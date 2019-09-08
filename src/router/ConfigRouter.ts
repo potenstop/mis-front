@@ -7,14 +7,14 @@
  * @author yanshaowen
  * @date 2019/9/8 17:07
  */
-import Main from "@/components/overall/Main.vue";
+import Main from '@/components/overall/Main.vue'
 
 /**
  * meta除了原生参数外可配置的参数:
  * meta: {
  *  title: { String|Number|Function }
  *         显示在侧边栏、面包屑和标签栏的文字
- *         使用'{{ 多语言字段 }}'形式结合多语言使用，例子看多语言的路由配置;
+ *         使用'{{ 多语言字段 }}'形式结合多语言使用，例子看多语言的路由配置
  *         可以传入一个回调函数，参数是当前路由对象，例子看动态路由和带参路由
  *  hideInBread: (false) 设为true后此级路由将不会出现在面包屑中，示例看QQ群路由配置
  *  hideInMenu: (false) 设为true后在左侧菜单不会显示该页面选项
@@ -26,32 +26,32 @@ import Main from "@/components/overall/Main.vue";
  */
 export default [
   {
-    path: "/login",
-    name: "login",
+    path: '/login',
+    name: 'login',
     meta: {
-      title: "Login - 登录",
+      title: 'Login - 登录',
       hideInMenu: true
     },
-    component: () => import("@/views/login/Login.vue")
+    component: () => import('@/views/login/Login.vue')
   },
   {
-    path: "/tools-methods",
-    name: "ToolsMethods",
+    path: '/tools-methods',
+    name: 'ToolsMethods',
     meta: {
       hideInBread: true
     },
     component: Main,
     children: [
       {
-        path: "page",
-        name: "ToolsMethodsPage",
+        path: 'page',
+        name: 'ToolsMethodsPage',
         meta: {
-          icon: "ios-hammer",
-          title: "工具方法",
-          beforeCloseName: "normal"
+          icon: 'ios-hammer',
+          title: '工具方法',
+          beforeCloseName: 'normal'
         },
-        component: () => import("@/views/tools-methods/ToolsMethods.vue")
+        component: () => import('@/views/tools-methods/ToolsMethods.vue')
       }
     ]
-  },
+  }
 ]
