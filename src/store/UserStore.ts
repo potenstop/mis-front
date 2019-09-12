@@ -1,4 +1,8 @@
 import Vuex from 'vuex'
+import { UserApi } from '@/dao/api/UserApi'
+import { ApiUtil } from '@/common/util/ApiUtil'
+import { CookiesUtil } from '@/common/util/CookiesUtil'
+const userApi = new UserApi()
 
 /**
  *
@@ -12,35 +16,30 @@ import Vuex from 'vuex'
 export default {
   namespaced: true,
   state: {
-    userName: '',
+    nickname: '',
     userId: '',
-    avatarImgPath: '',
+    avatar: '',
     token: '',
-    access: '',
     hasGetInfo: false,
     unreadCount: 0,
     messageUnreadList: [],
-    messageReadedList: [],
+    messageReadList: [],
     messageTrashList: [],
     messageContentStore: {}
   },
   mutations: {
-    setAvatar (state, avatarPath) {
-      state.avatarImgPath = avatarPath
+    setAvatar (state, avatar) {
+      state.avatar = avatar
     },
     setUserId (state, id) {
       state.userId = id
     },
-    setUserName (state, name) {
-      state.userName = name
-    },
-    setAccess (state, access) {
-      console.log('accessaccess', access)
-      state.access = access
+    setNickname (state, name) {
+      state.nickname = name
     },
     setToken (state, token) {
       state.token = token
-      // setToken(token);
+      CookiesUtil.setToken(token)
     },
     setHasGetInfo (state, status) {
       state.hasGetInfo = status
@@ -51,8 +50,8 @@ export default {
     setMessageUnreadList (state, list) {
       state.messageUnreadList = list
     },
-    setMessageReadedList (state, list) {
-      state.messageReadedList = list
+    setMessageReadList (state, list) {
+      state.messageReadList = list
     },
     setMessageTrashList (state, list) {
       state.messageTrashList = list
@@ -67,6 +66,57 @@ export default {
       state[to].unshift(msgItem)
     }
   },
-  getters: {},
-  actions: {}
+  getters: {
+    messageUnreadCount: state => state.messageUnreadList.length,
+    messageReadCount: state => state.messageReadList.length,
+    messageTrashCount: state => state.messageTrashList.length
+  },
+  actions: {
+    // 登录
+    async handleLogin ({ commit }, { nickname, password }) {
+      nickname = nickname.trim()
+      const result = await userApi.ldapLogin(nickname, password)
+      const data = ApiUtil.getData(result)
+      commit('setToken', data)
+    },
+    // 退出登录
+    handleLogOut ({ state, commit }) {
+      commit('setToken', '')
+      commit('setAccess', [])
+    },
+    // 获取用户相关信息
+    async getUserInfo ({ state, commit }) {
+      const result = await userApi.info()
+      const data = ApiUtil.getData(result)
+      commit('setAvatar', data.getAvatar())
+      commit('setNickname', data.getNickname())
+      commit('setUserId', data.getUserId())
+      commit('setHasGetInfo', true)
+      return data
+    },
+    // 此方法用来获取未读消息条数，接口只返回数值，不返回消息列表
+    getUnreadMessageCount ({ state, commit }) {
+      commit('setMessageCount', 0)
+    },
+    // 获取消息列表，其中包含未读、已读、回收站三个列表
+    getMessageList ({ state, commit }) {
+
+    },
+    // 根据当前点击的消息的id获取内容
+    getContentByMsgId ({ state, commit }, { msgId }) {
+
+    },
+    // 把一个未读消息标记为已读
+    hasRead ({ state, commit }, { msgId }) {
+
+    },
+    // 删除一个已读消息到回收站
+    removeRead ({ commit }, { msgId }) {
+
+    },
+    // 还原一个已删除消息到已读消息
+    restoreTrash ({ commit }, { msgId }) {
+
+    }
+  }
 }

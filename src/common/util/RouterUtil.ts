@@ -8,7 +8,8 @@
  * @date 2019/9/8 11:50
  */
 import ProjectConfig from '@/config/ProjectConfig';
-import {Route, RouteConfig} from 'vue-router'
+import { Route, RouteConfig } from 'vue-router'
+
 const forEach = (arr: Array<any>, fn: Function) => {
   if (!arr.length || !fn) return
   let i = -1
@@ -47,6 +48,16 @@ const doCustomTimes = (times: number, callback: Function) => {
   }
 }
 export class RouterUtil {
+  /**
+   * @description 根据当前跳转的路由设置显示在浏览器标签的title
+   * @param {Object} routeItem 路由对象
+   * @param {Object} vm Vue实例
+   */
+  public static setTitle(routeItem, vm) {
+    const handledRoute = RouterUtil.getRouteTitleHandled(routeItem)
+    const pageTitle = RouterUtil.showTitle(handledRoute, vm)
+    window.document.title = pageTitle ? `${ProjectConfig.title} - ${pageTitle}` : ProjectConfig.title
+  }
   public static showTitle(item, vm) {
     let { title, __titleIsFunction__ } = item.meta
     if (!title) return
@@ -60,7 +71,7 @@ export class RouterUtil {
         title = item.meta.title
       }
       else  {
-        title =vm.$t(item.name)
+        title = vm.$t(item.name)
       }
     } else {
       title = (item.meta && item.meta.title) || item.name
@@ -130,8 +141,8 @@ export class RouterUtil {
           icon: (item.meta && item.meta.icon) || '',
           name: item.name,
           meta: meta
-        };
-      });
+        }
+      })
     res = res.filter(item => {
       return !item.meta.hideInMenu
     })
@@ -172,9 +183,9 @@ export class RouterUtil {
   }
   public static getHomeRoute = (
     routers: RouteConfig[],
-    homeName = 'home'
+    homeName = ProjectConfig.homeName
   ): Route | { name?: string } => {
-    let i = -1;
+    let i = -1
     let len = routers.length
     let homeRoute = {}
     while (++i < len) {

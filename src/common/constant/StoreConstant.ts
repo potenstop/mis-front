@@ -10,4 +10,5 @@
 export class StoreConstant {
   public static readonly USER = 'user';
   public static readonly LOCAL = 'local';
+  public static readonly APP = 'app';
 }

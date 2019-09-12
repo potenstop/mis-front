@@ -5,8 +5,8 @@
     :rules="rules"
     @keydown.enter.native="handleSubmit"
   >
-    <FormItem prop="userName">
-      <Input v-model="form.userName" placeholder="请输入用户名">
+    <FormItem prop="nickname">
+      <Input v-model="form.nickname" placeholder="请输入用户名">
         <span slot="prepend">
           <Icon :size="16" type="ios-person"></Icon>
         </span>
@@ -35,25 +35,25 @@ export default class LoginForm extends Vue {
       { required: true, message: '账号不能为空', trigger: 'blur' }
     ]
   })
-  readonly passwordRules!: object | Array<any>;
+  readonly passwordRules!: Array<any>;
   @Prop({
     default: () => [
       { required: true, message: '密码不能为空', trigger: 'blur' }
     ]
   })
-  readonly userNameRules!: object | Array<any>;
+  readonly nicknameRules!: Array<any>;
 
   name: string = 'LoginForm';
 
   form = {
-    userName: 'super_admin',
-    password: ''
+    nickname: 'yanshaowen',
+    password: '123456'
   };
 
   // computed
   get rules () {
     return {
-      userName: this.userNameRules,
+      nickname: this.nicknameRules,
       password: this.passwordRules
     }
   }
@@ -61,7 +61,7 @@ export default class LoginForm extends Vue {
   @Emit('on-success-valid')
   submit () {
     return {
-      userName: this.form.userName,
+      nickname: this.form.nickname,
       password: this.form.password
     }
   }

@@ -26,6 +26,27 @@
     </Sider>
     <Layout>
       <Header class="header-con">
+        <header-bar
+          :collapsed="collapsed"
+          @on-coll-change="handleCollapsedChange"
+        >
+          <drop-user :message-unread-count="unreadCount" :user-avatar="avatar" />
+          <switch-language
+            v-if="$config.useI18n"
+            @on-lang-change="setLocal"
+            style="margin-right: 10px;"
+            :lang="local"
+          />
+          <error-store
+            v-if="
+              $config.plugin['error-store'] &&
+                $config.plugin['error-store'].showInHeader
+            "
+            :has-read="hasReadErrorPage"
+            :count="errorCount"
+          ></error-store>
+          <full-screen v-model="isFullscreen" style="margin-right: 10px;" />
+        </header-bar>
       </Header>
       <Content class="main-content-con">
         <Layout class="main-layout-con">
@@ -63,32 +84,42 @@ import SideMenu from '@/components/side-menu/SideMenu.vue'
 import TagsNav from '@/components/nav/TagsNav.vue'
 import { RouterUtil } from '@/common/util/RouterUtil'
 import ConfigRouter from '@/router/ConfigRouter'
+import ErrorStore from '@/components/store/ErrorStore.vue'
+import HeaderBar from '@/components/header-bar/HeaderBar.vue'
+import SwitchLanguage from '@/components/language/SwitchLanguage.vue'
+import FullScreen from '@/components/screen/FullScreen.vue'
+import DropUser from '@/components/user/DropUser.vue'
 const userModule = namespace(StoreConstant.USER)
+const appModule = namespace(StoreConstant.APP)
 
 @Component({
   components: {
     RollBackTop,
     SideMenu,
-    TagsNav
+    TagsNav,
+    HeaderBar,
+    ErrorStore,
+    SwitchLanguage,
+    FullScreen,
+    DropUser
   }
 })
 export default class Main extends Vue {
-  @userModule.Action handleLogin;
-  @userModule.Action getUnreadMessageCount;
-  @userModule.State unreadCount;
-  @Mutation setBreadCrumb;
-  @Mutation setTagNavList;
-  @Mutation addTag;
-  @Mutation setLocal;
-  @Mutation setHomeRoute;
-  @Mutation closeTag;
-  @Getter errorCount;
-  @Getter menuList;
-  @State(state => state.app.tagNavList) tagNavList;
-  @State(state => state.app.tagRouter) tagRouter;
-  @State(state => state.app.avatarImgPath) userAvatar;
-  @State(state => state.app.local) local;
-  @State(state => state.app.hasReadErrorPage) hasReadErrorPage;
+  @userModule.Action handleLogin: Function;
+  @userModule.Action getUnreadMessageCount: Function;
+  @userModule.State unreadCount: number;
+  @userModule.State avatar: string;
+  @appModule.Mutation setBreadCrumb: Function;
+  @appModule.Mutation setTagNavList: Function;
+  @appModule.Mutation addTag: Function;
+  @appModule.Mutation setLocal: Function;
+  @appModule.Mutation setHomeRoute: Function;
+  @appModule.Mutation closeTag: Function;
+  @appModule.Getter errorCount: Function;
+  @appModule.Getter menuList: Function;
+  @appModule.State tagNavList: any[];
+  @appModule.State local;
+  @appModule.State hasReadErrorPage;
 
   name = 'Main';
   collapsed = false;

@@ -15,6 +15,10 @@ export class ApiResult<T> {
   private data: T
   @JsonProperty
   private message: string
+  constructor() {
+    this.code = '0'
+    this.message = 'suc'
+  }
   public getCode (): string {
     return this.code
   }

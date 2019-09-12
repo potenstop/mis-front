@@ -1,8 +1,8 @@
-import { Modal, ModalInstance } from "iview";
+import { Modal, ModalInstance } from 'iview'
 export class BeforeCloseRouter {
-  public static normal(resolve) {
+  public static normal(resolve, vm) {
     ((Modal as unknown) as ModalInstance).confirm({
-      title: '确定要关闭这一页吗',
+      title: vm.$t('CONFIRM_CLOSE_TIP'),
       onOk: () => {
         resolve(true)
       },

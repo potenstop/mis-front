@@ -9,7 +9,7 @@ import { JsonProperty } from 'papio-h5'
  * @author yanshaowen
  * @date 2019/6/26 12:47
  */
-export class UserAuth {
+export class UserAuthResponse {
   @JsonProperty
   private userAuthId: number
   @JsonProperty

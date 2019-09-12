@@ -21,7 +21,7 @@ export default class ABackTop extends Vue {
     @Prop({ default: 30 }) readonly bottom!: number; // 距离container底部的距离, 定位
     @Prop({ default: 30 }) readonly right!: number; // 距离container 右侧的距离, 定位
     @Prop({ default: 1000 }) readonly duration!: number; // 动画时长
-    @Prop({ default: window }) readonly container!: Window | string; // 滚动元素
+    @Prop({ default: '' }) readonly container!: string; // 滚动元素
 
     @Emit('on-click')
     onClickHandler () {}
@@ -71,9 +71,7 @@ export default class ABackTop extends Vue {
     }
 
     get containerEle (): Element | null | Window {
-      return this.container === window
-        ? window
-        : document.querySelector(this.container as string)
+      return document.querySelector(this.container as string)
     }
 }
 </script>

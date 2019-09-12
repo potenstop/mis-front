@@ -4,7 +4,7 @@
       <Card icon="log-in" title="欢迎登录" :bordered="false">
         <div class="form-con">
           <login-form @on-success-valid="handleSubmit"></login-form>
-          <p class="login-tip">输入任意用户名和密码即可</p>
+          <p class="login-tip">{{errorTip}}</p>
         </div>
       </Card>
     </div>
@@ -24,18 +24,23 @@ const userModule = namespace(StoreConstant.USER)
     LoginForm
   }
 })
-export default class Login extends Vue {
+export default class UserLogin extends Vue {
     @userModule.Action handleLogin;
     @userModule.Action getUserInfo;
+    name = 'UserLogin';
+    errorTip: string = '';
 
-    handleSubmit ({ userName, password }: { userName: string; password: string }) {
-      this.handleLogin({ userName, password }).then(res => {
-        this.getUserInfo().then(res => {
-          /* this.$router.push({
-            name: this.$config.homeName
-          }) */
+    private async handleSubmit ({ nickname, password }) {
+      try {
+        this.errorTip = ''
+        await this.handleLogin({ nickname, password })
+        await this.getUserInfo()
+        await this.$router.push({
+          name: this.$config.homeName
         })
-      })
+      } catch (e) {
+        this.errorTip = e.message
+      }
     }
 }
 </script>
@@ -70,7 +75,7 @@ export default class Login extends Vue {
       .login-tip {
         font-size: 10px;
         text-align: center;
-        color: #c3c3c3;
+        color: #c34762;
       }
     }
   }

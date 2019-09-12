@@ -5,6 +5,7 @@
 </template>
 
 <script>
+import './config/HttpApiConfiguration'
 export default {
   name: 'App'
 }

@@ -150,13 +150,14 @@ export default class TagsNav extends Vue {
     }
 
     handleClose (current) {
-      console.log(current.meta)
       if (
         current.meta &&
         current.meta.beforeCloseName &&
         current.meta.beforeCloseName in BeforeCloseRouter
       ) {
-        new Promise(BeforeCloseRouter[current.meta.beforeCloseName]).then(close => {
+        new Promise((resolve) => {
+          return BeforeCloseRouter[current.meta.beforeCloseName](resolve, this)
+        }).then(close => {
           if (close) {
             this.close(current)
           }

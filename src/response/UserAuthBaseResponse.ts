@@ -1,4 +1,4 @@
-import { UserAuth } from '@/response/UserAuth'
+import { UserAuthResponse } from '@/response/UserAuthResponse'
 import { JsonProperty } from 'papio-h5'
 /**
  *
@@ -18,7 +18,7 @@ export class UserAuthBaseResponse {
   @JsonProperty
   private avatar: string
   @JsonProperty
-  private userAuthList: UserAuth[]
+  private userAuthList: UserAuthResponse[]
   public getUserId (): number {
     return this.userId
   }
@@ -37,10 +37,10 @@ export class UserAuthBaseResponse {
   public setAvatar (avatar: string): void {
     this.avatar = avatar
   }
-  public getUserAuthList (): UserAuth[] {
+  public getUserAuthList (): UserAuthResponse[] {
     return this.userAuthList
   }
-  public setUserAuthList (userAuthList: UserAuth[]): void {
+  public setUserAuthList (userAuthList: UserAuthResponse[]): void {
     this.userAuthList = userAuthList
   }
 }

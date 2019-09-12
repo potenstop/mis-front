@@ -26,31 +26,98 @@ import Main from '@/components/overall/Main.vue'
  */
 export default [
   {
-    path: '/login',
-    name: 'login',
+    path: '/401',
+    name: 'Error401',
     meta: {
-      title: 'Login - 登录',
       hideInMenu: true
     },
-    component: () => import('@/views/login/Login.vue')
+    component: () => import('@/views/exception/401.vue')
   },
   {
-    path: '/tools-methods',
-    name: 'ToolsMethods',
+    path: '/500',
+    name: 'Error500',
     meta: {
-      hideInBread: true
+      hideInMenu: true
+    },
+    component: () => import('@/views/exception/500.vue')
+  },
+  {
+    path: '*',
+    name: 'Error404',
+    meta: {
+      hideInMenu: true
+    },
+    component: () => import('@/views/exception/404.vue')
+  },
+  {
+    path: '/user/login',
+    name: 'UserLogin',
+    meta: {
+      title: '{{ LOGIN }}',
+      hideInMenu: true
+    },
+    component: () => import('@/views/login/UserLogin.vue')
+  },
+  {
+    path: '/',
+    name: 'Home',
+    redirect: '/overview',
+    component: Main,
+    meta: {
+      hideInMenu: true,
+      notCache: true
+    },
+    children: [
+      {
+        path: '/overview',
+        name: 'OverviewHome',
+        meta: {
+          hideInMenu: true,
+          title: '{{ OVERVIEW }}',
+          notCache: true,
+          icon: 'md-home'
+        },
+        component: () => import('@/views/home/OverviewHome.vue')
+      }
+    ]
+  },
+  {
+    path: '/logger',
+    name: 'Logger',
+    component: Main,
+    meta: {
+      hideInMenu: true,
+      notCache: true
+    },
+    children: [
+      {
+        path: 'error',
+        name: 'ErrorLogger',
+        meta: {
+          icon: 'ios-bug',
+          title: '{{ ERROR_LOGGER_COLLECT }}'
+        },
+        component: () => import('@/views/logger/ErrorLogger.vue')
+      }
+    ]
+  },
+  {
+    path: '/user',
+    name: 'User',
+    meta: {
+      icon: 'ios-contact-outline',
+      title: '{{ USER_MANAGE }}'
     },
     component: Main,
     children: [
       {
-        path: 'page',
-        name: 'ToolsMethodsPage',
+        path: 'list',
+        name: 'UserList',
         meta: {
-          icon: 'ios-hammer',
-          title: '工具方法',
-          beforeCloseName: 'normal'
+          icon: 'ios-people-outline',
+          title: '{{ USER_DATA_LIST }}'
         },
-        component: () => import('@/views/tools-methods/ToolsMethods.vue')
+        component: () => import('@/views/user/UserList.vue')
       }
     ]
   }

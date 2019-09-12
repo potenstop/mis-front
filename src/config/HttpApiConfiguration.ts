@@ -18,6 +18,7 @@ export class HttpApiConfiguration {
     httpDataSource.setName('master')
     httpDataSource.setReadOnly(false)
     httpDataSource.setUrl('http://web.potens.top/api')
+    httpDataSource.setCookieKeyList(['token'])
     httpDataSource.build()
     return httpDataSource
   }
