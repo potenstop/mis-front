@@ -6,6 +6,7 @@
       :border="border"
       :show-header="showHeader"
       :stripe="stripe"
+      @on-filter-change="onFilterChange"
     >
     </Table>
     <Table
@@ -33,7 +34,7 @@
       @on-select-all="onSelectAll"
       @on-selection-change="onSelectionChange"
       @on-sort-change="onSortChange"
-      @on-filter-change="onFilterChange"
+
       @on-row-click="onRowClick"
       @on-row-dblclick="onRowDblclick"
       @on-expand="onExpand"
@@ -137,19 +138,16 @@ export default class SimplePageTable extends Vue {
 
   onSortChange (column) {
     this.sortBy = column.key + ' ' + column.order
-    console.log(this.sortBy)
     this.handleList()
     this.$emit('on-sort-change', column)
   }
 
   async onFilterChange (row) {
-    if (this.filterData.has(row.key)) {
-      this.filterData.delete(row.key)
-    }
+    let value = null
     if (Array.isArray(row._filterChecked) && row._filterChecked.length > 0) {
-      this.filterData.set(row.key, row._filterChecked.join(','))
+      value = row._filterChecked.join(',')
     }
-    await this.handleList()
+    this.validInputValue(row._index, value)
     this.$emit('on-filter-change', row)
   }
 
@@ -180,7 +178,6 @@ export default class SimplePageTable extends Vue {
     return this.columns.filter(c => c.key !== 'handle')
   }
   handleColumns () {
-    this.insideColumns = this.columns
     this.columns.forEach((item: any, index: number) => {
       let customFilter = {}
       /**
@@ -201,10 +198,25 @@ export default class SimplePageTable extends Vue {
           render = this.getInputText(index)
         } else if (item.customFilter.type === 'date') {
           render = this.getInputDate(index)
+        } else if (item.customFilter.type === 'datetime') {
+          render = this.getInputDatetime(index)
+        } else if (item.customFilter.type === 'dateScope') {
+          render = this.getInputDateScope(index)
+        } else if (item.customFilter.type === 'datetimeScope') {
+          render = this.getInputDatetimeScope(index)
+        } else if (item.customFilter.type === 'selectSign') {
+          this.$set(customFilter, 'filters', item.customFilter.option)
+          this.$set(customFilter, 'filterRemote', () => {})
+          this.$set(customFilter, 'filterMultiple', false)
+        } else if (item.customFilter.type === 'selectMul') {
+          this.$set(customFilter, 'filters', item.customFilter.option)
+          this.$set(customFilter, 'filterRemote', () => {})
+          this.$set(customFilter, 'filterMultiple', true)
         }
       }
       this.$set(customFilter, 'render', render)
       this.tableColumnsFilters.push(customFilter)
+      this.insideColumns = this.columns
     })
   }
   /**
@@ -283,18 +295,106 @@ export default class SimplePageTable extends Vue {
    */
   getInputDate (index: number): (h: any) => any {
     return (h) => {
-      // 获取输入框的值,为了减少数据库的压力,我这里是
-      // 通过回车和点击搜索按钮才进行数据过滤查询,如果
-      // 要输入框变化就进行过滤,把 this.load()放到
-      // input事件方法就行了
-      let inputValue = {}
+      let inputValue: string = null
       return h('DatePicker', {
         props: {
           placeholder: '选择' + this.columns[index].title + '日期',
-          type: 'date'
+          type: 'date',
+          transfer: true,
+          confirm: true
         },
         on: {
-          'on-change': () => {
+          'on-change': (value: string) => {
+            inputValue = value
+          },
+          'on-ok': () => {
+            this.validInputValue(index, inputValue)
+          }
+        }
+      })
+    }
+  }
+  /**
+   * Datetime输入
+   * @param index
+   */
+  getInputDatetime (index: number): (h: any) => any {
+    return (h) => {
+      let inputValue: string = null
+      return h('DatePicker', {
+        props: {
+          placeholder: '选择' + this.columns[index].title + '日期',
+          type: 'datetime',
+          transfer: true,
+          confirm: true
+        },
+        on: {
+          'on-change': (value: string) => {
+            inputValue = value
+          },
+          'on-ok': () => {
+            this.validInputValue(index, inputValue)
+          }
+        }
+      })
+    }
+  }
+  /**
+   * Date输入
+   * @param index
+   */
+  getInputDateScope (index: number): (h: any) => any {
+    return (h) => {
+      let inputValue: string = null
+      return h('DatePicker', {
+        props: {
+          placeholder: '选择' + this.columns[index].title + '日期',
+          type: 'daterange',
+          transfer: true,
+          confirm: true,
+          options: {
+            disabledDate: this.columns[index].customFilter.disabledDate
+          }
+        },
+        on: {
+          'on-change': (value: string[]) => {
+            if (value) {
+              inputValue = value.join(',')
+            } else {
+              inputValue = null
+            }
+          },
+          'on-ok': () => {
+            this.validInputValue(index, inputValue)
+          }
+        }
+      })
+    }
+  }
+  /**
+   * Datetime输入
+   * @param index
+   */
+  getInputDatetimeScope (index: number): (h: any) => any {
+    return (h) => {
+      let inputValue: string = null
+      return h('DatePicker', {
+        props: {
+          placeholder: '选择' + this.columns[index].title + '日期',
+          type: 'datetimerange',
+          transfer: true,
+          confirm: true
+        },
+        on: {
+          'on-change': (value: string[]) => {
+            if (value) {
+              inputValue = value.join('|')
+            } else {
+              inputValue = null
+            }
+          },
+          'on-ok': () => {
+            console.log(1)
             this.validInputValue(index, inputValue)
           }
         }
@@ -304,17 +404,17 @@ export default class SimplePageTable extends Vue {
   // 重新加载数据
   load () {
     // 会执行一个load的事件
-    console.log(this.search)
-    this.$emit('on-search', this.search)
+    console.log(this.filterData)
+    this.$emit('on-search', this.filterData)
   }
   // 验证输入框的值
   validInputValue (index, inputValue) {
     if (!inputValue) {
-      this.$delete(this.search, this.columns[index].key)
+      this.filterData.delete(this.columns[index].key)
       this.load()
       return
     }
-    this.$set(this.search, this.columns[index].key, inputValue)
+    this.filterData.set(this.columns[index].key, inputValue)
     this.load()
   }
   async handleList () {

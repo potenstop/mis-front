@@ -59,7 +59,9 @@ export default class UserList extends Vue {
       key: 'name',
       sortable: true,
       customFilter: {
-        type: 'inputText'
+        type: 'inputNumber',
+        max: '100',
+        mix: '1'
       }
     },
     {
@@ -67,7 +69,8 @@ export default class UserList extends Vue {
       key: 'date',
       sortable: true,
       customFilter: {
-        type: 'date'
+        type: 'date',
+        default: 'now'
       }
     },
     {
@@ -75,7 +78,10 @@ export default class UserList extends Vue {
       key: 'date',
       sortable: true,
       customFilter: {
-        type: 'dateScope'
+        type: 'dateScope',
+        disabledDate: (date) => {
+          return date && date.valueOf() < Date.now() - 86400000
+        }
       }
     },
     {
@@ -99,25 +105,35 @@ export default class UserList extends Vue {
       key: 'age',
       sortable: true,
       customFilter: {
-        type: 'inputNumber'
-      },
-      filters: [
-        {
-          label: 'Greater than 4000',
-          value: 1
-        },
-        {
-          label: 'Less than 4000',
-          value: 2
-        }
-      ],
-      filterRemote (a, b) {
-        console.log(a, b)
+        type: 'selectSign',
+        option: [
+          {
+            label: 'Greater than 4000',
+            value: 1
+          },
+          {
+            label: 'Less than 4000',
+            value: 2
+          }
+        ],
       }
     },
     {
       title: 'Address',
-      key: 'address'
+      key: 'address',
+      customFilter: {
+        type: 'selectMul',
+        option: [
+          {
+            label: 'Greater than 4000',
+            value: 1
+          },
+          {
+            label: 'Less than 4000',
+            value: 2
+          }
+        ],
+      }
     }
   ]
   pageTotal = 4
