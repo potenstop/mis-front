@@ -3,7 +3,6 @@
     <simple-page-table
       :columns="columns1"
       :api-list="apiList"
-      :data="data1"
       @on-page-change="pageChange"
     ></simple-page-table>
   </div>

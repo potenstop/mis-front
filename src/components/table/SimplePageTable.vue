@@ -418,10 +418,10 @@ export default class SimplePageTable extends Vue {
     this.load()
   }
   async handleList () {
-    if (this.apiList && false) {
+    if (this.apiList) {
       try {
         const requestBody = {}
-        requestBody['pageIndex'] = this.pageCurrent
+        requestBody['pageNum'] = this.pageCurrent
         requestBody['pageSize'] = this.pageSize
         if (this.sortBy.length > 0) {
           requestBody['orderBy'] = this.sortBy
@@ -435,8 +435,8 @@ export default class SimplePageTable extends Vue {
         if ('total' in data) {
           this.pageTotal = data.total
         }
-        if ('data' in data) {
-          this.insideData = data.data
+        if ('list' in data) {
+          this.insideData = data.list
         }
       } catch (e) {
         this.$Message.error(e.message)

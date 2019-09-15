@@ -35,4 +35,20 @@ Mock.mock(/\/api\/user\/info(|\?\S*)$/, (req) => {
   result.setData(response)
   return result
 })
+Mock.mock(/\/api\/user\/list(|\?\S*)$/, (req) => {
+  const result = new ApiResult<UserAuthBaseResponse[]>()
+  //result.setData()
+  const response = new UserAuthBaseResponse()
+  const auth = new UserAuthResponse()
+  response.setAvatar('http://cms-bucket.nosdn.127.net/2018/08/13/078ea9f65d954410b62a52ac773875a1.jpeg')
+  response.setNickname('yanshaowen')
+  response.setUserId(317)
+
+  auth.setIdentifier('10000')
+  auth.setUserAuthId(1)
+  auth.setIdentityType(1)
+  response.setUserAuthList([auth])
+  result.setData([response])
+  return result
+})
 export default Mock

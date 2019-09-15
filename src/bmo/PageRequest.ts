@@ -2,30 +2,30 @@
  *
  * 功能描述:
  *
- * @className PageBody
+ * @className PageRequest
  * @projectName mis-front
  * @author yanshaowen
  * @date 2019/9/11 19:18
  */
 import { JsonProperty } from 'papio-h5'
 
-export class PageBody {
+export class PageRequest {
   @JsonProperty
-  private pageIndex: number
+  private pageNum: number
   @JsonProperty
   private pageSize: number
   @JsonProperty
   private orderBy: string
 
   constructor() {
-    this.pageIndex = 1
+    this.pageNum = 1
     this.pageSize = 20
   }
-  public getPageIndex (): number {
-    return this.pageIndex
+  public getPageNum (): number {
+    return this.pageNum
   }
-  public setPageIndex (pageIndex: number): void {
-    this.pageIndex = pageIndex
+  public setPageNum (pageNum: number): void {
+    this.pageNum = pageNum
   }
   public getPageSize (): number {
     return this.pageSize

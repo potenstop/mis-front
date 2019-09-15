@@ -7,10 +7,10 @@
  * @author yanshaowen
  * @date 2019/9/11 19:22
  */
-import { PageBody } from '@/bmo/PageBody'
+import { PageRequest } from '@/bmo/PageRequest'
 import { JsonProperty } from 'papio-h5'
 
-export class UserListRequest extends PageBody{
+export class UserListRequest extends PageRequest{
   @JsonProperty
   private age: number;
   public getAge (): number {
