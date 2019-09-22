@@ -1,5 +1,11 @@
 <template>
   <div>
+    <Collapse v-model="collapseValue" @on-change="collapseOnChange">
+      <Panel name="filter">
+        查看过滤条件
+        <ace-editor slot="content" :content="filterContent" v-show="filterShow"></ace-editor>
+      </Panel>
+    </Collapse>
     <Table
       :data="filters"
       :columns="tableColumnsFilters"
@@ -7,13 +13,18 @@
       :show-header="showHeader"
       :stripe="stripe"
       @on-filter-change="onFilterChange"
+      @on-sort-change="onSortChange"
+      @on-select="onSelect"
+      @on-select-cancel="onSelectCancel"
+      @on-select-all="onSelectAll"
+      @on-selection-change="onSelectionChange"
     >
     </Table>
     <Table
       ref="simplePageTable"
       :data="insideData"
       :columns="insideColumns"
-      :stripe="stripe"
+      :stripe="true"
       :border="border"
       :show-header="false"
       :width="width"
@@ -29,12 +40,6 @@
       :tooltip-theme="tooltipTheme"
       :row-key="rowKey"
       @on-current-change="onCurrentChange"
-      @on-select="onSelect"
-      @on-select-cancel="onSelectCancel"
-      @on-select-all="onSelectAll"
-      @on-selection-change="onSelectionChange"
-      @on-sort-change="onSortChange"
-
       @on-row-click="onRowClick"
       @on-row-dblclick="onRowDblclick"
       @on-expand="onExpand"
@@ -66,8 +71,11 @@
 <script lang="ts">
 import { Component, Vue, Prop, Watch } from 'vue-property-decorator'
 import { ApiUtil } from '@/common/util/ApiUtil'
-
-@Component
+import { ConvertUtil } from 'papio-h5'
+import AceEditor from '@/components/editor/AceEditor.vue'
+@Component({
+  components: { AceEditor }
+})
 export default class SimplePageTable extends Vue {
   @Prop({ default: () => [] }) data!: any[];
   @Prop({ default: () => [] }) readonly columns!: any[];
@@ -77,7 +85,6 @@ export default class SimplePageTable extends Vue {
   @Prop([Number, String]) readonly width!: Number | String | undefined;
   @Prop([Number, String]) readonly height!: Number | String | undefined;
   @Prop([Number, String]) readonly maxHeight!: Number | String | undefined;
-  @Prop({ default: false }) readonly loading!: boolean;
   @Prop({ default: false }) readonly disabledHover!: boolean;
   @Prop({ default: false }) readonly highlightRow!: boolean;
   @Prop({ type: Function, default: () => '' }) readonly rowClassName!: Function;
@@ -87,9 +94,6 @@ export default class SimplePageTable extends Vue {
   @Prop({ default: false }) readonly draggable !: boolean;
   @Prop({ default: 'dark' }) readonly tooltipTheme!: string;
   @Prop({ default: false }) readonly rowKey!: boolean;
-  @Prop({ default: 0 }) pageTotal!: number;
-  @Prop({ default: 1 }) readonly pageCurrent!: number;
-  @Prop({ default: 20 }) readonly pageSize!: number;
   @Prop({ default: true }) readonly pageShowTotal!: boolean;
   @Prop({ default: true }) readonly pageShowElevator!: boolean;
   @Prop({ default: true }) readonly pageShowSizer!: boolean;
@@ -102,20 +106,24 @@ export default class SimplePageTable extends Vue {
   @Prop(Function) readonly apiUpdate!: Function | undefined;
   @Prop(Function) readonly apiList!: Function | undefined;
 
-  name = 'SimplePageTable'
-  insideData: any[] = []
-  insideColumns: any[] = []
-  sortBy = ''
-  filterData: Map<string, string> = new Map<string, string>()
-  search = {}
-  tableColumnsFilters: any[] = []
-  filters = [{
+  private name = 'SimplePageTable'
+  private insideData: any[] = []
+  private insideColumns: any[] = []
+  private pageTotal: number = 0
+  private pageCurrent: number = 1
+  private pageSize: number = 20
+  private sortBy = ''
+  private loading = true
+  private filterContent: string = ''
+  private filterData: Map<string, string> = new Map<string, string>()
+  private search = {}
+  private tableColumnsFilters: any[] = []
+  private filterShow: boolean = false
+  private collapseValue: string = null
+  private filters = [{
     title: ''
   }]
 
-  onTest () {
-    alert(11)
-  }
   onCurrentChange (currentRow, oldCurrentRow) {
     this.$emit('on-current-change', currentRow, oldCurrentRow)
   }
@@ -137,9 +145,12 @@ export default class SimplePageTable extends Vue {
   }
 
   onSortChange (column) {
-    this.sortBy = column.key + ' ' + column.order
-    this.handleList()
-    this.$emit('on-sort-change', column)
+    if (!column.order || column.order === 'normal') {
+      this.sortBy = ''
+    } else {
+      this.sortBy = ConvertUtil.toLine(column.key) + ' ' + column.order
+    }
+    this.load()
   }
 
   async onFilterChange (row) {
@@ -172,6 +183,18 @@ export default class SimplePageTable extends Vue {
 
   pageChange (pageSize: number) {
     this.$emit('on-page-change', pageSize)
+  }
+
+  collapseOnChange (value) {
+    if (value.length === 1) {
+      this.filterShow = true
+      const requestBody = this.getRequestBody()
+      if (this.filterShow) {
+        this.drawResCode(JSON.stringify(requestBody, null, 4))
+      }
+    } else {
+      this.filterShow = false
+    }
   }
 
   get shownColumns () {
@@ -215,6 +238,8 @@ export default class SimplePageTable extends Vue {
         }
       }
       this.$set(customFilter, 'render', render)
+      this.$set(customFilter, 'sortable', item.sortable)
+      this.$set(customFilter, 'key', item.key)
       this.tableColumnsFilters.push(customFilter)
       this.insideColumns = this.columns
     })
@@ -359,7 +384,13 @@ export default class SimplePageTable extends Vue {
         on: {
           'on-change': (value: string[]) => {
             if (value) {
-              inputValue = value.join(',')
+              if (value.length === 2 && value[0].length > 1 && value[1].length > 1) {
+                inputValue = value.join(',')
+              } else {
+                // 清除了
+                inputValue = null
+                this.validInputValue(index, inputValue)
+              }
             } else {
               inputValue = null
             }
@@ -388,13 +419,18 @@ export default class SimplePageTable extends Vue {
         on: {
           'on-change': (value: string[]) => {
             if (value) {
-              inputValue = value.join('|')
+              if (value.length === 2 && value[0].length > 1 && value[1].length > 1) {
+                inputValue = value.join(',')
+              } else {
+                // 清除了
+                inputValue = null
+                this.validInputValue(index, inputValue)
+              }
             } else {
               inputValue = null
             }
           },
           'on-ok': () => {
-            console.log(1)
             this.validInputValue(index, inputValue)
           }
         }
@@ -402,10 +438,11 @@ export default class SimplePageTable extends Vue {
     }
   }
   // 重新加载数据
-  load () {
+  async load () {
+    this.loading = true
     // 会执行一个load的事件
-    console.log(this.filterData)
-    this.$emit('on-search', this.filterData)
+    await this.handleList()
+    this.loading = false
   }
   // 验证输入框的值
   validInputValue (index, inputValue) {
@@ -417,19 +454,26 @@ export default class SimplePageTable extends Vue {
     this.filterData.set(this.columns[index].key, inputValue)
     this.load()
   }
+
+  getRequestBody () {
+    const requestBody = {}
+    requestBody['pageNum'] = this.pageCurrent
+    requestBody['pageSize'] = this.pageSize
+    if (this.sortBy.length > 0) {
+      requestBody['orderBy'] = this.sortBy
+    }
+    this.filterData.forEach((value, key) => {
+      requestBody[key] = value
+    })
+    return requestBody
+  }
   async handleList () {
     if (this.apiList) {
       try {
-        const requestBody = {}
-        requestBody['pageNum'] = this.pageCurrent
-        requestBody['pageSize'] = this.pageSize
-        if (this.sortBy.length > 0) {
-          requestBody['orderBy'] = this.sortBy
+        const requestBody = this.getRequestBody()
+        if (this.filterShow) {
+          this.drawResCode(JSON.stringify(requestBody, null, 4))
         }
-        this.filterData.forEach((value, key) => {
-          requestBody[key] = value
-        })
-        console.log('requestBody', requestBody)
         const result = await this.apiList(requestBody)
         const data = ApiUtil.getData(result) as any
         if ('total' in data) {
@@ -441,12 +485,16 @@ export default class SimplePageTable extends Vue {
       } catch (e) {
         this.$Message.error(e.message)
       }
+    } else {
+      this.insideData = this.data
     }
-    this.insideData = this.data
   }
   async mounted () {
     this.handleColumns()
-    await this.handleList()
+    await this.load()
+  }
+  drawResCode (content: string) {
+    this.filterContent = content
   }
 }
 </script>

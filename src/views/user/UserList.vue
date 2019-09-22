@@ -3,7 +3,6 @@
     <simple-page-table
       :columns="columns1"
       :api-list="apiList"
-      @on-page-change="pageChange"
     ></simple-page-table>
   </div>
 </template>
@@ -18,6 +17,9 @@
 import { Component, Vue } from 'vue-property-decorator'
 import SimplePageTable from '@/components/table/SimplePageTable.vue'
 import { UserApi } from '@/dao/api/UserApi'
+import { JsonProtocol } from 'papio-h5'
+import { UserListRequest } from '@/request/UserListRequest'
+
 const userApi = new UserApi()
 @Component({
   components: {
@@ -54,98 +56,50 @@ export default class UserList extends Vue {
   ]
   columns1 = [
     {
-      title: 'Name',
-      key: 'name',
+      title: '用户id',
+      key: 'userId',
       sortable: true,
       customFilter: {
-        type: 'inputNumber',
-        max: '100',
-        mix: '1'
+        type: 'inputNumber'
       }
     },
     {
-      title: 'Date',
-      key: 'date',
-      sortable: true,
+      title: '用户名称',
+      key: 'nickname',
       customFilter: {
-        type: 'date',
-        default: 'now'
+        type: 'inputText'
       }
     },
     {
-      title: 'Date Scope',
-      key: 'date',
+      title: '用户头像',
+      key: 'avatar'
+    },
+    {
+      title: '注册时间',
+      key: 'createTime',
       sortable: true,
       customFilter: {
-        type: 'dateScope',
-        disabledDate: (date) => {
-          return date && date.valueOf() < Date.now() - 86400000
-        }
+        type: 'dateScope'
       }
     },
     {
-      title: 'Date1',
-      key: 'date',
+      title: '更新时间',
+      key: 'updateTime',
       sortable: true,
       customFilter: {
-        type: 'datetime'
-      }
-    },
-    {
-      title: 'Datetime Scope',
-      key: 'date',
-      sortable: true,
-      customFilter: {
-        type: 'datetimeScope'
-      }
-    },
-    {
-      title: 'Age',
-      key: 'age',
-      sortable: true,
-      customFilter: {
-        type: 'selectSign',
-        option: [
-          {
-            label: 'Greater than 4000',
-            value: 1
-          },
-          {
-            label: 'Less than 4000',
-            value: 2
-          }
-        ],
-      }
-    },
-    {
-      title: 'Address',
-      key: 'address',
-      customFilter: {
-        type: 'selectMul',
-        option: [
-          {
-            label: 'Greater than 4000',
-            value: 1
-          },
-          {
-            label: 'Less than 4000',
-            value: 2
-          }
-        ],
+        type: 'dateScope'
       }
     }
   ]
-  pageTotal = 4
-  pageCurrent = 1
-  apiList = userApi.list
+
   apiDetail = userApi.detail
   apiAdd = userApi.detail
   apiDelete = userApi.detail
   apiUpdate = userApi.detail
 
-  pageChange (current: number) {
-    console.log(current)
-    this.pageCurrent = current
+  apiList (body) {
+    const request = JsonProtocol.jsonToBean(body, UserListRequest)
+    return userApi.list(request)
   }
 }
 </script>

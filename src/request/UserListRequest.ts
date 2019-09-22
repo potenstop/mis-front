@@ -10,13 +10,37 @@
 import { PageRequest } from '@/bmo/PageRequest'
 import { JsonProperty } from 'papio-h5'
 
-export class UserListRequest extends PageRequest{
+export class UserListRequest extends PageRequest {
   @JsonProperty
-  private age: number;
-  public getAge (): number {
-    return this.age
+  private userId: number
+  @JsonProperty
+  private nickname: string
+  @JsonProperty
+  private createTime: string
+  @JsonProperty
+  private updateTime: string
+  public getUserId (): number {
+    return this.userId
   }
-  public setAge (age: number): void {
-    this.age = age
+  public setUserId (userId: number): void {
+    this.userId = userId
+  }
+  public getNickname (): string {
+    return this.nickname
+  }
+  public setNickname (nickname: string): void {
+    this.nickname = nickname
+  }
+  public getCreateTime (): string {
+    return this.createTime
+  }
+  public setCreateTime (createTime: string): void {
+    this.createTime = createTime
+  }
+  public getUpdateTime (): string {
+    return this.updateTime
+  }
+  public setUpdateTime (updateTime: string): void {
+    this.updateTime = updateTime
   }
 }
