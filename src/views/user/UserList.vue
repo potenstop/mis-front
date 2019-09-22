@@ -6,13 +6,7 @@
     ></simple-page-table>
   </div>
 </template>
-<!--
-:data="data1"
-:api-list="apiList"
-:api-detail="apiDetail"
-:api-add="apiAdd"
-:api-update="apiUpdate"
-:api-delete="apiDelete"-->
+
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
 import SimplePageTable from '@/components/table/SimplePageTable.vue'
@@ -89,6 +83,23 @@ export default class UserList extends Vue {
       customFilter: {
         type: 'dateScope'
       }
+    },
+    {
+      title: '操作',
+      key: '_option',
+      optionList: [
+        {
+          icon: 'ios-eye-outline',
+          text: '查看',
+          buttonType: 'info',
+          click: this.view
+        },
+        {
+          icon: 'ios-build-outline',
+          text: '编辑',
+          buttonType: 'primary'
+        }
+      ]
     }
   ]
 
@@ -100,6 +111,14 @@ export default class UserList extends Vue {
   apiList (body) {
     const request = JsonProtocol.jsonToBean(body, UserListRequest)
     return userApi.list(request)
+  }
+  view (row, index) {
+    this.$router.push({
+      path: '/user/view',
+      query: {
+        userId: row.userId
+      }
+    })
   }
 }
 </script>

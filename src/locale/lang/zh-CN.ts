@@ -4,5 +4,6 @@ export default {
   ERROR_LOGGER_COLLECT: '错误日志',
   USER_MANAGE: '用户管理',
   USER_DATA_LIST: '用户列表',
-  LOGIN: '登录'
+  LOGIN: '登录',
+  USER_VIEW: '用户查看',
 }

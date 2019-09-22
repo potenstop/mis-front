@@ -118,6 +118,16 @@ export default [
           title: '{{ USER_DATA_LIST }}'
         },
         component: () => import('@/views/user/UserList.vue')
+      },
+      {
+        path: 'view',
+        name: 'UserView',
+        meta: {
+          hideInMenu: true,
+          icon: 'ios-people-outline',
+          title: '{{ USER_VIEW }}'
+        },
+        component: () => import('@/views/user/UserView.vue')
       }
     ]
   }

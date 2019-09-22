@@ -213,6 +213,32 @@ export default class SimplePageTable extends Vue {
         this.$set(customFilter, 'width', item.width)
       }
       let render = (h) => {}
+      // 判断是否为_option
+      if (item.key === '_option' && Array.isArray(item.optionList)) {
+        item.render = (h, params) => {
+          const propList = []
+          item.optionList.forEach(op => {
+            propList.push(h('Button', {
+              props: {
+                icon: op.icon,
+                type: op.buttonType,
+                size: 'small'
+              },
+              style: {
+                marginRight: '5px'
+              },
+              on: {
+                click: () => {
+                  if (typeof op.click === 'function') {
+                    op.click(this.insideData[params.index], params.index)
+                  }
+                }
+              }
+            }, op.text))
+          })
+          return h('div', propList)
+        }
+      }
       // 如果存在 过滤选项
       if (item.customFilter && item.customFilter.type) {
         if (item.customFilter.type === 'inputNumber') {
