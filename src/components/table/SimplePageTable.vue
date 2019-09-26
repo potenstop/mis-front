@@ -267,8 +267,21 @@ export default class SimplePageTable extends Vue {
       this.$set(customFilter, 'sortable', item.sortable)
       this.$set(customFilter, 'key', item.key)
       this.tableColumnsFilters.push(customFilter)
-      this.insideColumns = this.columns
+      if (item.simpleOption) {
+        this.$set(item, 'render', (h, params) => {
+          let label = ''
+          if (this.insideData[params.index]) {
+            params.column.simpleOption.forEach((o) => {
+              if (o.value + '' === this.insideData[params.index][params.column.key] + '') {
+                label = o.label
+              }
+            })
+            return h('span', label)
+          }
+        })
+      }
     })
+    this.insideColumns = this.columns
   }
   /**
    * 文本输入

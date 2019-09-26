@@ -5,5 +5,8 @@ export default {
   USER_MANAGE: '用户管理',
   USER_DATA_LIST: '用户列表',
   LOGIN: '登录',
-  USER_VIEW: '用户查看',
+  USER_EDIT: '用户编辑',
+  NEWS_MANAGE: '新闻管理',
+  NEWS_LIST: '新闻列表',
+  NEWS_EDIT: '新闻编辑',
 }

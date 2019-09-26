@@ -21,34 +21,8 @@ const userApi = new UserApi()
   }
 })
 export default class UserList extends Vue {
-  name = 'UserList'
-  data1 = [
-    {
-      name: 'John Brown',
-      age: 18,
-      address: 'New York No. 1 Lake Park',
-      date: '2016-10-03'
-    },
-    {
-      name: 'Jim Green',
-      age: 24,
-      address: 'London No. 1 Lake Park',
-      date: '2016-10-01'
-    },
-    {
-      name: 'Joe Black',
-      age: 30,
-      address: 'Sydney No. 1 Lake Park',
-      date: '2016-10-02'
-    },
-    {
-      name: 'Jon Snow',
-      age: 26,
-      address: 'Ottawa No. 2 Lake Park',
-      date: '2016-10-04'
-    }
-  ]
-  columns1 = [
+  private name = 'UserList'
+  private columns1 = [
     {
       title: '用户id',
       key: 'userId',
@@ -89,32 +63,21 @@ export default class UserList extends Vue {
       key: '_option',
       optionList: [
         {
-          icon: 'ios-eye-outline',
-          text: '查看',
-          buttonType: 'info',
-          click: this.view
-        },
-        {
           icon: 'ios-build-outline',
           text: '编辑',
-          buttonType: 'primary'
+          buttonType: 'primary',
+          click: this.view
         }
       ]
     }
   ]
-
-  apiDetail = userApi.detail
-  apiAdd = userApi.detail
-  apiDelete = userApi.detail
-  apiUpdate = userApi.detail
-
   apiList (body) {
     const request = JsonProtocol.jsonToBean(body, UserListRequest)
     return userApi.list(request)
   }
   view (row, index) {
     this.$router.push({
-      path: '/user/view',
+      path: '/user/edit',
       query: {
         userId: row.userId
       }

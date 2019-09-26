@@ -1,5 +1,5 @@
 <template>
-  <pre :id="nodeId"></pre>
+  <pre :id="editorId"></pre>
 </template>
 
 <script lang="ts">
@@ -9,7 +9,6 @@ import 'ace-builds/webpack-resolver'
 @Component
 export default class AceEditor extends Vue {
   private name = 'AceEditor'
-  @Prop({ default: 'outId' }) nodeId!: string;
   @Prop({ default: 'json' }) lang!: string;
   @Prop({ default: undefined }) minLines!: number;
   @Prop({ default: 50 }) maxLines!: number;
@@ -18,6 +17,9 @@ export default class AceEditor extends Vue {
   @Prop({ default: 18 }) fontSize!: number;
   private outCodeAceEdit: Ace.Ace.Editor = null
 
+  get editorId () {
+    return `ace${(this as any)._uid}`
+  }
   @Watch('content')
   contentChanged () {
     if (this.outCodeAceEdit) {
@@ -26,7 +28,7 @@ export default class AceEditor extends Vue {
       return
     }
 
-    this.outCodeAceEdit = Ace.edit(this.nodeId, {
+    this.outCodeAceEdit = Ace.edit(this.editorId, {
       mode: 'ace/mode/' + this.lang,
       theme: 'ace/theme/dracula',
       maxLines: this.maxLines,

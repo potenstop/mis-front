@@ -37,7 +37,7 @@ Mock.mock(/\/api\/user\/info(|\?\S*)$/, (req) => {
 })
 Mock.mock(/\/api\/user\/list(|\?\S*)$/, (req) => {
   const result = new ApiResult<UserAuthBaseResponse[]>()
-  //result.setData()
+  // result.setData()
   const response = new UserAuthBaseResponse()
   const auth = new UserAuthResponse()
   response.setAvatar('http://cms-bucket.nosdn.127.net/2018/08/13/078ea9f65d954410b62a52ac773875a1.jpeg')

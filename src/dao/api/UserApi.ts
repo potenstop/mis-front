@@ -19,6 +19,7 @@ import { UserAuthBaseResponse } from '@/response/UserAuthBaseResponse'
 import { UserListRequest } from '@/request/UserListRequest'
 import { PageResponse } from '@/bmo/PageResponse'
 import { UserListItemResponse } from '@/response/UserListItemResponse'
+import {UserDetailResponse} from "@/response/UserDetailResponse";
 @AxisoRemote({ filepath: '/src/dao/api', name: '/user', timeout: 5000 })
 export class UserApi {
   @GetMapping('/ldap/login')
@@ -40,8 +41,8 @@ export class UserApi {
   }
 
   @GetMapping('/detail')
-  @ReturnGenericsProperty(ApiResult, new Map<string, new() => object>().set('data', UserAuthBaseResponse))
-  public detail (@RequestParam('userId') userId: number): Promise<ApiResult<UserAuthBaseResponse>> {
+  @ReturnGenericsProperty(ApiResult, new Map<string, new() => object>().set('data', UserDetailResponse))
+  public detail (@RequestParam('userId') userId: number): Promise<ApiResult<UserDetailResponse>> {
     return null
   }
 }

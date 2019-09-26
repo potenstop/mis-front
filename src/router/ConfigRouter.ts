@@ -120,14 +120,44 @@ export default [
         component: () => import('@/views/user/UserList.vue')
       },
       {
-        path: 'view',
-        name: 'UserView',
+        path: 'edit',
+        name: 'UserEdit',
         meta: {
           hideInMenu: true,
           icon: 'ios-people-outline',
-          title: '{{ USER_VIEW }}'
+          title: '{{ USER_EDIT }}'
         },
-        component: () => import('@/views/user/UserView.vue')
+        component: () => import('@/views/user/UserEdit.vue')
+      }
+    ]
+  },
+  {
+    path: '/news',
+    name: 'News',
+    meta: {
+      icon: 'logo-hackernews',
+      title: '{{ NEWS_MANAGE }}'
+    },
+    component: Main,
+    children: [
+      {
+        path: 'list',
+        name: 'NewsList',
+        meta: {
+          icon: 'logo-hackernews',
+          title: '{{ NEWS_LIST }}'
+        },
+        component: () => import('@/views/news/NewsList.vue')
+      },
+      {
+        path: 'edit',
+        name: 'NewsEdit',
+        meta: {
+          hideInMenu: true,
+          icon: 'ios-people-outline',
+          title: '{{ NEWS_EDIT }}'
+        },
+        component: () => import('@/views/news/NewsEdit.vue')
       }
     ]
   }
