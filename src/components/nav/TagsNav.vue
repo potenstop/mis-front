@@ -70,7 +70,7 @@ import { Component, Vue, Prop, Watch } from 'vue-property-decorator'
 import { Route } from 'vue-router'
 import { RouterUtil } from '@/common/util/RouterUtil'
 import { BeforeCloseRouter } from '@/router/BeforeCloseRouter'
-import { Tag } from 'iview'
+import { Tag } from 'view-design'
 
 @Component
 export default class TagsNav extends Vue {

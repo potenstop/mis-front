@@ -13,7 +13,7 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
 import { namespace } from 'vuex-class'
-import { Table } from 'iview'
+import { Table } from 'view-design'
 import moment from 'moment'
 
 import { StoreConstant } from '@/common/constant/StoreConstant'

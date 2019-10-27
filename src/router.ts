@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import ConfigRouter from '@/router/ConfigRouter'
-import iView from 'iview'
+import ViewUI from 'view-design'
 import ProjectConfig from '@/config/ProjectConfig'
 import { CookiesUtil } from '@/common/util/CookiesUtil'
 import { RouterUtil } from '@/common/util/RouterUtil'
@@ -19,7 +19,7 @@ const router = new Router({
 
 router.beforeEach((to, from, next) => {
   // @ts-ignore
-  iView.LoadingBar.start()
+  ViewUI.LoadingBar.start()
   const token = CookiesUtil.getToken()
   if (!token && to.name !== LOGIN_PAGE_NAME) {
     // 未登录且要跳转的页面不是登录页
@@ -53,20 +53,28 @@ router.beforeEach((to, from, next) => {
 router.afterEach(to => {
   RouterUtil.setTitle(to, router.app)
   // @ts-ignore
-  iView.LoadingBar.finish()
+  ViewUI.LoadingBar.finish()
   window.scrollTo(0, 0)
 })
 
 // http response 响应拦截器
-axios.interceptors.response.use(response => {
+axios.interceptors.response.use((response: any) => {
+  if ('code' in response.data && response.data.code !== '0') {
+    store.dispatch('app/addErrorLog', {
+      type: 'http',
+      code: response.data.code,
+      mes: response.data.message,
+      url: window.location.href
+    })
+  }
   return response
 }, error => {
   store.dispatch('app/addErrorLog', {
-    type: "script",
-    code: 0,
+    type: 'http',
+    code: error.status,
     mes: error.message,
     url: window.location.href
-  });
+  })
   if (error.response) {
     switch (error.response.status) {
       // 返回401，清除token信息并跳转到登录页面

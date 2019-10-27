@@ -1,8 +1,13 @@
 <template>
   <div>
+    <Row>
+      <Col offset="22" style="margin-bottom: 10px">
+        <Button v-show="hasActionAdd" type="primary" icon="ios-add" v-on:click="onActionAdd">{{$t("P_ADD")}}</Button>
+      </Col>
+    </Row>
     <Collapse v-model="collapseValue" @on-change="collapseOnChange">
       <Panel name="filter">
-        查看过滤条件
+        {{$t("P_VIEW_FILTER")}}
         <ace-editor slot="content" :content="filterContent" v-show="filterShow"></ace-editor>
       </Panel>
     </Collapse>
@@ -105,6 +110,7 @@ export default class SimplePageTable extends Vue {
   @Prop(Function) readonly apiDetail!: Function | undefined;
   @Prop(Function) readonly apiUpdate!: Function | undefined;
   @Prop(Function) readonly apiList!: Function | undefined;
+  @Prop({ default: true }) readonly hasActionAdd!: boolean;
 
   private name = 'SimplePageTable'
   private insideData: any[] = []
@@ -197,6 +203,9 @@ export default class SimplePageTable extends Vue {
     }
   }
 
+  onActionAdd () {
+    this.$emit('on-action-add')
+  }
   get shownColumns () {
     return this.columns.filter(c => c.key !== 'handle')
   }

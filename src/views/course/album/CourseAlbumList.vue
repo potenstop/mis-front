@@ -3,49 +3,56 @@
     <simple-page-table
       :columns="columns1"
       :api-list="apiList"
-      :has-action-add="false"
+      @on-action-add="actionAdd"
     ></simple-page-table>
   </div>
 </template>
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
-import SimplePageTable from '@/components/table/SimplePageTable.vue'
-import { UserApi } from '@/dao/api/UserApi'
+import { AlbumCourseApi } from '@/dao/api/AlbumCourseApi'
 import { JsonProtocol } from 'papio-h5'
-import { UserListRequest } from '@/request/UserListRequest'
+import { AlbumCourseListItemRequest } from '@/request/AlbumCourseListItemRequest'
+import SimplePageTable from '@/components/table/SimplePageTable.vue'
 
-const userApi = new UserApi()
+const albumCourseApi = new AlbumCourseApi()
 @Component({
   components: {
     SimplePageTable
   }
 })
-export default class UserList extends Vue {
-  private name = 'UserList'
-  private editName = ''
+export default class CourseAlbumList extends Vue {
+  private name = 'CourseAlbumList'
   private columns1 = [
     {
-      title: '用户id',
-      key: 'userId',
+      title: 'ID',
+      key: 'albumId',
       sortable: true,
       customFilter: {
         type: 'inputNumber'
       }
     },
     {
-      title: '用户名称',
-      key: 'nickname',
+      title: '专辑名称',
+      key: 'albumName',
       customFilter: {
         type: 'inputText'
       }
     },
     {
-      title: '用户头像',
-      key: 'avatar'
+      title: '描述',
+      key: 'albumDesc'
     },
     {
-      title: '注册时间',
+      title: '题目总数',
+      key: 'contentCount'
+    },
+    {
+      title: '分类',
+      key: 'courseTypeNames'
+    },
+    {
+      title: '创建时间',
       key: 'createTime',
       sortable: true,
       customFilter: {
@@ -66,7 +73,7 @@ export default class UserList extends Vue {
       optionList: [
         {
           icon: 'ios-build-outline',
-          text: this.editName,
+          text: '编辑',
           buttonType: 'primary',
           click: this.view
         }
@@ -74,23 +81,15 @@ export default class UserList extends Vue {
     }
   ]
   private apiList (body) {
-    const request = JsonProtocol.jsonToBean(body, UserListRequest)
-    return userApi.list(request)
+    const request = JsonProtocol.jsonToBean(body, AlbumCourseListItemRequest)
+    return albumCourseApi.list(request)
   }
-  private created () {
-    this.editName = this.$t('P_EDIT')
-  }
-  view (row, index) {
-    this.$router.push({
-      path: '/user/edit',
-      query: {
-        userId: row.userId
-      }
-    })
+  private actionAdd () {
+    this.$Message.info('111111')
   }
 }
 </script>
 
-<style lang="less">
+<style scoped>
 
 </style>

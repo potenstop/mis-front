@@ -26,7 +26,7 @@
 </template>
 <script lang="ts">
 import { Vue, Component, Prop, Emit } from 'vue-property-decorator'
-import { Form } from 'iview'
+import { Form } from 'view-design'
 
 @Component
 export default class LoginForm extends Vue {

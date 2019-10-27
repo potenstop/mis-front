@@ -2,9 +2,9 @@ import Vue from 'vue'
 import App from './App.vue'
 import router from './router'
 import store from './store'
-import iView from 'iview'
+import ViewUI from 'view-design'
 import './assets/icons/iconfont.css'
-import 'iview/dist/styles/iview.css'
+import 'view-design/dist/styles/iview.css'
 import 'highlight.js/styles/atom-one-dark.css'
 import ProjectConfig from '@/config/ProjectConfig'
 import i18n from '@/locale'
@@ -20,7 +20,7 @@ if (process.env.NODE_ENV !== 'production') {
 }
 
 Vue.config.productionTip = false
-Vue.use(iView, {
+Vue.use(ViewUI, {
   i18n: (key: string, value: string) => i18n.t(key, value)
 })
 /**

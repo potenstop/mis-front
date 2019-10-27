@@ -160,5 +160,34 @@ export default [
         component: () => import('@/views/news/NewsEdit.vue')
       }
     ]
+  },
+  {
+    path: '/course',
+    name: 'Course',
+    meta: {
+      icon: 'logo-hackernews',
+      title: '{{ COURSE_MANAGE }}'
+    },
+    component: Main,
+    children: [
+      {
+        path: 'album/list',
+        name: 'CourseAlbumList',
+        meta: {
+          icon: 'logo-hackernews',
+          title: '{{ COURSE_ALBUM_LIST }}'
+        },
+        component: () => import('@/views/course/album/CourseAlbumList.vue')
+      },
+      {
+        path: 'topic/list',
+        name: 'CourseTopicList',
+        meta: {
+          icon: 'logo-hackernews',
+          title: '{{ COURSE_TOPIC_LIST }}'
+        },
+        component: () => import('@/views/course/topic/CourseTopicList.vue')
+      }
+    ]
   }
 ]

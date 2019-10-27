@@ -1,4 +1,4 @@
-<!--CustomAndDefaultIcon组件同时支持iView内置图标类型和自定义图标类型，为了区别这两种类型，需要在自定义图标名称前加下划线"_"-->
+<!--CustomAndDefaultIcon组件同时支持ViewUI内置图标类型和自定义图标类型，为了区别这两种类型，需要在自定义图标名称前加下划线"_"-->
 <template>
   <component
     :is="iconType"

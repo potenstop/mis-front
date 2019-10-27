@@ -9,4 +9,10 @@ export default {
   NEWS_MANAGE: '新闻管理',
   NEWS_LIST: '新闻列表',
   NEWS_EDIT: '新闻编辑',
+  COURSE_MANAGE: '课程管理',
+  COURSE_ALBUM_LIST: '专辑列表',
+  COURSE_TOPIC_LIST: '题目列表',
+  P_ADD: '添加',
+  P_EDIT: '编辑',
+  P_VIEW_FILTER: '查看过滤条件'
 }

@@ -1,4 +1,4 @@
-import { Modal, ModalInstance } from 'iview'
+import { Modal, ModalInstance } from 'view-design'
 export class BeforeCloseRouter {
   public static normal(resolve, vm) {
     ((Modal as unknown) as ModalInstance).confirm({

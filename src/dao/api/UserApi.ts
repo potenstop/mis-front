@@ -36,7 +36,7 @@ export class UserApi {
 
   @PostMapping('/list')
   @ReturnGenericsProperty(ApiResult, new Map<string, new() => object>().set('data', PageResponse).set('data.list', Array).set('data.list.Array', UserListItemResponse))
-  public list (@RequestBody request: UserListRequest): Promise<ApiResult<PageResponse<UserListItemResponse[]>>> {
+  public list (@RequestBody request: UserListRequest): Promise<ApiResult<PageResponse<UserListItemResponse>>> {
     return null
   }
 

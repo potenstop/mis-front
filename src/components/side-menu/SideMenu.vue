@@ -87,7 +87,7 @@
 <script lang="ts">
 import { Component, Vue, Emit, Prop, Watch } from 'vue-property-decorator'
 import { mixins } from 'vue-class-component'
-import { Menu } from 'iview'
+import { Menu } from 'view-design'
 
 import SideMenuItem from './SideMenuItem.vue'
 import CollapsedMenu from './CollapsedMenu.vue'
