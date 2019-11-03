@@ -74,8 +74,7 @@ export default class CourseAlbumList extends Vue {
         {
           icon: 'ios-build-outline',
           text: '编辑',
-          buttonType: 'primary',
-          click: this.view
+          buttonType: 'primary'
         }
       ]
     }

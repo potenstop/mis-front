@@ -76,7 +76,7 @@
 <script lang="ts">
 import { Component, Vue, Prop, Watch } from 'vue-property-decorator'
 import { ApiUtil } from '@/common/util/ApiUtil'
-import { ConvertUtil } from 'papio-h5'
+import { ConvertUtil, JSHelperUtil } from 'papio-h5'
 import AceEditor from '@/components/editor/AceEditor.vue'
 @Component({
   components: { AceEditor }
@@ -111,6 +111,7 @@ export default class SimplePageTable extends Vue {
   @Prop(Function) readonly apiUpdate!: Function | undefined;
   @Prop(Function) readonly apiList!: Function | undefined;
   @Prop({ default: true }) readonly hasActionAdd!: boolean;
+  @Prop(Function) readonly childStartInit!: Function | undefined;
 
   private name = 'SimplePageTable'
   private insideData: any[] = []
@@ -129,6 +130,11 @@ export default class SimplePageTable extends Vue {
   private filters = [{
     title: ''
   }]
+  private recountValueMap: Map<string, Function> = new Map<string, Function>()
+  // 以item.key的值为map的key item为value
+  private columnsMap: Map<string, any> = new Map<string, any>()
+  // 渲染的key和数据的key映射
+  private columnsValueItemKeyAndKeyMap: Map<string, any> = new Map<string, string>()
 
   onCurrentChange (currentRow, oldCurrentRow) {
     this.$emit('on-current-change', currentRow, oldCurrentRow)
@@ -183,12 +189,16 @@ export default class SimplePageTable extends Vue {
   onDragDrop (index1, index2) {
     this.$emit('on-drag-drop', index1, index2)
   }
-  pageSizeChange (current: number) {
-    this.$emit('on-page-size-change', current)
+  async pageSizeChange (pageSize: number) {
+    this.pageSize = pageSize
+    this.$emit('on-page-size-change', pageSize)
+    await this.load()
   }
 
-  pageChange (pageSize: number) {
-    this.$emit('on-page-change', pageSize)
+  async pageChange (current: number) {
+    this.pageCurrent = current
+    this.$emit('on-page-change', current)
+    await this.load()
   }
 
   collapseOnChange (value) {
@@ -209,8 +219,22 @@ export default class SimplePageTable extends Vue {
   get shownColumns () {
     return this.columns.filter(c => c.key !== 'handle')
   }
-  handleColumns () {
-    this.columns.forEach((item: any, index: number) => {
+  async handleColumns () {
+    let index = 0
+    for (const item of this.columns) {
+      if (JSHelperUtil.isNullOrUndefined(item.responseKey)) {
+        item.responseKey = item.key
+      }
+      if (JSHelperUtil.isNullOrUndefined(item.requestKey)) {
+        item.requestKey = item.key
+      }
+      this.columnsMap.set(item.key, item)
+      this.columnsValueItemKeyAndKeyMap[item.responseKey] = item.key
+      // 重新计算value的值
+      if (typeof item.getValue === 'function') {
+        this.recountValueMap.set(item.responseKey, item.getValue)
+      }
+
       let customFilter = {}
       /**
        * 因为是采用的两个表的形式,过滤表中显示查询的Input,Select条件输组件,表头显示的是数据表的表头,渲染的数据是传入的columns中的filter字段
@@ -263,10 +287,16 @@ export default class SimplePageTable extends Vue {
         } else if (item.customFilter.type === 'datetimeScope') {
           render = this.getInputDatetimeScope(index)
         } else if (item.customFilter.type === 'selectSign') {
+          if ('remoteOption' in item.customFilter && typeof item.customFilter.remoteOption === 'function') {
+            item.customFilter.option = await item.customFilter.remoteOption()
+          }
           this.$set(customFilter, 'filters', item.customFilter.option)
           this.$set(customFilter, 'filterRemote', () => {})
           this.$set(customFilter, 'filterMultiple', false)
         } else if (item.customFilter.type === 'selectMul') {
+          if ('remoteOption' in item.customFilter && typeof item.customFilter.remoteOption === 'function') {
+            item.customFilter.option = await item.customFilter.remoteOption()
+          }
           this.$set(customFilter, 'filters', item.customFilter.option)
           this.$set(customFilter, 'filterRemote', () => {})
           this.$set(customFilter, 'filterMultiple', true)
@@ -289,7 +319,8 @@ export default class SimplePageTable extends Vue {
           }
         })
       }
-    })
+      index++
+    }
     this.insideColumns = this.columns
   }
   /**
@@ -494,12 +525,13 @@ export default class SimplePageTable extends Vue {
   }
   // 验证输入框的值
   validInputValue (index, inputValue) {
+    const current = this.columns[index]
     if (!inputValue) {
-      this.filterData.delete(this.columns[index].key)
+      this.filterData.delete(current.requestKey)
       this.load()
       return
     }
-    this.filterData.set(this.columns[index].key, inputValue)
+    this.filterData.set(current.requestKey, inputValue)
     this.load()
   }
 
@@ -528,6 +560,13 @@ export default class SimplePageTable extends Vue {
           this.pageTotal = data.total
         }
         if ('list' in data) {
+          data.list.forEach(item => {
+            this.recountValueMap.forEach((value, key) => {
+              if (key in item) {
+                item[this.columnsValueItemKeyAndKeyMap[key]] = value(item[key], item)
+              }
+            })
+          })
           this.insideData = data.list
         }
       } catch (e) {
@@ -537,8 +576,11 @@ export default class SimplePageTable extends Vue {
       this.insideData = this.data
     }
   }
-  async mounted () {
-    this.handleColumns()
+  async created () {
+    if (this.childStartInit) {
+      await this.childStartInit()
+    }
+    await this.handleColumns()
     await this.load()
   }
   drawResCode (content: string) {

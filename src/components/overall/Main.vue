@@ -105,25 +105,25 @@ const appModule = namespace(StoreConstant.APP)
   }
 })
 export default class Main extends Vue {
-  @userModule.Action handleLogin: Function;
-  @userModule.Action getUnreadMessageCount: Function;
-  @userModule.State unreadCount: number;
-  @userModule.State avatar: string;
-  @appModule.Mutation setBreadCrumb: Function;
-  @appModule.Mutation setTagNavList: Function;
-  @appModule.Mutation addTag: Function;
-  @appModule.Mutation setLocal: Function;
-  @appModule.Mutation setHomeRoute: Function;
-  @appModule.Mutation closeTag: Function;
-  @appModule.Getter errorCount: Function;
-  @appModule.Getter menuList: Function;
-  @appModule.State tagNavList: any[];
-  @appModule.State local;
-  @appModule.State hasReadErrorPage;
+  @userModule.Action handleLogin: Function
+  @userModule.Action getUnreadMessageCount: Function
+  @userModule.State unreadCount: number
+  @userModule.State avatar: string
+  @appModule.Mutation setBreadCrumb: Function
+  @appModule.Mutation setTagNavList: Function
+  @appModule.Mutation addTag: Function
+  @appModule.Mutation setLocal: Function
+  @appModule.Mutation setHomeRoute: Function
+  @appModule.Mutation closeTag: Function
+  @appModule.Getter errorCount: Function
+  @appModule.Getter menuList: Function
+  @appModule.State tagNavList: any[]
+  @appModule.State local
+  @appModule.State hasReadErrorPage
 
-  name = 'Main';
-  collapsed = false;
-  isFullscreen = false;
+  name = 'Main'
+  collapsed = false
+  isFullscreen = false
 
   turnToPage (route) {
     let name, params, query

@@ -10,79 +10,63 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
-import { AlbumCourseApi } from '@/dao/api/AlbumCourseApi'
+import { CourseApi } from '@/dao/api/CourseApi'
 import { JsonProtocol } from 'papio-h5'
-import { AlbumCourseListItemRequest } from '@/request/AlbumCourseListItemRequest'
 import SimplePageTable from '@/components/table/SimplePageTable.vue'
+import { CourseListItemRequest } from '@/request/CourseListItemRequest'
+import { CourseListItemResponse } from '@/response/CourseListItemResponse'
+import { CourseTypeSimpleResponse } from '@/response/CourseTypeSimpleResponse'
 
-const albumCourseApi = new AlbumCourseApi()
+const courseApi = new CourseApi()
 @Component({
   components: {
     SimplePageTable
   }
 })
-export default class CourseAlbumList extends Vue {
-  private name = 'CourseAlbumList'
+export default class CourseTopicList extends Vue {
+  private name = 'CourseTopicList'
   private columns1 = [
     {
       title: 'ID',
-      key: 'albumId',
+      key: 'courseId',
       sortable: true,
       customFilter: {
         type: 'inputNumber'
       }
     },
     {
-      title: '专辑名称',
-      key: 'albumName',
+      title: '课程名称',
+      key: 'courseName',
       customFilter: {
         type: 'inputText'
       }
     },
     {
-      title: '描述',
-      key: 'albumDesc'
+      title: '一级分类名称',
+      key: 'courseStairName'
     },
     {
-      title: '题目总数',
-      key: 'contentCount'
+      title: '二级分类名称',
+      key: 'courseSecondName'
     },
     {
-      title: '分类',
-      key: 'courseTypeNames'
-    },
-    {
-      title: '创建时间',
-      key: 'createTime',
-      sortable: true,
-      customFilter: {
-        type: 'dateScope'
-      }
-    },
-    {
-      title: '更新时间',
-      key: 'updateTime',
-      sortable: true,
-      customFilter: {
-        type: 'dateScope'
-      }
-    },
-    {
-      title: '操作',
-      key: '_option',
-      optionList: [
-        {
-          icon: 'ios-build-outline',
-          text: '编辑',
-          buttonType: 'primary',
-          click: this.view
+      title: '三级分类名称',
+      key: 'courseThreeName',
+      itemValueKey: 'courseThreeList',
+      getValue (item: CourseTypeSimpleResponse[], row: CourseListItemResponse) {
+        let v = ''
+        if (Array.isArray(item) && item.length > 0) {
+          item.forEach((simpleItem: CourseTypeSimpleResponse) => {
+            v += simpleItem.getTypeName()
+          })
         }
-      ]
+        return v
+      }
     }
   ]
   private apiList (body) {
-    const request = JsonProtocol.jsonToBean(body, AlbumCourseListItemRequest)
-    return albumCourseApi.list(request)
+    const request = JsonProtocol.jsonToBean(body, CourseListItemRequest)
+    return courseApi.list(request)
   }
   private actionAdd () {
     this.$Message.info('111111')

@@ -78,7 +78,7 @@ export default class UserList extends Vue {
     return userApi.list(request)
   }
   private created () {
-    this.editName = this.$t('P_EDIT')
+    this.editName = this.$t('P_EDIT') as string
   }
   view (row, index) {
     this.$router.push({
