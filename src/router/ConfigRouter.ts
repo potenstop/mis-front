@@ -194,6 +194,16 @@ export default [
         meta: {
           hideInMenu: true,
           icon: 'logo-hackernews',
+          title: '{{ COURSE_SUBJECT_ADD }}'
+        },
+        component: () => import('@/views/course/subject/CourseSubjectEdit.vue')
+      },
+      {
+        path: 'subject/edit',
+        name: 'CourseSubjectEdit',
+        meta: {
+          hideInMenu: true,
+          icon: 'logo-hackernews',
           title: '{{ COURSE_SUBJECT_EDIT }}'
         },
         component: () => import('@/views/course/subject/CourseSubjectEdit.vue')

@@ -29,8 +29,7 @@ const courseTypeApi = new CourseTypeApi()
   }
 })
 export default class CourseSubjectList extends Vue {
-  @Inject('reload') readonly reload: Function;
-
+  @Inject('reload') readonly reload: Function
   private name = 'CourseSubjectList'
   private columns = [
     {
@@ -81,25 +80,40 @@ export default class CourseSubjectList extends Vue {
         }
         return v
       }
+    },
+    {
+      title: '操作',
+      key: '_option',
+      optionList: [
+        {
+          icon: 'ios-build-outline',
+          text: '编辑',
+          buttonType: 'primary',
+          click: this.actionView
+        }
+      ]
     }
   ]
   private async created () {
-    // console.log(this.reload)
-    console.log('created')
-  }
-  private async mounted () {
-    console.log('mounted')
+    // this.editName = this.$t('P_EDIT') as string
+    console.log(this.$t('P_EDIT'))
   }
   private apiList (body) {
     const request = JsonProtocol.jsonToBean(body, CourseListItemRequest)
     return courseApi.list(request)
   }
   private actionAdd () {
-    /*this.$router.push({
+    this.$router.push({
       path: '/course/subject/add'
-    })*/
-    alert(1)
-    this.reload()
+    })
+  }
+  private actionView (row: any, index) {
+    this.$router.push({
+      path: '/course/subject/edit',
+      query: {
+        id: row.courseId
+      }
+    })
   }
   private async childStartInit () {
     const result = await courseTypeApi.noPageList(null, null)

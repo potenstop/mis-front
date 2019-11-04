@@ -37,15 +37,33 @@ import { CourseTypeTreeItemResponse } from '@/response/CourseTypeTreeItemRespons
 import { ApiUtil } from '@/common/util/ApiUtil'
 import { State, Getter, Action, Mutation, namespace } from 'vuex-class'
 import { StoreConstant } from '@/common/constant/StoreConstant'
+import { CourseUpdateRequest } from '@/request/CourseUpdateRequest'
+import { JsonProperty, JsonProtocol, ReturnGenericsProperty } from 'papio-h5'
 
 const appModule = namespace(StoreConstant.APP)
 
 const courseApi = new CourseApi()
 const courseTypeApi = new CourseTypeApi()
+class UpdateModel {
+  @JsonProperty
+  public courseId: number
+  @JsonProperty
+  public courseCode: string
+  @JsonProperty
+  public courseName: string
+  @JsonProperty
+  public courseSecondId: number
+  @JsonProperty
+  public courseStairId: number
+  @JsonProperty
+  @ReturnGenericsProperty(Array, new Map<string, {new(): object}>().set('Array', Number))
+  public courseThreeIdList: number[]
+}
+
 @Component
 export default class CourseSubjectEdit extends Vue {
   private name = 'CourseSubjectEdit'
-  private formItem: CourseAddRequest = new CourseAddRequest()
+  private formItem: UpdateModel = new UpdateModel()
   private courseTypeTreeList: CourseTypeTreeItemResponse[] = []
   private chooseThreeTypeList: {threeId: number, threeName: string}[] = []
   private chooseThreeTypeIdMap: Map<number, number> = new Map<number, number>()
@@ -65,9 +83,35 @@ export default class CourseSubjectEdit extends Vue {
   }
   @appModule.Mutation closeTag: Function
   private submitRunning: boolean = false
+  private isAddPage = true
 
   private async created () {
     this.courseTypeTreeList = ApiUtil.getData(await courseTypeApi.noPageTree())
+    if (this.$route.path.indexOf('add') !== -1) {
+      this.isAddPage = true
+    } else {
+      this.isAddPage = false
+    }
+    if (!this.isAddPage) {
+      const query = this.$route.query as any
+      const result = await courseApi.view(query.id)
+      const courseViewResponse = ApiUtil.getData(result)
+      this.formItem = new UpdateModel()
+      JsonProtocol.copyProperties(courseViewResponse, this.formItem)
+      this.stairId = courseViewResponse.getCourseStairId()
+      this.stairName = courseViewResponse.getCourseStairName()
+      this.secondId = courseViewResponse.getCourseSecondId()
+      this.secondName = courseViewResponse.getCourseSecondName()
+      courseViewResponse.getCourseThreeList().forEach(item => {
+        const i = this.chooseThreeTypeList.push({
+          threeId: item.getCourseTypeId(),
+          threeName: item.getTypeName()
+        })
+        this.chooseThreeTypeIdMap.set(item.getCourseTypeId(), i - 1)
+        this.formItem.courseThreeIdList = []
+        this.formItem.courseThreeIdList.push(item.getCourseTypeId())
+      })
+    }
   }
   /**
   * 方法描述 分类选中事件
@@ -126,13 +170,13 @@ export default class CourseSubjectEdit extends Vue {
   }
   private resetTypeChoose () {
     if (this.stairId !== null) {
-      this.formItem.setCourseStairId(this.stairId)
-      this.formItem.setCourseSecondId(this.secondId)
+      this.formItem.courseStairId = this.stairId
+      this.formItem.courseSecondId = this.secondId
       const idList: number[] = []
       for (const [key, value] of this.chooseThreeTypeIdMap) {
         idList.push(key)
       }
-      this.formItem.setCourseThreeIdList(idList)
+      this.formItem.courseThreeIdList = idList
     }
   }
 
@@ -148,9 +192,23 @@ export default class CourseSubjectEdit extends Vue {
         this.$Message.warning('课程分类必填')
         return
       }
-      // const result = await courseApi.add(this.formItem)
-      // ApiUtil.getData(result)
+      let result = null
+      if (this.isAddPage) {
+        const request = new CourseAddRequest()
+        JsonProtocol.copyProperties(this.formItem, request)
+        request.setCourseThreeIdList(this.formItem.courseThreeIdList)
+        result = await courseApi.add(request)
+      } else {
+        const request = new CourseUpdateRequest()
+        JsonProtocol.copyProperties(this.formItem, request)
+        request.setCourseThreeIdList(this.formItem.courseThreeIdList)
+        result = await courseApi.update(request)
+      }
+      ApiUtil.getData(result)
+
       this.closeTag(this.$route)
+    } catch (e) {
+      this.$Message.error(e.message)
     } finally {
       this.submitRunning = false
     }

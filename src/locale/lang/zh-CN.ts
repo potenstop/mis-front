@@ -13,6 +13,7 @@ export default {
   COURSE_ALBUM_LIST: '专辑列表',
   COURSE_TOPIC_LIST: '题目列表',
   COURSE_SUBJECT_LIST: '科目列表',
+  COURSE_SUBJECT_ADD: '科目新增',
   COURSE_SUBJECT_EDIT: '科目编辑',
   P_ADD: '添加',
   P_EDIT: '编辑',

@@ -234,7 +234,6 @@ export default class SimplePageTable extends Vue {
       if (typeof item.getValue === 'function') {
         this.recountValueMap.set(item.responseKey, item.getValue)
       }
-
       let customFilter = {}
       /**
        * 因为是采用的两个表的形式,过滤表中显示查询的Input,Select条件输组件,表头显示的是数据表的表头,渲染的数据是传入的columns中的filter字段

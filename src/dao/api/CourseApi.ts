@@ -19,6 +19,8 @@ import { PageResponse } from '@/bmo/PageResponse'
 import { CourseListItemRequest } from '@/request/CourseListItemRequest'
 import { CourseListItemResponse } from '@/response/CourseListItemResponse'
 import { CourseAddRequest } from '@/request/CourseAddRequest'
+import { CourseViewResponse } from '@/response/CourseViewResponse'
+import { CourseUpdateRequest } from '@/request/CourseUpdateRequest'
 @AxisoRemote({ filepath: '/src/dao/api', name: '/course', timeout: 5000 })
 export class CourseApi {
   @PostMapping('/list')
@@ -29,6 +31,16 @@ export class CourseApi {
   @PostMapping('/add')
   @ReturnGenericsProperty(ApiResult, new Map<string, new() => object>().set('data', Number))
   public add (@RequestBody request: CourseAddRequest): Promise<ApiResult<number>> {
+    return null
+  }
+  @GetMapping('/view')
+  @ReturnGenericsProperty(ApiResult, new Map<string, new() => object>().set('data', CourseViewResponse))
+  public view (@RequestParam courseId: number): Promise<ApiResult<CourseViewResponse>> {
+    return null
+  }
+  @PostMapping('/update')
+  @ReturnGenericsProperty(ApiResult, new Map<string, new() => object>().set('data', Number))
+  public update (@RequestBody request: CourseUpdateRequest): Promise<ApiResult<number>> {
     return null
   }
 }

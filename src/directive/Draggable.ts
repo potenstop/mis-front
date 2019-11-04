@@ -26,8 +26,9 @@ export default {
     const handleMousemove = e => {
       let xOffset = e.pageX - pageX + transformX
       let yOffset = e.pageY - pageY + transformY
-      if (canMove)
+      if (canMove) {
         bodyDom.style.transform = `translate(${xOffset}px, ${yOffset}px)`
+      }
     }
     const handleMouseup = e => {
       canMove = false
@@ -39,6 +40,6 @@ export default {
   update: (el, binding, vnode) => {
     if (!binding.value.recover) return
     let bodyDom = document.querySelector(binding.value.body)
-    bodyDom.style.transform = ""
+    bodyDom.style.transform = ''
   }
 }
