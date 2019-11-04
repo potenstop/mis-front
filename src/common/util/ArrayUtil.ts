@@ -13,7 +13,7 @@ export class ArrayUtil {
  * @param {Array} arr2
  * @description 得到两个数组的并集, 两个数组的元素为数值或字符串
  */
-  public static getUnion(arr1: Array<any>, arr2: Array<any>) {
-    return Array.from(new Set([...arr1, ...arr2]));
+  public static getUnion (arr1: Array<any>, arr2: Array<any>) {
+    return Array.from(new Set([...arr1, ...arr2]))
   };
 }

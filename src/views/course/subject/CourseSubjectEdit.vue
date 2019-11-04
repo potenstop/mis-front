@@ -148,8 +148,8 @@ export default class CourseSubjectEdit extends Vue {
         this.$Message.warning('课程分类必填')
         return
       }
-      const result = await courseApi.add(this.formItem)
-      ApiUtil.getData(result)
+      // const result = await courseApi.add(this.formItem)
+      // ApiUtil.getData(result)
       this.closeTag(this.$route)
     } finally {
       this.submitRunning = false

@@ -25,5 +25,4 @@ export class ContentNewsApi {
   public list (@RequestBody request: ContentNewsListRequest): Promise<ApiResult<PageResponse<ContentNewItemResponse[]>>> {
     return null
   }
-
 }

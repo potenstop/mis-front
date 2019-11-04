@@ -17,7 +17,7 @@ export class PageRequest {
   @JsonProperty
   private orderBy: string
 
-  constructor() {
+  constructor () {
     this.pageNum = 1
     this.pageSize = 20
   }

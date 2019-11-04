@@ -59,5 +59,4 @@ export class CourseListItemRequest extends PageRequest {
   public setCourseThreeId (courseThreeId: number): void {
     this.courseThreeId = courseThreeId
   }
-
 }

@@ -189,7 +189,7 @@ export default [
         component: () => import('@/views/course/subject/CourseSubjectList.vue')
       },
       {
-        path: 'subject/edit',
+        path: 'subject/add',
         name: 'CourseSubjectEdit',
         meta: {
           hideInMenu: true,

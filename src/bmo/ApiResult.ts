@@ -15,7 +15,7 @@ export class ApiResult<T> {
   private data: T
   @JsonProperty
   private message: string
-  constructor() {
+  constructor () {
     this.code = '0'
     this.message = 'suc'
   }

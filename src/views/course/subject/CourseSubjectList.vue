@@ -10,7 +10,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator'
+import { Component, Vue, Inject } from 'vue-property-decorator'
 import { CourseApi } from '@/dao/api/CourseApi'
 import { CourseTypeApi } from '@/dao/api/CourseTypeApi'
 import { JSHelperUtil, JsonProtocol } from 'papio-h5'
@@ -21,7 +21,6 @@ import { CourseTypeSimpleResponse } from '@/response/CourseTypeSimpleResponse'
 import { ApiUtil } from '@/common/util/ApiUtil'
 import { ParamsConstant } from '@/common/constant/ParamsConstant'
 import { CourseTypeListItemResponse } from '@/response/CourseTypeListItemResponse'
-
 const courseApi = new CourseApi()
 const courseTypeApi = new CourseTypeApi()
 @Component({
@@ -30,6 +29,8 @@ const courseTypeApi = new CourseTypeApi()
   }
 })
 export default class CourseSubjectList extends Vue {
+  @Inject('reload') readonly reload: Function;
+
   private name = 'CourseSubjectList'
   private columns = [
     {
@@ -83,19 +84,22 @@ export default class CourseSubjectList extends Vue {
     }
   ]
   private async created () {
-    // await this.setColumnsTypeOption()
+    // console.log(this.reload)
+    console.log('created')
+  }
+  private async mounted () {
+    console.log('mounted')
   }
   private apiList (body) {
     const request = JsonProtocol.jsonToBean(body, CourseListItemRequest)
     return courseApi.list(request)
   }
   private actionAdd () {
-    this.$router.push({
-      path: '/course/subject/edit',
-      query: {
-        action: ParamsConstant.ACTION_NEW_ITEM
-      }
-    })
+    /*this.$router.push({
+      path: '/course/subject/add'
+    })*/
+    alert(1)
+    this.reload()
   }
   private async childStartInit () {
     const result = await courseTypeApi.noPageList(null, null)

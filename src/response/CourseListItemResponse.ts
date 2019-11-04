@@ -1,4 +1,4 @@
-import {JsonProperty, ReturnGenericsProperty} from "papio-h5"
+import { JsonProperty, ReturnGenericsProperty } from 'papio-h5'
 import { CourseTypeSimpleResponse } from '@/response/CourseTypeSimpleResponse'
 
 /**
@@ -26,7 +26,7 @@ export class CourseListItemResponse {
   @JsonProperty
   private courseStairName: string
   @JsonProperty
-  @ReturnGenericsProperty(Array, new Map<string, any>().set("Array", CourseTypeSimpleResponse))
+  @ReturnGenericsProperty(Array, new Map<string, any>().set('Array', CourseTypeSimpleResponse))
   private courseThreeList: CourseTypeSimpleResponse[]
   public getCourseCode (): string {
     return this.courseCode

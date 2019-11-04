@@ -1,13 +1,24 @@
 <template>
   <div id="app">
-    <router-view />
+    <router-view v-if="isRouterAlive"/>
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import './config/HttpApiConfiguration'
-export default {
-  name: 'App'
+import { Component, Vue, Watch, Provide } from 'vue-property-decorator'
+@Component
+export default class App extends Vue {
+  @Provide('reload') reload = this.reloadF
+  private name = 'App'
+  private isRouterAlive = true
+
+  private reloadF () {
+    this.isRouterAlive = false
+    this.$nextTick(() => {
+      this.isRouterAlive = true
+    })
+  }
 }
 </script>
 

@@ -1,4 +1,4 @@
-import {JsonProperty} from "papio-h5"
+import { JsonProperty } from 'papio-h5'
 
 /**
  *
@@ -37,9 +37,9 @@ export class UserDetailResponse {
     this.avatar = avatar
   }
   public getIsDelete (): number {
-    return this.isDelete;
+    return this.isDelete
   }
   public setIsDelete (isDelete: number): void {
-    this.isDelete = isDelete;
+    this.isDelete = isDelete
   }
 }

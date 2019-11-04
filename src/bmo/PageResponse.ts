@@ -26,5 +26,4 @@ export class PageResponse<T> {
   public setTotal (total: number): void {
     this.total = total
   }
-
 }

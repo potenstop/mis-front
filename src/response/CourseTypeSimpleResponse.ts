@@ -1,4 +1,4 @@
-import {JsonProperty} from "papio-h5"
+import { JsonProperty } from 'papio-h5'
 
 /**
  *

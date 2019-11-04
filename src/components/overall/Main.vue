@@ -121,9 +121,10 @@ export default class Main extends Vue {
   @appModule.State local
   @appModule.State hasReadErrorPage
 
-  name = 'Main'
-  collapsed = false
-  isFullscreen = false
+  private name = 'Main'
+  private collapsed = false
+  private isFullscreen = false
+  private isRouterAlive = true
 
   turnToPage (route) {
     let name, params, query
