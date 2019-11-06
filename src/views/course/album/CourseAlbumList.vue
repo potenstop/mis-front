@@ -1,8 +1,9 @@
 <template>
   <div>
     <simple-page-table
-      :columns="columns1"
+      :columns="columns"
       :api-list="apiList"
+      :view-name="name"
       @on-action-add="actionAdd"
     ></simple-page-table>
   </div>
@@ -23,7 +24,7 @@ const albumCourseApi = new AlbumCourseApi()
 })
 export default class CourseAlbumList extends Vue {
   private name = 'CourseAlbumList'
-  private columns1 = [
+  private columns = [
     {
       title: 'ID',
       key: 'albumId',
@@ -48,8 +49,8 @@ export default class CourseAlbumList extends Vue {
       key: 'contentCount'
     },
     {
-      title: '分类',
-      key: 'courseTypeNames'
+      title: '课程名称',
+      key: 'courseName'
     },
     {
       title: '创建时间',
@@ -74,7 +75,8 @@ export default class CourseAlbumList extends Vue {
         {
           icon: 'ios-build-outline',
           text: '编辑',
-          buttonType: 'primary'
+          buttonType: 'primary',
+          click: this.actionView
         }
       ]
     }
@@ -84,7 +86,17 @@ export default class CourseAlbumList extends Vue {
     return albumCourseApi.list(request)
   }
   private actionAdd () {
-    this.$Message.info('111111')
+    this.$router.push({
+      path: '/course/album/add'
+    })
+  }
+  private actionView (row: any, index) {
+    this.$router.push({
+      path: '/course/album/edit',
+      query: {
+        id: row.courseId
+      }
+    })
   }
 }
 </script>

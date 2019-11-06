@@ -3,6 +3,7 @@
     <simple-page-table
       :columns="columns"
       :api-list="apiList"
+      :view-name="name"
       :child-start-init="childStartInit"
       @on-action-add="actionAdd"
     ></simple-page-table>

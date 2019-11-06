@@ -180,6 +180,26 @@ export default [
         component: () => import('@/views/course/album/CourseAlbumList.vue')
       },
       {
+        path: 'album/add',
+        name: 'CourseAlbumEdit',
+        meta: {
+          hideInMenu: true,
+          icon: 'logo-hackernews',
+          title: '{{ COURSE_ALBUM_ADD }}'
+        },
+        component: () => import('@/views/course/album/CourseAlbumEdit.vue')
+      },
+      {
+        path: 'album/edit',
+        name: 'CourseAlbumEdit',
+        meta: {
+          hideInMenu: true,
+          icon: 'logo-hackernews',
+          title: '{{ COURSE_ALBUM_EDIT }}'
+        },
+        component: () => import('@/views/course/album/CourseAlbumEdit.vue')
+      },
+      {
         path: 'subject/list',
         name: 'CourseSubjectList',
         meta: {

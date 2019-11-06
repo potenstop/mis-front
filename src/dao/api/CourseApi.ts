@@ -43,4 +43,9 @@ export class CourseApi {
   public update (@RequestBody request: CourseUpdateRequest): Promise<ApiResult<number>> {
     return null
   }
+  @GetMapping('/no-page/list')
+  @ReturnGenericsProperty(ApiResult, new Map<string, new() => object>().set('data', Array).set('data.Array', CourseListItemResponse))
+  public notPageList (@RequestParam courseName: string, @RequestParam courseId: number): Promise<ApiResult<CourseListItemResponse[]>> {
+    return null
+  }
 }

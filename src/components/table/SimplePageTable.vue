@@ -78,6 +78,8 @@ import { Component, Vue, Prop, Watch } from 'vue-property-decorator'
 import { ApiUtil } from '@/common/util/ApiUtil'
 import { ConvertUtil, JSHelperUtil } from 'papio-h5'
 import AceEditor from '@/components/editor/AceEditor.vue'
+import { RefreshEvent } from '@/common/event/RefreshEvent'
+
 @Component({
   components: { AceEditor }
 })
@@ -112,6 +114,7 @@ export default class SimplePageTable extends Vue {
   @Prop(Function) readonly apiList!: Function | undefined;
   @Prop({ default: true }) readonly hasActionAdd!: boolean;
   @Prop(Function) readonly childStartInit!: Function | undefined;
+  @Prop({ default: 'default' }) readonly viewName!: string | undefined;
 
   private name = 'SimplePageTable'
   private insideData: any[] = []
@@ -576,6 +579,9 @@ export default class SimplePageTable extends Vue {
     }
   }
   async created () {
+    RefreshEvent.on(this.viewName, async () => {
+      await this.load()
+    })
     if (this.childStartInit) {
       await this.childStartInit()
     }

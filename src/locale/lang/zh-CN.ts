@@ -11,6 +11,8 @@ export default {
   NEWS_EDIT: '新闻编辑',
   COURSE_MANAGE: '课程管理',
   COURSE_ALBUM_LIST: '专辑列表',
+  COURSE_ALBUM_ADD: '专辑新增',
+  COURSE_ALBUM_EDIT: '专辑编辑',
   COURSE_TOPIC_LIST: '题目列表',
   COURSE_SUBJECT_LIST: '科目列表',
   COURSE_SUBJECT_ADD: '科目新增',

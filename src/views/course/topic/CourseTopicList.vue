@@ -1,8 +1,9 @@
 <template>
   <div>
     <simple-page-table
-      :columns="columns1"
+      :columns="columns"
       :api-list="apiList"
+      :view-name="name"
       @on-action-add="actionAdd"
     ></simple-page-table>
   </div>
@@ -25,7 +26,7 @@ const courseApi = new CourseApi()
 })
 export default class CourseTopicList extends Vue {
   private name = 'CourseTopicList'
-  private columns1 = [
+  private columns = [
     {
       title: 'ID',
       key: 'courseId',

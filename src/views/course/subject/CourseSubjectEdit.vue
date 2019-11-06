@@ -7,7 +7,7 @@
       <FormItem label="课程代码" prop="courseCode">
         <Input v-model="formItem.courseCode" placeholder="" style="width: 300px"></Input>
       </FormItem>
-      <FormItem label="课程分类">
+      <FormItem label="课程分类" prop="courseThreeIdList">
         <Tag v-for="item in chooseThreeTypeList"
              :key="item.threeId"
              size="large"
@@ -22,7 +22,8 @@
         </Cascader>
       </FormItem>
       <FormItem>
-        <Button type="primary" @click="handleSubmit('formItem')" :loading="submitRunning">{{$t("P_SAVE")}}</Button>
+        <Button type="primary" @click="handleSubmit('formItem')" :loading="submitRunning" :disabled="loadingInit">{{$t("P_SAVE")}}</Button>
+        <Button @click="back" style="margin-left: 8px">{{$t("P_CANCEL")}}</Button>
       </FormItem>
     </Form>
   </Card>
@@ -39,6 +40,7 @@ import { State, Getter, Action, Mutation, namespace } from 'vuex-class'
 import { StoreConstant } from '@/common/constant/StoreConstant'
 import { CourseUpdateRequest } from '@/request/CourseUpdateRequest'
 import { JsonProperty, JsonProtocol, ReturnGenericsProperty } from 'papio-h5'
+import { RefreshEvent } from '@/common/event/RefreshEvent'
 
 const appModule = namespace(StoreConstant.APP)
 
@@ -58,6 +60,14 @@ class UpdateModel {
   @JsonProperty
   @ReturnGenericsProperty(Array, new Map<string, {new(): object}>().set('Array', Number))
   public courseThreeIdList: number[]
+  public constructor () {
+    this.courseId = 0
+    this.courseName = ''
+    this.courseCode = ''
+    this.courseSecondId = 0
+    this.courseStairId = 0
+    this.courseThreeIdList = []
+  }
 }
 
 @Component
@@ -71,6 +81,7 @@ export default class CourseSubjectEdit extends Vue {
   private stairName: string = null
   private secondId: number = null
   private secondName: string = null
+  private loadingInit: boolean = true
   private ruleValidate = {
     courseName: [
       { required: true, message: '课程名称不能为空', trigger: 'blur' },
@@ -79,6 +90,9 @@ export default class CourseSubjectEdit extends Vue {
     courseCode: [
       { required: true, message: '课程代码不能为空', trigger: 'blur' },
       { type: 'string', max: 50, message: '课程代码最大不超过50字符', trigger: 'blur' }
+    ],
+    courseThreeIdList: [
+      { type: 'array', required: true, message: '课程分类不能为空', min: 1, trigger: 'blur' }
     ]
   }
   @appModule.Mutation closeTag: Function
@@ -86,6 +100,7 @@ export default class CourseSubjectEdit extends Vue {
   private isAddPage = true
 
   private async created () {
+    this.loadingInit = true
     this.courseTypeTreeList = ApiUtil.getData(await courseTypeApi.noPageTree())
     if (this.$route.path.indexOf('add') !== -1) {
       this.isAddPage = true
@@ -112,6 +127,7 @@ export default class CourseSubjectEdit extends Vue {
         this.formItem.courseThreeIdList.push(item.getCourseTypeId())
       })
     }
+    this.loadingInit = false
   }
   /**
   * 方法描述 分类选中事件
@@ -205,13 +221,16 @@ export default class CourseSubjectEdit extends Vue {
         result = await courseApi.update(request)
       }
       ApiUtil.getData(result)
-
-      this.closeTag(this.$route)
+      RefreshEvent.emit('CourseSubjectList')
+      this.back()
     } catch (e) {
       this.$Message.error(e.message)
     } finally {
       this.submitRunning = false
     }
+  }
+  public back () {
+    this.closeTag(this.$route)
   }
 }
 </script>
