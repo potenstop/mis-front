@@ -565,7 +565,7 @@ export default class SimplePageTable extends Vue {
           data.list.forEach(item => {
             this.recountValueMap.forEach((value, key) => {
               if (key in item) {
-                item[this.columnsValueItemKeyAndKeyMap[key]] = value(item[key], item)
+                item[this.columnsValueItemKeyAndKeyMap[key]] = value(item[key], item, this)
               }
             })
           })

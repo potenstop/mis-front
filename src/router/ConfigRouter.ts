@@ -236,6 +236,26 @@ export default [
           title: '{{ COURSE_TOPIC_LIST }}'
         },
         component: () => import('@/views/course/topic/CourseTopicList.vue')
+      },
+      {
+        path: 'topic/add',
+        name: 'CourseTopicEdit',
+        meta: {
+          hideInMenu: true,
+          icon: 'logo-hackernews',
+          title: '{{ COURSE_TOPIC_ADD }}'
+        },
+        component: () => import('@/views/course/topic/CourseTopicEdit.vue')
+      },
+      {
+        path: 'topic/edit',
+        name: 'CourseTopicEdit',
+        meta: {
+          hideInMenu: true,
+          icon: 'logo-hackernews',
+          title: '{{ COURSE_TOPIC_EDIT }}'
+        },
+        component: () => import('@/views/course/topic/CourseTopicEdit.vue')
       }
     ]
   }

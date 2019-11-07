@@ -11,14 +11,14 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
-import { CourseApi } from '@/dao/api/CourseApi'
+import { ContentTopicApi } from '@/dao/api/ContentTopicApi'
 import { JsonProtocol } from 'papio-h5'
 import SimplePageTable from '@/components/table/SimplePageTable.vue'
-import { CourseListItemRequest } from '@/request/CourseListItemRequest'
-import { CourseListItemResponse } from '@/response/CourseListItemResponse'
-import { CourseTypeSimpleResponse } from '@/response/CourseTypeSimpleResponse'
+import { ContentTopicListItemResponse } from '@/response/ContentTopicListItemResponse'
+import { ContentTopicConstant } from '@/common/constant/ContentTopicConstant'
+import { ContentTopicListItemRequest } from '@/request/ContentTopicListItemRequest'
 
-const courseApi = new CourseApi()
+const contentTopicApi = new ContentTopicApi()
 @Component({
   components: {
     SimplePageTable
@@ -29,48 +29,76 @@ export default class CourseTopicList extends Vue {
   private columns = [
     {
       title: 'ID',
-      key: 'courseId',
+      key: 'contentId',
       sortable: true,
       customFilter: {
         type: 'inputNumber'
       }
     },
     {
-      title: '课程名称',
-      key: 'courseName',
+      title: '题目描述',
+      key: 'title',
       customFilter: {
         type: 'inputText'
       }
     },
     {
-      title: '一级分类名称',
-      key: 'courseStairName'
-    },
-    {
-      title: '二级分类名称',
-      key: 'courseSecondName'
-    },
-    {
-      title: '三级分类名称',
-      key: 'courseThreeName',
-      itemValueKey: 'courseThreeList',
-      getValue (item: CourseTypeSimpleResponse[], row: CourseListItemResponse) {
-        let v = ''
-        if (Array.isArray(item) && item.length > 0) {
-          item.forEach((simpleItem: CourseTypeSimpleResponse) => {
-            v += simpleItem.getTypeName()
-          })
+      title: '题目类型',
+      key: 'topicType',
+      getValue (item: number, row: ContentTopicListItemResponse, simpleThis: Vue) {
+        if (ContentTopicConstant.TYPE_SIGN_SELECT === item) {
+          return simpleThis.$t('CONTENT_TOPIC_TYPE_SIGN_SELECT')
+        } else if (ContentTopicConstant.TYPE_MUL_SELECT === item) {
+          return simpleThis.$t('CONTENT_TOPIC_TYPE_MUL_SELECT')
+        } else if (ContentTopicConstant.TYPE_FILL_BLANK === item) {
+          return simpleThis.$t('CONTENT_TOPIC_TYPE_FILL_BLANK')
+        } else if (ContentTopicConstant.TYPE_SHORT_ANSWER === item) {
+          return simpleThis.$t('CONTENT_TOPIC_TYPE_SHORT_ANSWER')
         }
-        return v
+        return simpleThis.$t('P_ERROR_ENUM')
       }
+    },
+    {
+      title: '状态',
+      key: 'state',
+      getValue (item: number, row: ContentTopicListItemResponse, simpleThis: Vue) {
+        if (ContentTopicConstant.STATE_ONLINE === item) {
+          return simpleThis.$t('CONTENT_STATE_ONLINE')
+        } else if (ContentTopicConstant.STATE_OFFLINE === item) {
+          return simpleThis.$t('CONTENT_STATE_OFFLINE')
+        }
+        return simpleThis.$t('P_ERROR_ENUM')
+      }
+    },
+    {
+      title: '操作',
+      key: '_option',
+      optionList: [
+        {
+          icon: 'ios-build-outline',
+          text: '编辑',
+          buttonType: 'primary',
+          click: this.actionView
+        }
+      ]
     }
   ]
   private apiList (body) {
-    const request = JsonProtocol.jsonToBean(body, CourseListItemRequest)
-    return courseApi.list(request)
+    const request = JsonProtocol.jsonToBean(body, ContentTopicListItemRequest)
+    return contentTopicApi.list(request)
   }
   private actionAdd () {
-    this.$Message.info('111111')
+    this.$router.push({
+      path: '/course/topic/add'
+    })
+  }
+  private actionView (row: any, index) {
+    this.$router.push({
+      path: '/course/topic/edit',
+      query: {
+        id: row.contentId
+      }
+    })
   }
 }
 </script>
