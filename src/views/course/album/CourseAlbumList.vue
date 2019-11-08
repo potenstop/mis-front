@@ -28,6 +28,7 @@ export default class CourseAlbumList extends Vue {
     {
       title: 'ID',
       key: 'albumId',
+      width: 80,
       sortable: true,
       customFilter: {
         type: 'inputNumber'
@@ -45,8 +46,9 @@ export default class CourseAlbumList extends Vue {
       key: 'albumDesc'
     },
     {
-      title: '题目总数',
-      key: 'contentCount'
+      title: '题目数',
+      key: 'contentCount',
+      width: 80
     },
     {
       title: '课程名称',
@@ -55,6 +57,7 @@ export default class CourseAlbumList extends Vue {
     {
       title: '创建时间',
       key: 'createTime',
+      width: 150,
       sortable: true,
       customFilter: {
         type: 'dateScope'
@@ -63,6 +66,7 @@ export default class CourseAlbumList extends Vue {
     {
       title: '更新时间',
       key: 'updateTime',
+      width: 150,
       sortable: true,
       customFilter: {
         type: 'dateScope'
@@ -71,12 +75,19 @@ export default class CourseAlbumList extends Vue {
     {
       title: '操作',
       key: '_option',
+      width: 300,
       optionList: [
         {
           icon: 'ios-build-outline',
           text: '编辑',
           buttonType: 'primary',
           click: this.actionView
+        },
+        {
+          icon: 'ios-build-outline',
+          text: '选题',
+          buttonType: 'primary',
+          click: this.actionTopic
         }
       ]
     }
@@ -97,6 +108,9 @@ export default class CourseAlbumList extends Vue {
         id: row.courseId
       }
     })
+  }
+  private actionTopic (row: any, index) {
+
   }
 }
 </script>

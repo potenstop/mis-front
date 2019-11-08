@@ -181,7 +181,7 @@ export default [
       },
       {
         path: 'album/add',
-        name: 'CourseAlbumEdit',
+        name: 'CourseAlbumAdd',
         meta: {
           hideInMenu: true,
           icon: 'logo-hackernews',
@@ -210,7 +210,7 @@ export default [
       },
       {
         path: 'subject/add',
-        name: 'CourseSubjectEdit',
+        name: 'CourseSubjectAdd',
         meta: {
           hideInMenu: true,
           icon: 'logo-hackernews',
@@ -239,7 +239,7 @@ export default [
       },
       {
         path: 'topic/add',
-        name: 'CourseTopicEdit',
+        name: 'CourseTopicAdd',
         meta: {
           hideInMenu: true,
           icon: 'logo-hackernews',
