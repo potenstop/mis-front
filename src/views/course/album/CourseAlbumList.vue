@@ -110,7 +110,12 @@ export default class CourseAlbumList extends Vue {
     })
   }
   private actionTopic (row: any, index) {
-
+    this.$router.push({
+      path: '/course/album/topic',
+      query: {
+        id: row.courseId
+      }
+    })
   }
 }
 </script>

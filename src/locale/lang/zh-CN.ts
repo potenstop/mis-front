@@ -19,6 +19,7 @@ export default {
   COURSE_TOPIC_LIST: '题目列表',
   COURSE_TOPIC_ADD: '题目新增',
   COURSE_TOPIC_EDIT: '题目编辑',
+  COURSE_ALBUM_TOPIC: '选题',
   P_ADD: '添加',
   P_EDIT: '编辑',
   P_SAVE: '保存',

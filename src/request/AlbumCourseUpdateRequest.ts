@@ -19,10 +19,10 @@ export class AlbumCourseUpdateRequest {
   @JsonProperty
   private courseId: number
   public getAlbumId (): number {
-    return this.albumId;
+    return this.albumId
   }
   public setAlbumId (albumId: number): void {
-    this.albumId = albumId;
+    this.albumId = albumId
   }
   public getAlbumDesc (): string {
     return this.albumDesc

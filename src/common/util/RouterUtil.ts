@@ -36,9 +36,12 @@ const showThisMenuEle = (item: RouteConfig, access: string[]) => {
   if (item.meta && item.meta.access && item.meta.access.length) {
     if (hasOneOf(item.meta.access, access)) {
       return true
+    } else {
+      return false
     }
-    else return false
-  } else return true
+  } else {
+    return true
+  }
 }
 
 const doCustomTimes = (times: number, callback: Function) => {
@@ -66,11 +69,9 @@ export class RouterUtil {
         title = title.replace(/({{[\s\S]+?}})/, (m, str) =>
           str.replace(/{{([\s\S]*)}}/, (m, _) => vm.$t(_.trim()))
         )
-      }
-      else if (__titleIsFunction__) {
+      } else if (__titleIsFunction__) {
         title = item.meta.title
-      }
-      else  {
+      } else {
         title = vm.$t(item.name)
       }
     } else {
@@ -86,7 +87,7 @@ export class RouterUtil {
     } else if (keysArr1.length === 0 && keysArr2.length === 0) {
       return true
     } else {
-      return !keysArr1.some(key => obj1[key] != obj2[key])
+      return !keysArr1.some(key => obj1[key] !== obj2[key])
     }
   }
   public static routeEqual (route1: Partial<Route>, route2: Partial<Route>): boolean {

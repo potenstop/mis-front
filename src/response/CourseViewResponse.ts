@@ -1,4 +1,4 @@
-import {JsonProperty, ReturnGenericsProperty} from 'papio-h5'
+import { JsonProperty, ReturnGenericsProperty } from 'papio-h5'
 import { CourseTypeSimpleResponse } from '@/response/CourseTypeSimpleResponse'
 
 /**

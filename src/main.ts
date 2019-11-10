@@ -12,6 +12,7 @@ import installPlugin from '@/plugin'
 import { directive as clickOutside } from 'v-click-outside-x'
 import importDirective from '@/directive'
 import axios from 'axios'
+import VModal from 'vue-js-modal'
 
 Vue.prototype.axios = axios
 // 实际打包时应该不引入mock
@@ -22,6 +23,11 @@ if (process.env.NODE_ENV !== 'production') {
 Vue.config.productionTip = false
 Vue.use(ViewUI, {
   i18n: (key: string, value: string) => i18n.t(key, value)
+})
+
+Vue.use(VModal, {
+  dialog: true,
+  dynamic: true
 })
 /**
  * @description 注册admin内置插件

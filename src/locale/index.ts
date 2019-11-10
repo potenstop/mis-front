@@ -28,7 +28,6 @@ const i18n = new VueI18n({
   locale: lang,
   messages
 })
-
 export default i18n
 
 // vue-i18n 5.x写法
