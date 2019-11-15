@@ -1,4 +1,4 @@
-import { JsonProperty } from 'papio-h5'
+import {JsonProperty, ReturnGenericsProperty} from 'papio-h5'
 
 /**
  *
@@ -20,6 +20,9 @@ export class AlbumCourseViewResponse {
   private courseId: number
   @JsonProperty
   private courseName: string
+  @JsonProperty
+  @ReturnGenericsProperty(Array, new Map<string, {new(): object}>().set('Array', Number))
+  private contentIdList: number[]
   public getAlbumId (): number {
     return this.albumId
   }
@@ -49,5 +52,11 @@ export class AlbumCourseViewResponse {
   }
   public setCourseName (courseName: string): void {
     this.courseName = courseName
+  }
+  public getContentIdList (): number[] {
+    return this.contentIdList
+  }
+  public setContentIdList (contentIdList: number[]): void {
+    this.contentIdList = contentIdList
   }
 }

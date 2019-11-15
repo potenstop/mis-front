@@ -54,7 +54,6 @@ export class ContentTopicAddRequest {
   public setTopicType (topicType: number): void {
     this.topicType = topicType
   }
-
   public getAddOptionList (): ContentTopicSelectOptionRequest[] {
     return this.addOptionList
   }

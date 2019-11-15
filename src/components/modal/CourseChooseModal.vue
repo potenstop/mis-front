@@ -6,6 +6,7 @@
          :adaptive="true"
          :scrollable="true"
          :reset="true"
+         :draggable="true"
          width="80%"
          height="auto"
          @before-open="beforeOpen"
@@ -23,10 +24,10 @@
         <span>{{ row.title }}</span>
       </template>
       <template slot-scope="{ row }" slot="topicType">
-        <span>{{ getTopicTypeNameById(row.topicType) }}</span>
+        <span>{{ getContentTopicTypeNameById(row.topicType) }}</span>
       </template>
       <template slot-scope="{ row }" slot="state">
-        <span>{{ getStateNameById(row.state) }}</span>
+        <span>{{ getContentStateNameById(row.state) }}</span>
       </template>
       <template slot-scope="{ row, index }" slot="action">
         <Button v-if="chooseIdList.indexOf(row.contentId) !== -1" type="warning" size="small" style="margin-right: 5px" @click="actionCancelChoose(row, index)">取消选中</Button>
@@ -55,17 +56,18 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator'
+import { Component, Vue, Prop } from 'vue-property-decorator'
 import { ContentTopicListItemResponse } from '@/response/ContentTopicListItemResponse'
-import { ContentTopicConstant } from '@/common/constant/ContentTopicConstant'
 import { JsonProtocol } from 'papio-h5'
 import { ContentTopicListItemRequest } from '@/request/ContentTopicListItemRequest'
 import { ContentTopicApi } from '@/dao/api/ContentTopicApi'
 import { ApiUtil } from '@/common/util/ApiUtil'
+import ConstantMixin from '@/components/mixin/ConstantMixin'
+import { mixins } from 'vue-class-component'
 const contentTopicApi = new ContentTopicApi()
 
-@Component()
-export default class CourseChooseModal extends Vue {
+@Component
+export default class CourseChooseModal extends mixins(ConstantMixin) {
   private name = 'CourseChooseModal'
   private chooseIdList: Array<number> = []
   private pageTotal: number = 0
@@ -93,15 +95,14 @@ export default class CourseChooseModal extends Vue {
     },
     {
       title: '操作',
-      slot: 'action',
-      width: 150,
-      align: 'center'
+      slot: 'action'
     }
   ]
   private dataList: ContentTopicListItemResponse[] = []
   private async created () {
   }
-  private async beforeOpen () {
+  private async beforeOpen (event) {
+    this.chooseIdList = event.params.chooseIdList
     await this.load()
   }
   private async load () {
@@ -117,26 +118,6 @@ export default class CourseChooseModal extends Vue {
     } finally {
       this.loading = false
     }
-  }
-  private getTopicTypeNameById (id: number) {
-    if (ContentTopicConstant.TYPE_SIGN_SELECT === id) {
-      return this.$t('CONTENT_TOPIC_TYPE_SIGN_SELECT')
-    } else if (ContentTopicConstant.TYPE_MUL_SELECT === id) {
-      return this.$t('CONTENT_TOPIC_TYPE_MUL_SELECT')
-    } else if (ContentTopicConstant.TYPE_FILL_BLANK === id) {
-      return this.$t('CONTENT_TOPIC_TYPE_FILL_BLANK')
-    } else if (ContentTopicConstant.TYPE_SHORT_ANSWER === id) {
-      return this.$t('CONTENT_TOPIC_TYPE_SHORT_ANSWER')
-    }
-    return this.$t('P_ERROR_ENUM')
-  }
-  private getStateNameById (id: number) {
-    if (ContentTopicConstant.STATE_ONLINE === id) {
-      return this.$t('CONTENT_STATE_ONLINE')
-    } else if (ContentTopicConstant.STATE_OFFLINE === id) {
-      return this.$t('CONTENT_STATE_OFFLINE')
-    }
-    return this.$t('P_ERROR_ENUM')
   }
   private actionChoose (row: any, index) {
     this.chooseIdList.push(row.contentId)

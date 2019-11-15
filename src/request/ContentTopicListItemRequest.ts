@@ -8,7 +8,7 @@
  * @date 2019/9/25 16:00
  */
 import { PageRequest } from '@/bmo/PageRequest'
-import { JsonProperty } from 'papio-h5'
+import { JsonProperty, ReturnGenericsProperty } from 'papio-h5'
 
 export class ContentTopicListItemRequest extends PageRequest {
   @JsonProperty
@@ -19,6 +19,9 @@ export class ContentTopicListItemRequest extends PageRequest {
   private state: number
   @JsonProperty
   private title: string
+  @JsonProperty
+  @ReturnGenericsProperty(Array, new Map<string, {new(): object}>().set('Array', Number))
+  private contentIdList: number[]
   public getContentId (): number {
     return this.contentId
   }
@@ -42,5 +45,11 @@ export class ContentTopicListItemRequest extends PageRequest {
   }
   public setTitle (title: string): void {
     this.title = title
+  }
+  public getContentIdList (): number[] {
+    return this.contentIdList
+  }
+  public setContentIdList (contentIdList: number[]): void {
+    this.contentIdList = contentIdList
   }
 }

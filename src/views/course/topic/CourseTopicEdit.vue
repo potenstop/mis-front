@@ -132,6 +132,7 @@ export default class CourseTopicEdit extends Vue {
     this.initSelectTopicTypeList()
     this.initContentTopicTypeConstantSelectList()
     await this.initEditData()
+    console.log(this.formItem.topicType, this.contentTopicTypeConstantSelectList)
     this.loadingInit = false
   }
   private initSelectTopicTypeList () {
@@ -154,8 +155,7 @@ export default class CourseTopicEdit extends Vue {
     }]
   }
   private initContentTopicTypeConstantSelectList () {
-    this.contentTopicTypeConstantSelectList.push(ContentTopicConstant.TYPE_SIGN_SELECT)
-    this.contentTopicTypeConstantSelectList.push(ContentTopicConstant.TYPE_MUL_SELECT)
+    this.contentTopicTypeConstantSelectList = [ContentTopicConstant.TYPE_SIGN_SELECT, ContentTopicConstant.TYPE_MUL_SELECT]
   }
   private async initEditData () {
     if (!this.isAddPage) {

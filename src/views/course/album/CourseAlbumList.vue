@@ -28,7 +28,7 @@ export default class CourseAlbumList extends Vue {
     {
       title: 'ID',
       key: 'albumId',
-      width: 80,
+      width: 120,
       sortable: true,
       customFilter: {
         type: 'inputNumber'
@@ -113,7 +113,7 @@ export default class CourseAlbumList extends Vue {
     this.$router.push({
       path: '/course/album/topic',
       query: {
-        id: row.courseId
+        id: row.albumId
       }
     })
   }
