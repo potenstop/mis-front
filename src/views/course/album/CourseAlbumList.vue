@@ -88,6 +88,12 @@ export default class CourseAlbumList extends Vue {
           text: '选题',
           buttonType: 'primary',
           click: this.actionTopic
+        },
+        {
+          icon: 'ios-build-outline',
+          text: '答题',
+          buttonType: 'primary',
+          click: this.actionAnswer
         }
       ]
     }
@@ -112,6 +118,14 @@ export default class CourseAlbumList extends Vue {
   private actionTopic (row: any, index) {
     this.$router.push({
       path: '/course/album/topic',
+      query: {
+        id: row.albumId
+      }
+    })
+  }
+  private actionAnswer (row: any, index) {
+    this.$router.push({
+      path: '/course/album/answer',
       query: {
         id: row.albumId
       }

@@ -1,15 +1,16 @@
 import { JsonProperty, ReturnGenericsProperty } from 'papio-h5'
+import { ContentTopicViewResponse } from '@/response/ContentTopicViewResponse'
 
 /**
  *
  * 功能描述:
  *
- * @className AlbumCourseViewResponse
+ * @className AlbumCourseTopicViewResponse
  * @projectName mis-front
  * @author yanshaowen
  * @date 2019/9/14 12:46
  */
-export class AlbumCourseViewResponse {
+export class AlbumCourseTopicViewResponse {
   @JsonProperty
   private albumId: number
   @JsonProperty
@@ -21,8 +22,8 @@ export class AlbumCourseViewResponse {
   @JsonProperty
   private courseName: string
   @JsonProperty
-  @ReturnGenericsProperty(Array, new Map<string, {new(): object}>().set('Array', Number))
-  private contentIdList: number[]
+  @ReturnGenericsProperty(Array, new Map<string, {new(): object}>().set('Array', ContentTopicViewResponse))
+  private contentList: ContentTopicViewResponse[]
   public getAlbumId (): number {
     return this.albumId
   }
@@ -53,10 +54,10 @@ export class AlbumCourseViewResponse {
   public setCourseName (courseName: string): void {
     this.courseName = courseName
   }
-  public getContentIdList (): number[] {
-    return this.contentIdList
+  public getContentList (): ContentTopicViewResponse[] {
+    return this.contentList
   }
-  public setContentIdList (contentIdList: number[]): void {
-    this.contentIdList = contentIdList
+  public setContentList (contentList: ContentTopicViewResponse[]): void {
+    this.contentList = contentList
   }
 }

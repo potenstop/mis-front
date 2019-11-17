@@ -18,6 +18,8 @@ export class ContentTopicUpdateRequest {
   @JsonProperty
   private answer: string
   @JsonProperty
+  private topicType: number
+  @JsonProperty
   private state: number
   @JsonProperty
   private title: string
@@ -47,6 +49,12 @@ export class ContentTopicUpdateRequest {
   }
   public setAnswer (answer: string): void {
     this.answer = answer
+  }
+  public getTopicType (): number {
+    return this.topicType
+  }
+  public setTopicType (topicType: number): void {
+    this.topicType = topicType
   }
   public getState (): number {
     return this.state

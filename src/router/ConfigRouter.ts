@@ -210,6 +210,16 @@ export default [
         component: () => import('@/views/course/album/CourseAlbumTopic.vue')
       },
       {
+        path: 'album/answer',
+        name: 'CourseAlbumAnswer',
+        meta: {
+          hideInMenu: true,
+          icon: 'logo-hackernews',
+          title: '{{ COURSE_ALBUM_ANSWER }}'
+        },
+        component: () => import('@/views/course/album/CourseAlbumAnswer.vue')
+      },
+      {
         path: 'subject/list',
         name: 'CourseSubjectList',
         meta: {

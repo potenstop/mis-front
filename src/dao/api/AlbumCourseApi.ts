@@ -21,7 +21,8 @@ import { AlbumCourseListItemRequest } from '@/request/AlbumCourseListItemRequest
 import { AlbumCourseAddRequest } from '@/request/AlbumCourseAddRequest'
 import { AlbumCourseViewResponse } from '@/response/AlbumCourseViewResponse'
 import { AlbumCourseUpdateRequest } from '@/request/AlbumCourseUpdateRequest'
-import {AlbumCourseUpdateCourseRelationRequest} from "@/request/AlbumCourseUpdateCourseRelationRequest";
+import { AlbumCourseUpdateCourseRelationRequest } from '@/request/AlbumCourseUpdateCourseRelationRequest'
+import { AlbumCourseTopicViewResponse } from '@/response/AlbumCourseTopicViewResponse'
 @AxisoRemote({ filepath: '/src/dao/api', name: '/album/course', timeout: 5000 })
 export class AlbumCourseApi {
   @PostMapping('/list')
@@ -47,6 +48,11 @@ export class AlbumCourseApi {
   @PostMapping('/update-course-relation')
   @ReturnGenericsProperty(ApiResult, new Map<string, new() => object>().set('data', Number))
   public updateCourseRelation (@RequestBody request: AlbumCourseUpdateCourseRelationRequest): Promise<ApiResult<number>> {
+    return null
+  }
+  @GetMapping('/topic-list')
+  @ReturnGenericsProperty(ApiResult, new Map<string, new() => object>().set('data', AlbumCourseTopicViewResponse))
+  public albumCourseTopicList (@RequestParam albumId: number): Promise<ApiResult<AlbumCourseTopicViewResponse>> {
     return null
   }
 }

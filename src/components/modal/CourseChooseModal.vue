@@ -11,6 +11,7 @@
          height="auto"
          @before-open="beforeOpen"
   >
+    <Input search v-model="title" suffix="ios-search" placeholder="输入名称" style="width: 30%;margin: 5px" @on-search="load"/>
     <Table border
            :columns="columns"
            :data="dataList"
@@ -73,6 +74,7 @@ export default class CourseChooseModal extends mixins(ConstantMixin) {
   private pageTotal: number = 0
   private pageCurrent: number = 1
   private pageSize: number = 20
+  private title: string = null
   private loading = true
   private columns = [
     {
@@ -111,6 +113,7 @@ export default class CourseChooseModal extends mixins(ConstantMixin) {
       const request = JsonProtocol.jsonToBean({}, ContentTopicListItemRequest)
       request.setPageNum(this.pageCurrent)
       request.setPageSize(this.pageSize)
+      request.setTitle(this.title)
       const result = await contentTopicApi.list(request)
       const data = ApiUtil.getData(result)
       this.dataList = data.getList()
