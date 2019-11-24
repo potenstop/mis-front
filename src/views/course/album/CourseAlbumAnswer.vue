@@ -1,6 +1,6 @@
 <template>
   <div>
-    <topic-item v-for="item in contentTopic" :data="item" :key="item.contentId"></topic-item>
+    <topic-item style="margin-top: 10px" v-for="item in contentTopic" :data="item" :key="item.contentId"></topic-item>
   </div>
 </template>
 
@@ -53,13 +53,16 @@ export default class CourseAlbumAnswer extends Vue {
     const query = this.$route.query as any
     const result = await albumCourseApi.albumCourseTopicList(query.id)
     this.contentTopic = []
-    ApiUtil.getData(result).getContentList().forEach(item => {
+    const o = ['A ', 'B ', 'C ', 'D ', 'E ', 'F ', 'J ']
+    ApiUtil.getData(result).getContentList().forEach((item, j) => {
       const itemContentTopic = new ItemContentTopic()
       JsonProtocol.copyProperties(item, itemContentTopic)
+      itemContentTopic.title = `${j + 1} ${itemContentTopic.title}`
       itemContentTopic.addOptionList = []
-      item.getAddOptionList().forEach(optionItem => {
+      item.getAddOptionList().forEach((optionItem, i) => {
         const itemContentTopicSelectOption = new ItemContentTopicSelectOption()
-        JsonProtocol.copyProperties(item, itemContentTopicSelectOption)
+        JsonProtocol.copyProperties(optionItem, itemContentTopicSelectOption)
+        itemContentTopicSelectOption.optionLabel = o[i] + itemContentTopicSelectOption.optionLabel
         itemContentTopic.addOptionList.push(itemContentTopicSelectOption)
       })
       this.contentTopic.push(itemContentTopic)
