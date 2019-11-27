@@ -4,8 +4,12 @@
       :columns="columns"
       :api-list="apiList"
       :view-name="name"
-      @on-action-add="actionAdd"
-    ></simple-page-table>
+    >
+      <div slot="headButtonList" class="simple-page-table-head">
+        <Button type="primary" icon="ios-add" v-on:click="actionAdd">{{$t("P_ADD")}}</Button>
+        <Button type="primary" icon="ios-add" v-on:click="actionMulAdd">{{$t("P_MUL_ADD")}}</Button>
+      </div>
+    </simple-page-table>
   </div>
 </template>
 
@@ -86,6 +90,11 @@ export default class CourseTopicList extends Vue {
   private apiList (body) {
     const request = JsonProtocol.jsonToBean(body, ContentTopicListItemRequest)
     return contentTopicApi.list(request)
+  }
+  private actionMulAdd () {
+    this.$router.push({
+      path: '/course/topic/mul-add'
+    })
   }
   private actionAdd () {
     this.$router.push({

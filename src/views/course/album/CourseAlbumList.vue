@@ -4,8 +4,11 @@
       :columns="columns"
       :api-list="apiList"
       :view-name="name"
-      @on-action-add="actionAdd"
-    ></simple-page-table>
+    >
+      <div slot="headButtonList" class="simple-page-table-head">
+        <Button type="primary" icon="ios-add" v-on:click="actionAdd">{{$t("P_ADD")}}</Button>
+      </div>
+    </simple-page-table>
   </div>
 </template>
 

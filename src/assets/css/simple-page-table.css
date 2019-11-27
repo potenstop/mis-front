@@ -1,0 +1,7 @@
+.simple-page-table-head {
+    margin-bottom: 10px;
+    float:right
+}
+.simple-page-table-head * {
+    margin-right: 10px;
+}

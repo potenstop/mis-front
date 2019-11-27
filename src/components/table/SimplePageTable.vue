@@ -1,9 +1,7 @@
 <template>
   <div>
     <Row>
-      <Col offset="22" style="margin-bottom: 10px">
-        <Button v-show="hasActionAdd" type="primary" icon="ios-add" v-on:click="onActionAdd">{{$t("P_ADD")}}</Button>
-      </Col>
+      <slot name="headButtonList"></slot>
     </Row>
     <Collapse v-model="collapseValue" @on-change="collapseOnChange">
       <Panel name="filter">
@@ -112,7 +110,6 @@ export default class SimplePageTable extends Vue {
   @Prop(Function) readonly apiDetail!: Function | undefined;
   @Prop(Function) readonly apiUpdate!: Function | undefined;
   @Prop(Function) readonly apiList!: Function | undefined;
-  @Prop({ default: true }) readonly hasActionAdd!: boolean;
   @Prop(Function) readonly childStartInit!: Function | undefined;
   @Prop({ default: 'default' }) readonly viewName!: string | undefined;
 
@@ -216,9 +213,6 @@ export default class SimplePageTable extends Vue {
     }
   }
 
-  onActionAdd () {
-    this.$emit('on-action-add')
-  }
   get shownColumns () {
     return this.columns.filter(c => c.key !== 'handle')
   }

@@ -2,7 +2,7 @@
   <Card style="width: 100%">
     <Form ref="formItem" :model="formItem" :rules="ruleValidate" :label-width="80" style="margin-left: 20%" label-position="left">
       <FormItem label="标题" prop="title">
-        <Input v-model="formItem.title" placeholder="" style="width: 300px"></Input>
+        <Input v-model.trim="formItem.title" placeholder="" style="width: 300px"></Input>
       </FormItem>
       <FormItem label="是否展示" prop="state">
         <Select v-model="formItem.state" style="width: 300px">
@@ -16,7 +16,7 @@
         </Select>
       </FormItem>
       <FormItem label="选项" v-if="contentTopicTypeConstantSelectList.indexOf(formItem.topicType) !== -1" prop="chooseOption">
-        <Input v-model="optionLabel" placeholder="" style="width: 300px"/>
+        <Input v-model.trim="optionLabel" placeholder="" style="width: 300px"/>
         <Button icon="ios-add" type="dashed" @click="optionAdd" style="margin-left: 10px">添加选项</Button>
         <br/>
         <Tag v-for="item in formItem.chooseOption"
@@ -33,10 +33,10 @@
         >{{item.label}}</Tag>
       </FormItem>
       <FormItem label="答案" v-if="formItem.topicType > 0 && contentTopicTypeConstantSelectList.indexOf(formItem.topicType) === -1" prop="answer">
-        <Input v-model="formItem.answer" maxlength="5000" show-word-limit type="textarea" placeholder="Enter something..." style="width: 300px" />
+        <Input v-model.trim="formItem.answer" maxlength="5000" show-word-limit type="textarea" placeholder="Enter something..." style="width: 300px" />
       </FormItem>
       <FormItem label="解析" prop="analysis">
-        <Input v-model="formItem.analysis" maxlength="2000" show-word-limit type="textarea" placeholder="Enter something..." style="width: 300px" />
+        <Input v-model.trim="formItem.analysis" maxlength="2000" show-word-limit type="textarea" placeholder="Enter something..." style="width: 300px" />
       </FormItem>
       <FormItem>
         <Button type="primary" @click="handleSubmit('formItem')" :loading="submitRunning" :disabled="loadingInit">{{$t("P_SAVE")}}</Button>
@@ -80,8 +80,8 @@ class UpdateModel {
   public constructor () {
     this.contentId = null
     this.title = null
-    this.state = null
-    this.topicType = null
+    this.state = ContentTopicConstant.STATE_ONLINE
+    this.topicType = ContentTopicConstant.TYPE_SIGN_SELECT
     this.analysis = null
     this.answer = null
     this.chooseOption = []

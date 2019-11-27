@@ -3,7 +3,6 @@
     <simple-page-table
       :columns="columns1"
       :api-list="apiList"
-      :has-action-add="false"
     ></simple-page-table>
   </div>
 </template>

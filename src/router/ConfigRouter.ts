@@ -268,6 +268,16 @@ export default [
         component: () => import('@/views/course/topic/CourseTopicEdit.vue')
       },
       {
+        path: 'topic/mul-add',
+        name: 'CourseTopicMulAdd',
+        meta: {
+          hideInMenu: true,
+          icon: 'logo-hackernews',
+          title: '{{ COURSE_TOPIC_MUL_ADD }}'
+        },
+        component: () => import('@/views/course/topic/CourseTopicMulAdd.vue')
+      },
+      {
         path: 'topic/edit',
         name: 'CourseTopicEdit',
         meta: {

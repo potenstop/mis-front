@@ -13,11 +13,13 @@ import { directive as clickOutside } from 'v-click-outside-x'
 import importDirective from '@/directive'
 import axios from 'axios'
 import VModal from 'vue-js-modal'
+// simpe page table css
+import '@/assets/css/simple-page-table.css'
 
 Vue.prototype.axios = axios
 // 实际打包时应该不引入mock
 if (process.env.NODE_ENV !== 'production') {
-  // require('@/mock/UserMock')
+  require('@/mock/UserMock')
 }
 
 Vue.config.productionTip = false
