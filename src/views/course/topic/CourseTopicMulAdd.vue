@@ -1,6 +1,19 @@
 <template>
   <Card style="width: 100%">
-    <Button>导入word</Button>
+    <Upload
+      :action="fileApiAddress"
+      :show-upload-list="true"
+      :format="['doc']"
+      :max-size="1024*20"
+      :on-success="handleUploadSuccess"
+      :on-error="handleUploadError"
+      type="drag"
+    >
+      <div style="padding: 20px 0">
+        <Icon type="ios-cloud-upload" size="52" style="color: #3399ff"></Icon>
+        <p>上传word</p>
+      </div>
+    </Upload>
     <Form
       ref="formItem"
       :model="formItem"
@@ -9,44 +22,44 @@
       label-position="left"
       v-if="formItem.length > 0"
     >
-        <div v-for="(item,index) in [1,2,3]" :key="item">
+        <div v-for="(item, index) in this.formItem" :key="index">
           <div style="margin-left: 20%">
             <FormItem label="标题" prop="title">
-              <Input v-model.trim="formItem.title" placeholder="" style="width: 300px"></Input>
+              <Input v-model.trim="item.title" placeholder="" style="width: 300px"></Input>
             </FormItem>
             <FormItem label="是否展示" prop="state">
-              <Select v-model="formItem.state" style="width: 300px">
+              <Select v-model="item.state" style="width: 300px">
                 <Option :value="1">是</Option>
                 <Option :value="2">否</Option>
               </Select>
             </FormItem>
             <FormItem label="类型" prop="topicType">
-              <Select v-model="formItem.topicType" style="width: 300px">
-                <Option v-for="item in selectTopicTypeList" :value="item.value" :key="item.item">{{item.label}}</Option>
+              <Select v-model="item.topicType" style="width: 300px">
+                <Option v-for="itemType in selectTopicTypeList" :value="itemType.value" :key="itemType.value">{{itemType.label}}</Option>
               </Select>
             </FormItem>
-            <FormItem label="选项" v-if="contentTopicTypeConstantSelectList.indexOf(formItem.topicType) !== -1" prop="chooseOption">
+            <FormItem label="选项" v-if="contentTopicTypeConstantSelectList.indexOf(item.topicType) !== -1" prop="chooseOption">
               <Input v-model.trim="optionLabel" placeholder="" style="width: 300px"/>
               <Button icon="ios-add" type="dashed" @click="optionAdd" style="margin-left: 10px">添加选项</Button>
               <br/>
-              <Tag v-for="item in formItem.chooseOption"
+              <Tag v-for="itemOption in item.chooseOption"
                    style="margin-top: 5px"
-                   :key="item.value"
+                   :key="itemOption.value"
                    size="large"
                    closable
                    checkable
-                   :color="item.checked ? 'primary' : 'default'"
-                   :checked="item.checked"
-                   :name="item.value"
+                   :color="itemOption.checked ? 'primary' : 'default'"
+                   :checked="itemOption.checked"
+                   :name="itemOption.value"
                    @on-close = "optionTagClose"
                    @on-change = "optionTagChange"
-              >{{item.label}}</Tag>
+              >{{itemOption.label}}</Tag>
             </FormItem>
-            <FormItem label="答案" v-if="formItem.topicType > 0 && contentTopicTypeConstantSelectList.indexOf(formItem.topicType) === -1" prop="answer">
+            <FormItem label="答案" v-if="item.topicType > 0 && contentTopicTypeConstantSelectList.indexOf(item.topicType) === -1" prop="answer">
               <Input v-model.trim="formItem.answer" maxlength="5000" show-word-limit type="textarea" placeholder="Enter something..." style="width: 300px" />
             </FormItem>
             <FormItem label="解析" prop="analysis">
-              <Input v-model.trim="formItem.analysis" maxlength="2000" show-word-limit type="textarea" placeholder="Enter something..." style="width: 300px" />
+              <Input v-model.trim="item.analysis" maxlength="2000" show-word-limit type="textarea" placeholder="Enter something..." style="width: 300px" />
             </FormItem>
           </div>
 
@@ -66,13 +79,23 @@ import { Component, Vue } from 'vue-property-decorator'
 import { ApiUtil } from '@/common/util/ApiUtil'
 import { State, Getter, Action, Mutation, namespace } from 'vuex-class'
 import { StoreConstant } from '@/common/constant/StoreConstant'
-import { JSHelperUtil, JsonProperty, JsonProtocol, ReturnGenericsProperty, StringUtil } from 'papio-h5'
+import {
+  JSHelperUtil,
+  JsonProperty,
+  JsonProtocol,
+  Beans,
+  ReturnGenericsProperty,
+  StringUtil,
+  AxiosDataSource
+} from 'papio-h5'
 import { RefreshEvent } from '@/common/event/RefreshEvent'
 import { ContentTopicConstant } from '@/common/constant/ContentTopicConstant'
 import { ContentTopicAddRequest } from '@/request/ContentTopicAddRequest'
 import { ContentTopicApi } from '@/dao/api/ContentTopicApi'
 import { ContentTopicUpdateRequest } from '@/request/ContentTopicUpdateRequest'
 import { ContentTopicSelectOptionRequest } from '@/request/ContentTopicSelectOptionRequest'
+import { UploadTopicListItemResponse } from '@/response/UploadTopicListItemResponse'
+import { ApiResult } from '@/bmo/ApiResult'
 
 const appModule = namespace(StoreConstant.APP)
 
@@ -106,6 +129,7 @@ class UpdateModel {
 @Component
 export default class CourseTopicMulAdd extends Vue {
   @appModule.Mutation closeTag: Function
+  private fileApiAddress: string;
   private name = 'CourseTopicMulAdd'
   private formItem: UpdateModel[] = []
   private loadingInit: boolean = true
@@ -138,6 +162,8 @@ export default class CourseTopicMulAdd extends Vue {
   private removeOptionIdList: number[] = []
 
   private async created () {
+    const dataSource = Beans.getBean('HttpApiConfigurationMaster') as AxiosDataSource
+    this.fileApiAddress = dataSource.getUrl() + '/word/batch/course/topic'
     if (this.$route.path.indexOf('add') !== -1) {
       this.isAddPage = true
     } else {
@@ -146,7 +172,6 @@ export default class CourseTopicMulAdd extends Vue {
     this.loadingInit = true
     this.initSelectTopicTypeList()
     this.initContentTopicTypeConstantSelectList()
-    await this.initEditData()
     this.loadingInit = false
   }
   private initSelectTopicTypeList () {
@@ -171,32 +196,6 @@ export default class CourseTopicMulAdd extends Vue {
   private initContentTopicTypeConstantSelectList () {
     this.contentTopicTypeConstantSelectList = [ContentTopicConstant.TYPE_SIGN_SELECT, ContentTopicConstant.TYPE_MUL_SELECT]
   }
-  private async initEditData () {
-    if (!this.isAddPage) {
-      const query = this.$route.query as any
-      const result = await contentTopicApi.view(query.id)
-      const response = ApiUtil.getData(result)
-      this.formItem = []
-      const updateModel = new UpdateModel()
-      updateModel.title = '111'
-      updateModel.topicType = 1
-      updateModel.state = 1
-      updateModel.chooseOption = []
-
-      // JsonProtocol.copyProperties(response, this.formItem)
-      // if (JSHelperUtil.isNotNull(response.getAddOptionList()) && response.getAddOptionList()) {
-      //   this.formItem.chooseOption = []
-      //   response.getAddOptionList().forEach(item => {
-      //     this.formItem.chooseOption.push({
-      //       value: item.getContentTopicSelectOptionId(),
-      //       label: item.getOptionLabel(),
-      //       checked: item.getIsOptionAnswer() === 1,
-      //       isNew: false
-      //     })
-      //   })
-      // }
-    }
-  }
   private async handleSubmit (name) {
     this.submitRunning = true
     try {
@@ -207,33 +206,33 @@ export default class CourseTopicMulAdd extends Vue {
       }
       let result = null
 
-        // const request = new ContentTopicAddRequest()
-        // JsonProtocol.copyProperties(this.formItem, request)
-        // if (ContentTopicConstant.TYPE_SIGN_SELECT === this.formItem.topicType || ContentTopicConstant.TYPE_MUL_SELECT === this.formItem.topicType) {
-        //   if (JSHelperUtil.isNullOrUndefined(this.formItem.chooseOption) || this.formItem.chooseOption.length === 0) {
-        //     // 没有选项
-        //     this.$Message.warning('选择题必须有选项')
-        //     return
-        //   }
-        //   const optionList: ContentTopicSelectOptionRequest[] = []
-        //   let hasCheck = false
-        //   this.formItem.chooseOption.forEach(option => {
-        //     const contentTopicSelectOptionRequest = new ContentTopicSelectOptionRequest()
-        //     contentTopicSelectOptionRequest.setOptionLabel(option.label)
-        //     contentTopicSelectOptionRequest.setIsOptionAnswer(option.checked ? 1 : 2)
-        //     if (option.checked) {
-        //       hasCheck = true
-        //     }
-        //     optionList.push(contentTopicSelectOptionRequest)
-        //   })
-        //   if (!hasCheck) {
-        //     // 没有答案
-        //     this.$Message.warning('选择题必须答案')
-        //     return
-        //   }
-        //   request.setAddOptionList(optionList)
-        // }
-        // result = await contentTopicApi.add(request)
+      // const request = new ContentTopicAddRequest()
+      // JsonProtocol.copyProperties(this.formItem, request)
+      // if (ContentTopicConstant.TYPE_SIGN_SELECT === this.formItem.topicType || ContentTopicConstant.TYPE_MUL_SELECT === this.formItem.topicType) {
+      //   if (JSHelperUtil.isNullOrUndefined(this.formItem.chooseOption) || this.formItem.chooseOption.length === 0) {
+      //     // 没有选项
+      //     this.$Message.warning('选择题必须有选项')
+      //     return
+      //   }
+      //   const optionList: ContentTopicSelectOptionRequest[] = []
+      //   let hasCheck = false
+      //   this.formItem.chooseOption.forEach(option => {
+      //     const contentTopicSelectOptionRequest = new ContentTopicSelectOptionRequest()
+      //     contentTopicSelectOptionRequest.setOptionLabel(option.label)
+      //     contentTopicSelectOptionRequest.setIsOptionAnswer(option.checked ? 1 : 2)
+      //     if (option.checked) {
+      //       hasCheck = true
+      //     }
+      //     optionList.push(contentTopicSelectOptionRequest)
+      //   })
+      //   if (!hasCheck) {
+      //     // 没有答案
+      //     this.$Message.warning('选择题必须答案')
+      //     return
+      //   }
+      //   request.setAddOptionList(optionList)
+      // }
+      // result = await contentTopicApi.add(request)
 
       ApiUtil.getData(result)
       RefreshEvent.emit('CourseTopicList')
@@ -303,6 +302,36 @@ export default class CourseTopicMulAdd extends Vue {
     // if (index >= 0) {
     //   this.formItem.chooseOption[index].checked = checked
     // }
+  }
+  private handleUploadSuccess (res) {
+    const result: ApiResult<UploadTopicListItemResponse[]> = JsonProtocol.jsonToBean<ApiResult<UploadTopicListItemResponse[]>>(
+      res, ApiResult, new Map<string, new() => object>().set('data', Array).set('data.Array', UploadTopicListItemResponse))
+    const data = ApiUtil.getData(result)
+    let i = 10000
+    console.log(data)
+    data.forEach(item => {
+      const updateModel = new UpdateModel()
+      updateModel.state = ContentTopicConstant.STATE_ONLINE
+      updateModel.topicType = item.getTopicType()
+      updateModel.title = item.getTitle()
+      updateModel.chooseOption = []
+      if (JSHelperUtil.isNotNull(item.getOptionList())) {
+        console.log('111', item.getOptionList())
+        item.getOptionList().forEach(option => {
+          updateModel.chooseOption.push({
+            value: i++,
+            label: option,
+            checked: false,
+            isNew: true
+          })
+        })
+      }
+      this.formItem.push(updateModel)
+    })
+    console.log(this.formItem)
+  }
+  private handleUploadError (error) {
+    this.$Message.error('上传失败:' + error.message)
   }
 }
 </script>
