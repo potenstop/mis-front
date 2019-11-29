@@ -14,63 +14,61 @@
         <p>上传word</p>
       </div>
     </Upload>
-    <Form
-      ref="formItem"
-      :model="formItem"
-      :rules="ruleValidate"
-      :label-width="80"
-      label-position="left"
-      v-if="formItem.length > 0"
-    >
-        <div v-for="(item, index) in this.formItem" :key="index">
-          <div style="margin-left: 20%">
-            <FormItem label="标题" prop="title">
-              <Input v-model.trim="item.title" placeholder="" style="width: 300px"></Input>
-            </FormItem>
-            <FormItem label="是否展示" prop="state">
-              <Select v-model="item.state" style="width: 300px">
-                <Option :value="1">是</Option>
-                <Option :value="2">否</Option>
-              </Select>
-            </FormItem>
-            <FormItem label="类型" prop="topicType">
-              <Select v-model="item.topicType" style="width: 300px">
-                <Option v-for="itemType in selectTopicTypeList" :value="itemType.value" :key="itemType.value">{{itemType.label}}</Option>
-              </Select>
-            </FormItem>
-            <FormItem label="选项" v-if="contentTopicTypeConstantSelectList.indexOf(item.topicType) !== -1" prop="chooseOption">
-              <Input v-model.trim="optionLabel" placeholder="" style="width: 300px"/>
-              <Button icon="ios-add" type="dashed" @click="optionAdd" style="margin-left: 10px">添加选项</Button>
-              <br/>
-              <Tag v-for="itemOption in item.chooseOption"
-                   style="margin-top: 5px"
-                   :key="itemOption.value"
-                   size="large"
-                   closable
-                   checkable
-                   :color="itemOption.checked ? 'primary' : 'default'"
-                   :checked="itemOption.checked"
-                   :name="itemOption.value"
-                   @on-close = "optionTagClose"
-                   @on-change = "optionTagChange"
-              >{{itemOption.label}}</Tag>
-            </FormItem>
-            <FormItem label="答案" v-if="item.topicType > 0 && contentTopicTypeConstantSelectList.indexOf(item.topicType) === -1" prop="answer">
-              <Input v-model.trim="formItem.answer" maxlength="5000" show-word-limit type="textarea" placeholder="Enter something..." style="width: 300px" />
-            </FormItem>
-            <FormItem label="解析" prop="analysis">
-              <Input v-model.trim="item.analysis" maxlength="2000" show-word-limit type="textarea" placeholder="Enter something..." style="width: 300px" />
-            </FormItem>
-          </div>
-
-          <Divider />
-
-        </div>
-      <FormItem>
+    <div v-if="Array.isArray(this.formItem) && this.formItem.length > 0">
+      <Form
+        :ref="'formItem' + index"
+        :model="item"
+        :rules="ruleValidate"
+        :label-width="80"
+        label-position="left"
+        v-for="(item, index) in this.formItem"
+        :key="index"
+        style="padding-left: 20%"
+      >
+        <FormItem label="标题" prop="title">
+          <Input v-model.trim="item.title" placeholder="" style="width: 300px"></Input>
+        </FormItem>
+        <FormItem label="是否展示" prop="state">
+          <Select v-model="item.state" style="width: 300px">
+            <Option :value="1">是</Option>
+            <Option :value="2">否</Option>
+          </Select>
+        </FormItem>
+        <FormItem label="类型" prop="topicType">
+          <Select v-model="item.topicType" style="width: 300px">
+            <Option v-for="itemType in selectTopicTypeList" :value="itemType.value" :key="itemType.value">{{itemType.label}}</Option>
+          </Select>
+        </FormItem>
+        <FormItem label="选项" v-if="contentTopicTypeConstantSelectList.indexOf(item.topicType) !== -1">
+          <Input v-model.trim="optionLabel" placeholder="" style="width: 300px"/>
+          <Button icon="ios-add" type="dashed" @click="optionAdd" style="margin-left: 10px">添加选项</Button>
+          <br/>
+          <Tag v-for="itemOption in item.chooseOption"
+               style="margin-top: 5px"
+               :key="itemOption.value"
+               size="large"
+               closable
+               checkable
+               :color="itemOption.checked ? 'primary' : 'default'"
+               :checked="itemOption.checked"
+               :name="itemOption.value"
+               @on-close = "optionTagClose"
+               @on-change = "optionTagChange"
+          >{{itemOption.label}}</Tag>
+        </FormItem>
+        <FormItem label="答案" v-if="item.topicType > 0 && contentTopicTypeConstantSelectList.indexOf(item.topicType) === -1" prop="answer">
+          <Input v-model.trim="item.answer" maxlength="5000" show-word-limit type="textarea" placeholder="Enter something..." style="width: 300px" />
+        </FormItem>
+        <FormItem label="解析" prop="analysis">
+          <Input v-model.trim="item.analysis" maxlength="2000" show-word-limit type="textarea" placeholder="Enter something..." style="width: 300px" />
+        </FormItem>
+        <Divider />
+      </Form>
+      <div style="padding-left: 40%">
         <Button type="primary" @click="handleSubmit('formItem')" :loading="submitRunning" :disabled="loadingInit">{{$t("P_SAVE")}}</Button>
         <Button @click="back" style="margin-left: 8px">{{$t("P_CANCEL")}}</Button>
-      </FormItem>
-    </Form>
+      </div>
+    </div>
   </Card>
 </template>
 
@@ -196,13 +194,17 @@ export default class CourseTopicMulAdd extends Vue {
   private initContentTopicTypeConstantSelectList () {
     this.contentTopicTypeConstantSelectList = [ContentTopicConstant.TYPE_SIGN_SELECT, ContentTopicConstant.TYPE_MUL_SELECT]
   }
-  private async handleSubmit (name) {
+  private async handleSubmit () {
     this.submitRunning = true
     try {
-      const form = this.$refs[name] as any
-      const valid = await form.validate()
-      if (!valid) {
-        return
+      let i = 0
+      for (;i < this.formItem.length - 1; i++) {
+        const form = this.$refs['formItem' + i][0] as any
+        console.log(form)
+        const valid = await form.validate()
+        if (!valid) {
+          return
+        }
       }
       let result = null
 
@@ -308,7 +310,6 @@ export default class CourseTopicMulAdd extends Vue {
       res, ApiResult, new Map<string, new() => object>().set('data', Array).set('data.Array', UploadTopicListItemResponse))
     const data = ApiUtil.getData(result)
     let i = 10000
-    console.log(data)
     data.forEach(item => {
       const updateModel = new UpdateModel()
       updateModel.state = ContentTopicConstant.STATE_ONLINE
@@ -316,7 +317,6 @@ export default class CourseTopicMulAdd extends Vue {
       updateModel.title = item.getTitle()
       updateModel.chooseOption = []
       if (JSHelperUtil.isNotNull(item.getOptionList())) {
-        console.log('111', item.getOptionList())
         item.getOptionList().forEach(option => {
           updateModel.chooseOption.push({
             value: i++,
