@@ -33,10 +33,10 @@
         >{{item.label}}</Tag>
       </FormItem>
       <FormItem label="答案" v-if="formItem.topicType > 0 && contentTopicTypeConstantSelectList.indexOf(formItem.topicType) === -1" prop="answer">
-        <Input v-model.trim="formItem.answer" maxlength="5000" show-word-limit type="textarea" placeholder="Enter something..." style="width: 300px" />
+        <Input v-model.trim="formItem.answer" maxlength="5000" show-word-limit type="textarea" placeholder="Enter something..." style="width: 600px" />
       </FormItem>
       <FormItem label="解析" prop="analysis">
-        <Input v-model.trim="formItem.analysis" maxlength="2000" show-word-limit type="textarea" placeholder="Enter something..." style="width: 300px" />
+        <Input v-model.trim="formItem.analysis" maxlength="2000" show-word-limit type="textarea" placeholder="Enter something..." style="width: 600px" />
       </FormItem>
       <FormItem>
         <Button type="primary" @click="handleSubmit('formItem')" :loading="submitRunning" :disabled="loadingInit">{{$t("P_SAVE")}}</Button>
@@ -132,7 +132,6 @@ export default class CourseTopicEdit extends Vue {
     this.initSelectTopicTypeList()
     this.initContentTopicTypeConstantSelectList()
     await this.initEditData()
-    console.log(this.formItem.topicType, this.contentTopicTypeConstantSelectList)
     this.loadingInit = false
   }
   private initSelectTopicTypeList () {

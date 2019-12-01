@@ -1,6 +1,16 @@
 <template>
   <div>
-    <topic-item style="margin-top: 10px" v-for="item in contentTopic" :data="item" :key="item.contentId"></topic-item>
+    <topic-item
+      style="margin-top: 10px"
+      v-for="item in contentTopic"
+      :data="item"
+      :key="item.contentId"
+    ></topic-item>
+    <div style="margin-top: 20px;margin-left: 40%">
+      <Button type="primary" @click="handleSubmit" :loading="submitRunning" :disabled="loadingInit">{{$t("P_SAVE")}}</Button>
+      <Button type="primary" @click="handleHold" :loading="holdRunning" :disabled="loadingInit">{{$t("P_SAVE")}}</Button>
+      <Button @click="back" style="margin-left: 8px">{{$t("P_CANCEL")}}</Button>
+    </div>
   </div>
 </template>
 
@@ -59,17 +69,21 @@ export default class CourseAlbumAnswer extends Vue {
       JsonProtocol.copyProperties(item, itemContentTopic)
       itemContentTopic.title = `${j + 1} ${itemContentTopic.title}`
       itemContentTopic.addOptionList = []
-      item.getAddOptionList().forEach((optionItem, i) => {
-        const itemContentTopicSelectOption = new ItemContentTopicSelectOption()
-        JsonProtocol.copyProperties(optionItem, itemContentTopicSelectOption)
-        itemContentTopicSelectOption.optionLabel = o[i] + itemContentTopicSelectOption.optionLabel
-        itemContentTopic.addOptionList.push(itemContentTopicSelectOption)
-      })
+      if (item.getAddOptionList() !== null) {
+        item.getAddOptionList().forEach((optionItem, i) => {
+          const itemContentTopicSelectOption = new ItemContentTopicSelectOption()
+          JsonProtocol.copyProperties(optionItem, itemContentTopicSelectOption)
+          itemContentTopicSelectOption.optionLabel = o[i] + itemContentTopicSelectOption.optionLabel
+          itemContentTopic.addOptionList.push(itemContentTopicSelectOption)
+        })
+      }
       this.contentTopic.push(itemContentTopic)
     })
   }
 
-  private async handleSubmit (name) {
+  private async handleSubmit () {
+    // 提交答案并给出得分
+    console.log(this.contentTopic)
   }
   public back () {
     this.closeTag(this.$route)

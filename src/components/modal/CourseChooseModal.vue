@@ -73,7 +73,7 @@ export default class CourseChooseModal extends mixins(ConstantMixin) {
   private chooseIdList: Array<number> = []
   private pageTotal: number = 0
   private pageCurrent: number = 1
-  private pageSize: number = 20
+  private pageSize: number = 10
   private title: string = null
   private loading = true
   private columns = [

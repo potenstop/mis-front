@@ -21,6 +21,7 @@ import { ContentTopicListItemRequest } from '@/request/ContentTopicListItemReque
 import { ContentTopicAddRequest } from '@/request/ContentTopicAddRequest'
 import { ContentTopicViewResponse } from '@/response/ContentTopicViewResponse'
 import { ContentTopicUpdateRequest } from '@/request/ContentTopicUpdateRequest'
+import { ContentTopicMulAddRequest } from '@/request/ContentTopicMulAddRequest'
 @AxisoRemote({ filepath: '/src/dao/api', name: '/content-topic', timeout: 5000 })
 export class ContentTopicApi {
   @PostMapping('/list')
@@ -41,6 +42,11 @@ export class ContentTopicApi {
   @PostMapping('/update')
   @ReturnGenericsProperty(ApiResult, new Map<string, new() => object>().set('data', Number))
   public update (@RequestBody request: ContentTopicUpdateRequest): Promise<ApiResult<number>> {
+    return null
+  }
+  @PostMapping('/mul-add')
+  @ReturnGenericsProperty(ApiResult, new Map<string, new() => object>().set('data', Number))
+  public mulAdd (@RequestBody request: ContentTopicMulAddRequest): Promise<ApiResult<number>> {
     return null
   }
 }

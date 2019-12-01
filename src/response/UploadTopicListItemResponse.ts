@@ -1,5 +1,4 @@
-import {JsonProperty, ReturnGenericsProperty} from 'papio-h5'
-import {ItemContentTopicSelectOption} from "@/components/item/topic/ItemContentTopicSelectOption";
+import { JsonProperty, ReturnGenericsProperty } from 'papio-h5'
 
 /**
  *

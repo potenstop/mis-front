@@ -39,9 +39,9 @@
             <Option v-for="itemType in selectTopicTypeList" :value="itemType.value" :key="itemType.value">{{itemType.label}}</Option>
           </Select>
         </FormItem>
-        <FormItem label="选项" v-if="contentTopicTypeConstantSelectList.indexOf(item.topicType) !== -1">
-          <Input v-model.trim="optionLabel" placeholder="" style="width: 300px"/>
-          <Button icon="ios-add" type="dashed" @click="optionAdd" style="margin-left: 10px">添加选项</Button>
+        <FormItem label="选项" v-if="contentTopicTypeConstantSelectList.indexOf(item.topicType) !== -1" prop="chooseOption">
+          <Input v-model.trim="item.optionLabel" placeholder="" style="width: 300px"/>
+          <Button icon="ios-add" type="dashed" @click="optionAdd(index)" style="margin-left: 10px">添加选项</Button>
           <br/>
           <Tag v-for="itemOption in item.chooseOption"
                style="margin-top: 5px"
@@ -94,6 +94,7 @@ import { ContentTopicUpdateRequest } from '@/request/ContentTopicUpdateRequest'
 import { ContentTopicSelectOptionRequest } from '@/request/ContentTopicSelectOptionRequest'
 import { UploadTopicListItemResponse } from '@/response/UploadTopicListItemResponse'
 import { ApiResult } from '@/bmo/ApiResult'
+import { ContentTopicMulAddRequest } from '@/request/ContentTopicMulAddRequest'
 
 const appModule = namespace(StoreConstant.APP)
 
@@ -111,6 +112,7 @@ class UpdateModel {
   public analysis: string
   @JsonProperty
   public answer: string
+  public optionLabel: string
   @JsonProperty
   public chooseOption: {label: string, value: number, checked: boolean, isNew: boolean}[]
   public constructor () {
@@ -121,6 +123,7 @@ class UpdateModel {
     this.analysis = null
     this.answer = null
     this.chooseOption = []
+    this.optionLabel = null
   }
 }
 
@@ -156,8 +159,8 @@ export default class CourseTopicMulAdd extends Vue {
   }
   private submitRunning: boolean = false
   private isAddPage = true
-  private optionLabel: string = ''
   private removeOptionIdList: number[] = []
+  private optionValue: number = 1000
 
   private async created () {
     const dataSource = Beans.getBean('HttpApiConfigurationMaster') as AxiosDataSource
@@ -197,45 +200,47 @@ export default class CourseTopicMulAdd extends Vue {
   private async handleSubmit () {
     this.submitRunning = true
     try {
+      const contentTopicAddRequestList: ContentTopicAddRequest[] = []
       let i = 0
-      for (;i < this.formItem.length - 1; i++) {
+      for (;i <= this.formItem.length - 1; i++) {
         const form = this.$refs['formItem' + i][0] as any
-        console.log(form)
         const valid = await form.validate()
         if (!valid) {
           return
         }
+        const item = this.formItem[i]
+        const contentTopicAddRequest = new ContentTopicAddRequest()
+        JsonProtocol.copyProperties(item, contentTopicAddRequest)
+        if (ContentTopicConstant.TYPE_SIGN_SELECT === item.topicType || ContentTopicConstant.TYPE_MUL_SELECT === item.topicType) {
+          if (JSHelperUtil.isNullOrUndefined(item.chooseOption) || item.chooseOption.length === 0) {
+            // 没有选项
+            this.$Message.warning('选择题必须有选项')
+            return
+          }
+          const optionList: ContentTopicSelectOptionRequest[] = []
+          let hasCheck = false
+          item.chooseOption.forEach(option => {
+            const contentTopicSelectOptionRequest = new ContentTopicSelectOptionRequest()
+            contentTopicSelectOptionRequest.setOptionLabel(option.label)
+            contentTopicSelectOptionRequest.setIsOptionAnswer(option.checked ? 1 : 2)
+            if (option.checked) {
+              hasCheck = true
+            }
+            optionList.push(contentTopicSelectOptionRequest)
+          })
+          if (!hasCheck) {
+            // 没有答案
+            this.$Message.warning('选择题必须答案')
+            return
+          }
+          contentTopicAddRequest.setAddOptionList(optionList)
+        }
+        contentTopicAddRequestList.push(contentTopicAddRequest)
       }
-      let result = null
-
-      // const request = new ContentTopicAddRequest()
-      // JsonProtocol.copyProperties(this.formItem, request)
-      // if (ContentTopicConstant.TYPE_SIGN_SELECT === this.formItem.topicType || ContentTopicConstant.TYPE_MUL_SELECT === this.formItem.topicType) {
-      //   if (JSHelperUtil.isNullOrUndefined(this.formItem.chooseOption) || this.formItem.chooseOption.length === 0) {
-      //     // 没有选项
-      //     this.$Message.warning('选择题必须有选项')
-      //     return
-      //   }
-      //   const optionList: ContentTopicSelectOptionRequest[] = []
-      //   let hasCheck = false
-      //   this.formItem.chooseOption.forEach(option => {
-      //     const contentTopicSelectOptionRequest = new ContentTopicSelectOptionRequest()
-      //     contentTopicSelectOptionRequest.setOptionLabel(option.label)
-      //     contentTopicSelectOptionRequest.setIsOptionAnswer(option.checked ? 1 : 2)
-      //     if (option.checked) {
-      //       hasCheck = true
-      //     }
-      //     optionList.push(contentTopicSelectOptionRequest)
-      //   })
-      //   if (!hasCheck) {
-      //     // 没有答案
-      //     this.$Message.warning('选择题必须答案')
-      //     return
-      //   }
-      //   request.setAddOptionList(optionList)
-      // }
-      // result = await contentTopicApi.add(request)
-
+      console.log(contentTopicAddRequestList, '111111')
+      const request = new ContentTopicMulAddRequest()
+      request.setContentTopicAddRequestList(contentTopicAddRequestList)
+      const result = await contentTopicApi.mulAdd(request)
       ApiUtil.getData(result)
       RefreshEvent.emit('CourseTopicList')
       this.back()
@@ -249,67 +254,69 @@ export default class CourseTopicMulAdd extends Vue {
     this.closeTag(this.$route)
   }
   private optionAdd (index: number) {
-    const label = this.optionLabel
+    const label = this.formItem[index].optionLabel
     if (StringUtil.isBank(label)) {
       this.$Message.warning('输入不能为空')
       return
     }
     this.formItem[index].chooseOption.push({
-      value: new Date().getTime(),
+      value: this.optionValue++,
       label,
       checked: false,
       isNew: true
     })
-    this.optionLabel = ''
-    const f = this.$refs.formItem as any
+    this.formItem[index].optionLabel = ''
+    const f = this.$refs['formItem' + index][0] as any
     f.validateField('chooseOption')
   }
   private optionTagClose (event, id) {
     const index = this.getOptionIndexById(id)
-    if (index >= 0) {
-      // const option = this.formItem.chooseOption.splice(index, 1)
-      // if (option.length === 1 && !option[0].isNew) {
-      //   this.removeOptionIdList.push(option[0].value)
-      // }
+    if (index[0] >= 0 && index[1] >= 0) {
+      const option = this.formItem[index[0]].chooseOption.splice(index[1], 1)
+      if (option.length === 1 && !option[0].isNew) {
+        this.removeOptionIdList.push(option[0].value)
+      }
     }
   }
-  private getOptionIndexById (id) {
-    let index = -1
-    // this.formItem.chooseOption.forEach((option, i) => {
-    //   if (option.value === id) {
-    //     index = i
-    //   }
-    // })
-    return index
+  private getOptionIndexById (id): number[] {
+    let indexI = -1
+    let indexJ = -1
+    this.formItem.forEach((item, i) => {
+      item.chooseOption.forEach((option, j) => {
+        if (option.value === id) {
+          indexI = i
+          indexJ = j
+        }
+      })
+    })
+    return [indexI, indexJ]
   }
   private optionTagChange (checked, id) {
-    // const index = this.getOptionIndexById(id)
-    // if (checked && ContentTopicConstant.TYPE_SIGN_SELECT === this.formItem.topicType) {
-    //   // 单选 判断当前选中的数量
-    //   let checkCount = 0
-    //   this.formItem.chooseOption.forEach((option, i) => {
-    //     if (option.checked) {
-    //       checkCount++
-    //     }
-    //   })
-    //   if (checkCount !== 0) {
-    //     this.$Message.warning('单选模式 不能多选')
-    //     if (index >= 0) {
-    //       this.formItem.chooseOption[index].checked = false
-    //       console.log('111', this.formItem.chooseOption[index])
-    //     }
-    //     return
-    //   }
-    // }
-    // if (index >= 0) {
-    //   this.formItem.chooseOption[index].checked = checked
-    // }
+    const index = this.getOptionIndexById(id)
+    if (checked && ContentTopicConstant.TYPE_SIGN_SELECT === this.formItem[index[0]].topicType) {
+      // 单选 判断当前选中的数量
+      let checkCount = 0
+      this.formItem[index[0]].chooseOption.forEach((option, i) => {
+        if (option.checked) {
+          checkCount++
+        }
+      })
+      if (checkCount !== 0) {
+        this.$Message.warning('单选模式 不能多选')
+        if (index[0] >= 0 && index[1] >= 0) {
+          this.formItem[index[0]].chooseOption[index[1]].checked = false
+        }
+        return
+      }
+    }
+    if (index[0] >= 0 && index[1] >= 0) {
+      this.formItem[index[0]].chooseOption[index[1]].checked = checked
+    }
   }
   private handleUploadSuccess (res) {
     const result: ApiResult<UploadTopicListItemResponse[]> = JsonProtocol.jsonToBean<ApiResult<UploadTopicListItemResponse[]>>(
       res, ApiResult, new Map<string, new() => object>().set('data', Array).set('data.Array', UploadTopicListItemResponse))
     const data = ApiUtil.getData(result)
-    let i = 10000
     data.forEach(item => {
       const updateModel = new UpdateModel()
       updateModel.state = ContentTopicConstant.STATE_ONLINE
@@ -319,7 +326,7 @@ export default class CourseTopicMulAdd extends Vue {
       if (JSHelperUtil.isNotNull(item.getOptionList())) {
         item.getOptionList().forEach(option => {
           updateModel.chooseOption.push({
-            value: i++,
+            value: this.optionValue++,
             label: option,
             checked: false,
             isNew: true
@@ -328,7 +335,6 @@ export default class CourseTopicMulAdd extends Vue {
       }
       this.formItem.push(updateModel)
     })
-    console.log(this.formItem)
   }
   private handleUploadError (error) {
     this.$Message.error('上传失败:' + error.message)
