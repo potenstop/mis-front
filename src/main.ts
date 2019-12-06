@@ -15,6 +15,9 @@ import axios from 'axios'
 import VModal from 'vue-js-modal'
 // simpe page table css
 import '@/assets/css/simple-page-table.css'
+import VueKatex from 'vue-katex'
+import 'katex/dist/katex.min.css'
+
 
 Vue.prototype.axios = axios
 // 实际打包时应该不引入mock
@@ -36,6 +39,8 @@ Vue.use(VModal, {
  */
 installPlugin(Vue)
 Vue.directive('clickOutside', clickOutside)
+// katex
+Vue.use(VueKatex)
 
 /**
  * 注册指令

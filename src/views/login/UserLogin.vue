@@ -7,6 +7,9 @@
           <p class="login-tip">{{errorTip}}</p>
         </div>
       </Card>
+      <div v-katex="'\\[\n'+
+'\\int_0^1f(t)dt = \\iint_Dg(x,y)dxdy.\n'+
+'\\]'"></div>
     </div>
   </div>
 </template>
@@ -25,23 +28,26 @@ const userModule = namespace(StoreConstant.USER)
   }
 })
 export default class UserLogin extends Vue {
-    @userModule.Action handleLogin;
-    @userModule.Action getUserInfo;
-    name = 'UserLogin';
-    errorTip: string = '';
+  @userModule.Action handleLogin
+  @userModule.Action getUserInfo
+  private name = 'UserLogin'
+  private errorTip: string = ''
+  private html: string = ''
 
-    private async handleSubmit ({ nickname, password }) {
-      try {
-        this.errorTip = ''
-        await this.handleLogin({ nickname, password })
-        await this.getUserInfo()
-        await this.$router.push({
-          name: this.$config.homeName
-        })
-      } catch (e) {
-        this.errorTip = e.message
-      }
+  private created () {
+  }
+  private async handleSubmit ({ nickname, password }) {
+    try {
+      this.errorTip = ''
+      await this.handleLogin({ nickname, password })
+      await this.getUserInfo()
+      await this.$router.push({
+        name: this.$config.homeName
+      })
+    } catch (e) {
+      this.errorTip = e.message
     }
+  }
 }
 </script>
 
