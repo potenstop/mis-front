@@ -16,7 +16,7 @@
             <span>{{ row.contentId }}</span>
           </template>
           <template slot-scope="{ row }" slot="title">
-            <span>{{ row.title }}</span>
+            <auto-katex :data="row.title"></auto-katex>
           </template>
           <template slot-scope="{ row }" slot="topicType">
             <span>{{ getContentTopicTypeNameById(row.topicType) }}</span>
@@ -54,6 +54,7 @@ import ConstantMixin from '@/components/mixin/ConstantMixin'
 import { mixins } from 'vue-class-component'
 import { AlbumCourseApi } from '@/dao/api/AlbumCourseApi'
 import { AlbumCourseUpdateCourseRelationRequest } from '@/request/AlbumCourseUpdateCourseRelationRequest'
+import AutoKatex from '@/components/katex/AutoKatex.vue'
 
 const contentTopicApi = new ContentTopicApi()
 const albumCourseApi = new AlbumCourseApi()
@@ -73,7 +74,7 @@ class UpdateModel {
 
 @Component({
   components: {
-    CourseChooseModal
+    CourseChooseModal, AutoKatex
   }
 })
 export default class CourseAlbumTopic extends mixins(ConstantMixin) {

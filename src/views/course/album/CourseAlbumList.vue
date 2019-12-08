@@ -114,7 +114,7 @@ export default class CourseAlbumList extends Vue {
     this.$router.push({
       path: '/course/album/edit',
       query: {
-        id: row.courseId
+        id: row.albumId
       }
     })
   }

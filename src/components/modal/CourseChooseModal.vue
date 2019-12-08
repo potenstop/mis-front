@@ -22,7 +22,7 @@
         <span>{{ row.contentId }}</span>
       </template>
       <template slot-scope="{ row }" slot="title">
-        <span>{{ row.title }}</span>
+        <auto-katex :data="row.title"></auto-katex>
       </template>
       <template slot-scope="{ row }" slot="topicType">
         <span>{{ getContentTopicTypeNameById(row.topicType) }}</span>
@@ -65,9 +65,14 @@ import { ContentTopicApi } from '@/dao/api/ContentTopicApi'
 import { ApiUtil } from '@/common/util/ApiUtil'
 import ConstantMixin from '@/components/mixin/ConstantMixin'
 import { mixins } from 'vue-class-component'
+import AutoKatex from '@/components/katex/AutoKatex.vue'
 const contentTopicApi = new ContentTopicApi()
 
-@Component
+@Component({
+  components: {
+    AutoKatex
+  }
+})
 export default class CourseChooseModal extends mixins(ConstantMixin) {
   private name = 'CourseChooseModal'
   private chooseIdList: Array<number> = []

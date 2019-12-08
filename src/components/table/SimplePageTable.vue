@@ -47,7 +47,10 @@
       @on-row-dblclick="onRowDblclick"
       @on-expand="onExpand"
       @on-drag-drop="onDragDrop"
-    ><slot name="header" slot="header"></slot>
+    ><template slot-scope="{ row, column }" slot="katext">
+      <auto-katex :data="row[column.key]"></auto-katex>
+    </template>
+      <slot name="header" slot="header"></slot>
       <slot name="footer" slot="footer"></slot>
       <slot name="loading" slot="loading"></slot>
     </Table>
@@ -77,9 +80,10 @@ import { ApiUtil } from '@/common/util/ApiUtil'
 import { ConvertUtil, JSHelperUtil } from 'papio-h5'
 import AceEditor from '@/components/editor/AceEditor.vue'
 import { RefreshEvent } from '@/common/event/RefreshEvent'
+import AutoKatex from '@/components/katex/AutoKatex.vue'
 
 @Component({
-  components: { AceEditor }
+  components: { AutoKatex, AceEditor }
 })
 export default class SimplePageTable extends Vue {
   @Prop({ default: () => [] }) data!: any[];

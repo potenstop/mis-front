@@ -42,6 +42,7 @@ export default class CourseTopicList extends Vue {
     {
       title: '题目描述',
       key: 'title',
+      slot: 'katext',
       customFilter: {
         type: 'inputText'
       }

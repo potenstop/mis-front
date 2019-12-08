@@ -1,8 +1,9 @@
-<template>
+<template xmlns:v-katex="http://www.w3.org/1999/xhtml">
   <Card style="width: 100%">
     <Form ref="formItem" :model="formItem" :rules="ruleValidate" :label-width="80" style="margin-left: 20%" label-position="left">
       <FormItem label="标题" prop="title">
         <Input v-model.trim="formItem.title" placeholder="" style="width: 300px"></Input>
+        <auto-katex :data="formItem.title"></auto-katex>
       </FormItem>
       <FormItem label="是否展示" prop="state">
         <Select v-model="formItem.state" style="width: 300px">
@@ -18,6 +19,7 @@
       <FormItem label="选项" v-if="contentTopicTypeConstantSelectList.indexOf(formItem.topicType) !== -1" prop="chooseOption">
         <Input v-model.trim="optionLabel" placeholder="" style="width: 300px"/>
         <Button icon="ios-add" type="dashed" @click="optionAdd" style="margin-left: 10px">添加选项</Button>
+        <auto-katex :data="optionLabel"></auto-katex>
         <br/>
         <Tag v-for="item in formItem.chooseOption"
              style="margin-top: 5px"
@@ -39,8 +41,8 @@
         <Input v-model.trim="formItem.analysis" maxlength="2000" show-word-limit type="textarea" placeholder="Enter something..." style="width: 600px" />
       </FormItem>
       <FormItem>
-        <Button type="primary" @click="handleSubmit('formItem')" :loading="submitRunning" :disabled="loadingInit">{{$t("P_SAVE")}}</Button>
-        <Button @click="back" style="margin-left: 8px">{{$t("P_CANCEL")}}</Button>
+        <Button type="primary" @click="handleSubmit('formItem')" :loading="submitRunning" :disabled="loadingInit">{{$t('P_SAVE')}}</Button>
+        <Button @click="back" style="margin-left: 8px">{{$t('P_CANCEL')}}</Button>
       </FormItem>
     </Form>
   </Card>
@@ -58,6 +60,7 @@ import { ContentTopicAddRequest } from '@/request/ContentTopicAddRequest'
 import { ContentTopicApi } from '@/dao/api/ContentTopicApi'
 import { ContentTopicUpdateRequest } from '@/request/ContentTopicUpdateRequest'
 import { ContentTopicSelectOptionRequest } from '@/request/ContentTopicSelectOptionRequest'
+import AutoKatex from '@/components/katex/AutoKatex.vue'
 
 const appModule = namespace(StoreConstant.APP)
 
@@ -88,7 +91,9 @@ class UpdateModel {
   }
 }
 
-@Component
+@Component({
+  components: { AutoKatex }
+})
 export default class CourseTopicEdit extends Vue {
   @appModule.Mutation closeTag: Function
   private name = 'CourseTopicEdit'
@@ -99,7 +104,7 @@ export default class CourseTopicEdit extends Vue {
   private ruleValidate = {
     title: [
       { type: 'string', required: true, message: '标题不能为空', trigger: 'blur' },
-      { type: 'string', max: 50, message: '课程名称最大不超过50字符', trigger: 'blur' }
+      { type: 'string', max: 2000, message: '课程名称最大不超过50字符', trigger: 'blur' }
     ],
     state: [
       { type: 'integer', required: true, message: '状态不能为空', trigger: 'blur' }
@@ -111,7 +116,7 @@ export default class CourseTopicEdit extends Vue {
       { type: 'array', required: true, message: '选项不能为空', trigger: 'blur' }
     ],
     analysis: [
-      { type: 'string', required: true, message: '解析不能为空', trigger: 'blur' }
+      { type: 'string', required: false, message: '解析不能为空', trigger: 'blur' }
     ],
     answer: [
       { type: 'string', required: true, message: '答案不能为空', trigger: 'blur' }

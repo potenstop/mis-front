@@ -1,4 +1,4 @@
-<template>
+<template xmlns:v-katex="http://www.w3.org/1999/xhtml">
   <div class="login">
     <div class="login-con">
       <Card icon="log-in" title="欢迎登录" :bordered="false">
@@ -7,9 +7,6 @@
           <p class="login-tip">{{errorTip}}</p>
         </div>
       </Card>
-      <div v-katex="'\\[\n'+
-'\\int_0^1f(t)dt = \\iint_Dg(x,y)dxdy.\n'+
-'\\]'"></div>
     </div>
   </div>
 </template>
