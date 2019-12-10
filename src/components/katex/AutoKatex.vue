@@ -8,7 +8,7 @@ import { Component, Prop, Vue, Watch } from 'vue-property-decorator'
 import katex from 'katex'
 import { JSHelperUtil, StringUtil } from 'papio-h5'
 
-  @Component
+@Component
 export default class AutoKatex extends Vue {
   private name = 'AutoKatex'
   @Prop({ default: '' }) readonly data!: string;

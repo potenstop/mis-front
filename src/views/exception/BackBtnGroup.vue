@@ -12,27 +12,28 @@ import { Component, Vue } from 'vue-property-decorator'
 
 @Component
 export default class BackBtnGroup extends Vue {
-  name = 'BackBtnGroup';
-
-  // data
-  second = 5;
-  timer = 0;
-  backHome () {
+  private name = 'BackBtnGroup'
+  private second: number = 5
+  private timer: number = 0
+  private backHome () {
     this.$router.replace({
       name: this.$config.homeName
     })
   }
 
-  backPrev () {
+  private backPrev () {
     this.$router.go(-1)
   }
-  mounted () {
+  private mounted () {
     this.timer = setInterval(() => {
-      if (this.second === 0) this.backPrev()
-      else this.second--
-    }, 1000) as any
+      if (this.second === 0) {
+        this.backPrev()
+      } else {
+        this.second--
+      }
+    }, 1000)
   }
-  beforeDestroy () {
+  private beforeDestroy () {
     if (this.timer) {
       clearInterval(this.timer)
     }

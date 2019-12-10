@@ -36,9 +36,7 @@
     "src/**/*.ts",
     "src/**/*.tsx",
     "src/**/*.vue",
-    "tests/**/*.ts",
-    "tests/**/*.tsx",
-    "../../../install/WebStorm 183.4588.47/plugins/JavaScriptLanguage/jsLanguageServicesImpl/external/lib.es5.d.ts"
+    "tests/**/*.ts"
   ],
   "exclude": [
     "node_modules"
