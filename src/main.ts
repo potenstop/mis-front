@@ -17,7 +17,6 @@ import VModal from 'vue-js-modal'
 import '@/assets/css/simple-page-table.css'
 import 'katex/dist/katex.min.css'
 
-
 Vue.prototype.axios = axios
 // 实际打包时应该不引入mock
 if (process.env.NODE_ENV !== 'production') {

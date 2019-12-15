@@ -1,5 +1,5 @@
 <template>
-  <div v-html="htmlData">
+  <div v-html="htmlData" :style="{display: isLineFeed?'block' : 'inline'}">
   </div>
 </template>
 
@@ -12,10 +12,10 @@ import { JSHelperUtil, StringUtil } from 'papio-h5'
 export default class AutoKatex extends Vue {
   private name = 'AutoKatex'
   @Prop({ default: '' }) readonly data!: string;
+  @Prop({ default: true }) readonly isLineFeed!: boolean;
   private htmlData = ''
 
   private created () {
-    // katex.renderToString()
     this.katexRender()
   }
 

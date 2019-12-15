@@ -20,6 +20,7 @@
     "countup": "^1.8.2",
     "js-cookie": "^2.2.0",
     "katex": "^0.11.1",
+    "localforage": "^1.7.3",
     "mockjs": "^1.0.1-beta3",
     "moment": "^2.24.0",
     "papio-h5": "0.0.8",

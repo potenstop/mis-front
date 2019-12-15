@@ -31,7 +31,7 @@ export default class BackBtnGroup extends Vue {
       } else {
         this.second--
       }
-    }, 1000)
+    }, 1000) as any
   }
   private beforeDestroy () {
     if (this.timer) {

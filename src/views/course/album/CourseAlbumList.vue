@@ -9,23 +9,36 @@
         <Button type="primary" icon="ios-add" v-on:click="actionAdd">{{$t("P_ADD")}}</Button>
       </div>
     </simple-page-table>
+    <problem-choose-modal/>
   </div>
 </template>
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
 import { AlbumCourseApi } from '@/dao/api/AlbumCourseApi'
+import { AlbumCourseProblemApi } from '@/dao/api/AlbumCourseProblemApi'
 import { JsonProtocol } from 'papio-h5'
 import { AlbumCourseListItemRequest } from '@/request/AlbumCourseListItemRequest'
 import SimplePageTable from '@/components/table/SimplePageTable.vue'
+import { AlbumCourseProblemListItemRequest } from '@/request/AlbumCourseProblemListItemRequest'
+import { StoreConstant } from '@/common/constant/StoreConstant'
+import { namespace } from 'vuex-class'
+import { AlbumCourseProblemConstant } from '@/common/constant/AlbumCourseProblemConstant'
+import { ApiUtil } from '@/common/util/ApiUtil'
+import { AlbumCourseProblemAddRequest } from '@/request/AlbumCourseProblemAddRequest'
+import ProblemChooseModal from '@/components/modal/ProblemChooseModal.vue'
+
+const userModule = namespace(StoreConstant.USER)
 
 const albumCourseApi = new AlbumCourseApi()
+const albumCourseProblemApi = new AlbumCourseProblemApi()
 @Component({
   components: {
-    SimplePageTable
+    SimplePageTable, ProblemChooseModal
   }
 })
 export default class CourseAlbumList extends Vue {
+  @userModule.State userId: string;
   private name = 'CourseAlbumList'
   private columns = [
     {
@@ -126,11 +139,40 @@ export default class CourseAlbumList extends Vue {
       }
     })
   }
-  private actionAnswer (row: any, index) {
+  private async actionAnswer (row: any, index) {
+    const albumCourseProblemListItemRequest = new AlbumCourseProblemListItemRequest()
+    albumCourseProblemListItemRequest.setAlbumId(row.albumId)
+    albumCourseProblemListItemRequest.setUserId(+this.userId)
+    albumCourseProblemListItemRequest.setPageSize(1000)
+    albumCourseProblemListItemRequest.setPageNum(1)
+    albumCourseProblemListItemRequest.setState(AlbumCourseProblemConstant.STATE_SAVE)
+    const listResult = await albumCourseProblemApi.list(albumCourseProblemListItemRequest)
+    const listData = ApiUtil.getData(listResult)
+    if (listData.getTotal() === 0) {
+      const albumCourseProblemAddRequest = new AlbumCourseProblemAddRequest()
+      albumCourseProblemAddRequest.setAlbumId(row.albumId)
+      const addResult = await albumCourseProblemApi.add(albumCourseProblemAddRequest)
+      const addData = ApiUtil.getData(addResult)
+      this.$router.push({
+        path: '/course/album/answer',
+        query: {
+          id: row.albumId,
+          albumCourseProblemId: addData + ''
+        }
+      })
+    } else {
+      this.$modal.show('problem-choose-modal', {
+        chooseList: listData.getList(),
+        onChooseRow: this.onChooseRow
+      })
+    }
+  }
+  private onChooseRow (row) {
     this.$router.push({
       path: '/course/album/answer',
       query: {
-        id: row.albumId
+        albumId: row.albumId,
+        albumCourseProblemId: row.albumCourseProblemId
       }
     })
   }

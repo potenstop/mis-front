@@ -1,5 +1,6 @@
 import Cookies from 'js-cookie'
 import config from '@/config/ProjectConfig'
+import { ItemContentTopic } from '@/components/item/topic/ItemContentTopic'
 
 const { cookieExpires, tokenKey } = config
 /**
@@ -19,5 +20,9 @@ export class CookiesUtil {
     const token = Cookies.get(tokenKey)
     if (token) return token
     else return false
+  }
+  public static setAlbumCourseProblem (albumCourseProblemId: number, contentTopic: ItemContentTopic[]) {
+    console.log(11111111111112222, JSON.stringify(contentTopic))
+    Cookies.set('albumCourseProblem1_'+ albumCourseProblemId, '111111111', { expires: 10000})
   }
 }
