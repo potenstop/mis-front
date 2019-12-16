@@ -21,8 +21,4 @@ export class CookiesUtil {
     if (token) return token
     else return false
   }
-  public static setAlbumCourseProblem (albumCourseProblemId: number, contentTopic: ItemContentTopic[]) {
-    console.log(11111111111112222, JSON.stringify(contentTopic))
-    Cookies.set('albumCourseProblem1_'+ albumCourseProblemId, '111111111', { expires: 10000})
-  }
 }

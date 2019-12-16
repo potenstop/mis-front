@@ -20,7 +20,7 @@ import 'katex/dist/katex.min.css'
 Vue.prototype.axios = axios
 // 实际打包时应该不引入mock
 if (process.env.NODE_ENV !== 'production') {
-  // require('@/mock/UserMock')
+  require('@/mock/UserMock')
 }
 
 Vue.config.productionTip = false
