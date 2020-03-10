@@ -4,13 +4,13 @@ import { JsonProperty } from 'papio-h5'
  *
  * 功能描述:
  *
- * @className UserAuthBaseResponse
+ * @className UserAuthBasicResponse
  * @projectName web-front
  * @author yanshaowen
  * @date 2019/6/24 14:18
  */
 
-export class UserAuthBaseResponse {
+export class UserAuthBasicResponse {
   @JsonProperty
   private userId: number
   @JsonProperty

@@ -9,7 +9,7 @@
  */
 import Mock from 'mockjs'
 import { ApiResult } from '@/bmo/ApiResult'
-import { UserAuthBaseResponse } from '@/response/UserAuthBaseResponse'
+import { UserAuthBasicResponse } from '@/response/UserAuthBasicResponse'
 import { UserAuthResponse } from '@/response/UserAuthResponse'
 // 配置Ajax请求延时，可用来测试网络延迟大时项目中一些效果
 Mock.setup({
@@ -21,8 +21,8 @@ Mock.mock(/\/api\/user\/ldap\/login(|\?\S*)$/, (req) => {
   return result
 })
 Mock.mock(/\/api\/user\/info(|\?\S*)$/, (req) => {
-  const result = new ApiResult<UserAuthBaseResponse>()
-  const response = new UserAuthBaseResponse()
+  const result = new ApiResult<UserAuthBasicResponse>()
+  const response = new UserAuthBasicResponse()
   const auth = new UserAuthResponse()
   response.setAvatar('http://cms-bucket.nosdn.127.net/2018/08/13/078ea9f65d954410b62a52ac773875a1.jpeg')
   response.setNickname('yanshaowen')
@@ -36,9 +36,9 @@ Mock.mock(/\/api\/user\/info(|\?\S*)$/, (req) => {
   return result
 })
 Mock.mock(/\/api\/user\/list(|\?\S*)$/, (req) => {
-  const result = new ApiResult<UserAuthBaseResponse[]>()
+  const result = new ApiResult<UserAuthBasicResponse[]>()
   // result.setData()
-  const response = new UserAuthBaseResponse()
+  const response = new UserAuthBasicResponse()
   const auth = new UserAuthResponse()
   response.setAvatar('http://cms-bucket.nosdn.127.net/2018/08/13/078ea9f65d954410b62a52ac773875a1.jpeg')
   response.setNickname('yanshaowen')

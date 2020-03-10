@@ -15,22 +15,22 @@ import {
   ReturnGenericsProperty
 } from 'papio-h5'
 import { ApiResult } from '@/bmo/ApiResult'
-import { UserAuthBaseResponse } from '@/response/UserAuthBaseResponse'
+import { UserAuthBasicResponse } from '@/response/UserAuthBasicResponse'
 import { UserListRequest } from '@/request/UserListRequest'
 import { PageResponse } from '@/bmo/PageResponse'
 import { UserListItemResponse } from '@/response/UserListItemResponse'
 import { UserDetailResponse } from '@/response/UserDetailResponse'
-@AxisoRemote({ filepath: '/src/dao/api', name: '/user', timeout: 10000 })
+@AxisoRemote({ filepath: '/src/dao/api', name: 'user-api', timeout: 10000 })
 export class UserApi {
-  @GetMapping('/ldap/login')
+  @GetMapping('/mis/login/ldap')
   @ReturnGenericsProperty(ApiResult, new Map<string, new() => object>().set('data', String))
-  public ldapLogin (@RequestParam('username') username: string, @RequestParam('password') password: string): Promise<ApiResult<String>> {
+  public ldapLogin (@RequestParam('identifier') username: string, @RequestParam('credential') password: string): Promise<ApiResult<String>> {
     return null
   }
 
-  @GetMapping('/info')
-  @ReturnGenericsProperty(ApiResult, new Map<string, new() => object>().set('data', UserAuthBaseResponse))
-  public info (): Promise<ApiResult<UserAuthBaseResponse>> {
+  @GetMapping('/mis/info/basic')
+  @ReturnGenericsProperty(ApiResult, new Map<string, new() => object>().set('data', UserAuthBasicResponse))
+  public info (): Promise<ApiResult<UserAuthBasicResponse>> {
     return null
   }
 
