@@ -51,7 +51,7 @@ export default class UserLogin extends Vue {
 <style lang="less">
   .login {
     width: 100%;
-    height: 100%;
+    height: 90%;
     background-image: url('../../assets/images/login-bg.jpg');
     background-size: cover;
     background-position: center;
