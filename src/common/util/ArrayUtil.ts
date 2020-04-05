@@ -15,5 +15,5 @@ export class ArrayUtil {
  */
   public static getUnion (arr1: Array<any>, arr2: Array<any>) {
     return Array.from(new Set([...arr1, ...arr2]))
-  };
+  }
 }

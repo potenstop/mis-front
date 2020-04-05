@@ -1,24 +1,16 @@
 <template>
   <div id="app">
-    <router-view v-on:footer="footer" v-if="isRouterAlive"></router-view>
-    <app-footer v-if="footerShow"></app-footer>
+    <router-view v-if="isRouterAlive"/>
   </div>
 </template>
 
 <script lang="ts">
 import './config/HttpApiConfiguration'
 import { Component, Vue, Watch, Provide } from 'vue-property-decorator'
-import AppFooter from '@/components/app/AppFooter.vue'
-
-@Component({
-  components: {
-    AppFooter
-  }
-})
+@Component
 export default class App extends Vue {
   @Provide('reload') reload = this.reloadF
   private name = 'App'
-  private footerShow = true
   private isRouterAlive = true
 
   private reloadF () {
@@ -26,9 +18,6 @@ export default class App extends Vue {
     this.$nextTick(() => {
       this.isRouterAlive = true
     })
-  }
-  private footer (bool) {
-    this.footerShow = bool
   }
 }
 </script>

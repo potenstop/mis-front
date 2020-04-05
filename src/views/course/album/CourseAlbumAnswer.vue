@@ -22,7 +22,7 @@ import { StoreConstant } from '@/common/constant/StoreConstant'
 import { JSHelperUtil, JsonProperty, JsonProtocol, ReturnGenericsProperty, StringUtil } from 'papio-h5'
 import { RefreshEvent } from '@/common/event/RefreshEvent'
 import { ContentTopicApi } from '@/dao/api/ContentTopicApi'
-import { AlbumCourseApi } from '@/dao/api/AlbumCourseApi'
+import { CourseApi } from '@/dao/api/CourseApi'
 import { AlbumCourseProblemApi } from '@/dao/api/AlbumCourseProblemApi'
 import TopicItem from '@/components/item/topic/TopicItem.vue'
 import { ItemContentTopic } from '@/components/item/topic/ItemContentTopic'
@@ -33,7 +33,7 @@ import { ProblemContentTopicRequest } from '@/request/ProblemContentTopicRequest
 import moment from 'moment'
 
 const contentTopicApi = new ContentTopicApi()
-const albumCourseApi = new AlbumCourseApi()
+const courseApi = new CourseApi()
 const albumCourseProblemApi = new AlbumCourseProblemApi()
 const appModule = namespace(StoreConstant.APP)
 
@@ -109,7 +109,7 @@ export default class CourseAlbumAnswer extends Vue {
     const query = this.$route.query as any
     this.albumId = query.albumId
     this.albumCourseProblemId = query.albumCourseProblemId
-    const result = await albumCourseApi.albumCourseTopicList(this.albumId)
+    const result = await courseApi.albumCourseTopicList(this.albumId)
     this.contentTopic = []
     const o = ['A ', 'B ', 'C ', 'D ', 'E ', 'F ', 'J ']
     const cacheData = await this.getCacheData()
@@ -118,14 +118,14 @@ export default class CourseAlbumAnswer extends Vue {
       JsonProtocol.copyProperties(item, itemContentTopic)
       itemContentTopic.title = `${j + 1} ${itemContentTopic.title}`
       itemContentTopic.addOptionList = []
-      if (item.getAddOptionList() !== null) {
-        item.getAddOptionList().forEach((optionItem, i) => {
-          const itemContentTopicSelectOption = new ItemContentTopicSelectOption()
-          JsonProtocol.copyProperties(optionItem, itemContentTopicSelectOption)
-          itemContentTopicSelectOption.optionLabel = o[i] + itemContentTopicSelectOption.optionLabel
-          itemContentTopic.addOptionList.push(itemContentTopicSelectOption)
-        })
-      }
+      // if (item.getAddOptionList() !== null) {
+      //   item.getAddOptionList().forEach((optionItem, i) => {
+      //     const itemContentTopicSelectOption = new ItemContentTopicSelectOption()
+      //     JsonProtocol.copyProperties(optionItem, itemContentTopicSelectOption)
+      //     itemContentTopicSelectOption.optionLabel = o[i] + itemContentTopicSelectOption.optionLabel
+      //     itemContentTopic.addOptionList.push(itemContentTopicSelectOption)
+      //   })
+      // }
       if (item.getContentId() in cacheData) {
         itemContentTopic.chooseValue = cacheData[item.getContentId()]
       }

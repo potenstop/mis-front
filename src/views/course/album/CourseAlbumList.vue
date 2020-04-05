@@ -15,7 +15,7 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
-import { AlbumCourseApi } from '@/dao/api/AlbumCourseApi'
+import { CourseApi } from '@/dao/api/CourseApi'
 import { AlbumCourseProblemApi } from '@/dao/api/AlbumCourseProblemApi'
 import { JsonProtocol } from 'papio-h5'
 import { AlbumCourseListItemRequest } from '@/request/AlbumCourseListItemRequest'
@@ -30,7 +30,7 @@ import ProblemChooseModal from '@/components/modal/ProblemChooseModal.vue'
 
 const userModule = namespace(StoreConstant.USER)
 
-const albumCourseApi = new AlbumCourseApi()
+const courseApi = new CourseApi()
 const albumCourseProblemApi = new AlbumCourseProblemApi()
 @Component({
   components: {
@@ -116,7 +116,7 @@ export default class CourseAlbumList extends Vue {
   ]
   private apiList (body) {
     const request = JsonProtocol.jsonToBean(body, AlbumCourseListItemRequest)
-    return albumCourseApi.list(request)
+    return courseApi.albumCourseList(request)
   }
   private actionAdd () {
     this.$router.push({
@@ -171,8 +171,8 @@ export default class CourseAlbumList extends Vue {
     this.$router.push({
       path: '/course/album/answer',
       query: {
-        albumId: row.albumId,
-        albumCourseProblemId: row.albumCourseProblemId
+        albumId: row.albumId + '',
+        albumCourseProblemId: row.albumCourseProblemId + ''
       }
     })
   }

@@ -123,7 +123,7 @@ export default class SideMenu extends mixins(mixin) {
       .map(item => item.name)
       .filter(item => item !== name)
   }
-  updateOpenName (name) {
+  public updateOpenName (name) {
     if (name === this.$config.homeName) {
       this.openedNames = []
     } else {

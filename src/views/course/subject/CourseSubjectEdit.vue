@@ -33,7 +33,6 @@
 import { Component, Vue } from 'vue-property-decorator'
 import { CourseAddRequest } from '@/request/CourseAddRequest'
 import { CourseApi } from '@/dao/api/CourseApi'
-import { CourseTypeApi } from '@/dao/api/CourseTypeApi'
 import { CourseTypeTreeItemResponse } from '@/response/CourseTypeTreeItemResponse'
 import { ApiUtil } from '@/common/util/ApiUtil'
 import { State, Getter, Action, Mutation, namespace } from 'vuex-class'
@@ -45,7 +44,6 @@ import { RefreshEvent } from '@/common/event/RefreshEvent'
 const appModule = namespace(StoreConstant.APP)
 
 const courseApi = new CourseApi()
-const courseTypeApi = new CourseTypeApi()
 class UpdateModel {
   @JsonProperty
   public courseId: number
@@ -101,7 +99,7 @@ export default class CourseSubjectEdit extends Vue {
 
   private async created () {
     this.loadingInit = true
-    this.courseTypeTreeList = ApiUtil.getData(await courseTypeApi.noPageTree())
+    this.courseTypeTreeList = ApiUtil.getData(await courseApi.courseTypeTreeByFilterNotPage())
     if (this.$route.path.indexOf('add') !== -1) {
       this.isAddPage = true
     } else {
@@ -109,7 +107,7 @@ export default class CourseSubjectEdit extends Vue {
     }
     if (!this.isAddPage) {
       const query = this.$route.query as any
-      const result = await courseApi.view(query.id)
+      const result = await courseApi.courseView(query.id)
       const courseViewResponse = ApiUtil.getData(result)
       this.formItem = new UpdateModel()
       JsonProtocol.copyProperties(courseViewResponse, this.formItem)
@@ -213,12 +211,12 @@ export default class CourseSubjectEdit extends Vue {
         const request = new CourseAddRequest()
         JsonProtocol.copyProperties(this.formItem, request)
         request.setCourseThreeIdList(this.formItem.courseThreeIdList)
-        result = await courseApi.add(request)
+        result = await courseApi.courseAdd(request)
       } else {
         const request = new CourseUpdateRequest()
         JsonProtocol.copyProperties(this.formItem, request)
         request.setCourseThreeIdList(this.formItem.courseThreeIdList)
-        result = await courseApi.update(request)
+        result = await courseApi.courseUpdate(request)
       }
       ApiUtil.getData(result)
       RefreshEvent.emit('CourseSubjectList')

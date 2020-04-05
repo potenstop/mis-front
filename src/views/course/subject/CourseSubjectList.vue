@@ -16,17 +16,13 @@
 <script lang="ts">
 import { Component, Vue, Inject } from 'vue-property-decorator'
 import { CourseApi } from '@/dao/api/CourseApi'
-import { CourseTypeApi } from '@/dao/api/CourseTypeApi'
 import { JSHelperUtil, JsonProtocol } from 'papio-h5'
 import SimplePageTable from '@/components/table/SimplePageTable.vue'
 import { CourseListItemRequest } from '@/request/CourseListItemRequest'
 import { CourseListItemResponse } from '@/response/CourseListItemResponse'
 import { CourseTypeSimpleResponse } from '@/response/CourseTypeSimpleResponse'
 import { ApiUtil } from '@/common/util/ApiUtil'
-import { ParamsConstant } from '@/common/constant/ParamsConstant'
-import { CourseTypeListItemResponse } from '@/response/CourseTypeListItemResponse'
 const courseApi = new CourseApi()
-const courseTypeApi = new CourseTypeApi()
 @Component({
   components: {
     SimplePageTable
@@ -104,7 +100,7 @@ export default class CourseSubjectList extends Vue {
   }
   private apiList (body) {
     const request = JsonProtocol.jsonToBean(body, CourseListItemRequest)
-    return courseApi.list(request)
+    return courseApi.courseListByFilter(request)
   }
   private actionAdd () {
     this.$router.push({
@@ -120,7 +116,7 @@ export default class CourseSubjectList extends Vue {
     })
   }
   private async childStartInit () {
-    const result = await courseTypeApi.noPageList(null, null)
+    const result = await courseApi.courseTypeListByFilterNotPage(null, null)
     const data = ApiUtil.getData(result)
     const map = new Map<number, { value: number; label: string; }[]>()
     data.forEach(item => {

@@ -86,7 +86,7 @@ export default {
     },
     // 获取用户相关信息
     async getUserInfo ({ state, commit }) {
-      const result = await userApi.info()
+      const result = await userApi.userInfo()
       const data = ApiUtil.getData(result)
       commit('setAvatar', data.getAvatar())
       commit('setNickname', data.getNickname())

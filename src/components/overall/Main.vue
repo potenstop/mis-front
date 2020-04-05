@@ -71,6 +71,9 @@
           </Content>
         </Layout>
       </Content>
+      <Footer class="layout-footer-center">
+        <app-footer></app-footer>
+      </Footer>
     </Layout>
   </Layout>
 </template>
@@ -89,9 +92,9 @@ import HeaderBar from '@/components/header-bar/HeaderBar.vue'
 import SwitchLanguage from '@/components/language/SwitchLanguage.vue'
 import FullScreen from '@/components/screen/FullScreen.vue'
 import DropUser from '@/components/user/DropUser.vue'
+import AppFooter from '@/components/app/AppFooter.vue'
 const userModule = namespace(StoreConstant.USER)
 const appModule = namespace(StoreConstant.APP)
-
 @Component({
   components: {
     RollBackTop,
@@ -101,7 +104,8 @@ const appModule = namespace(StoreConstant.APP)
     ErrorStore,
     SwitchLanguage,
     FullScreen,
-    DropUser
+    DropUser,
+    AppFooter
   }
 })
 export default class Main extends Vue {
@@ -186,8 +190,9 @@ export default class Main extends Vue {
       type: 'push'
     })
     this.setBreadCrumb(newRoute)
-    this.setTagNavList(RouterUtil.getNewTagList(this.tagNavList, newRoute));
-    (this.$refs.sideMenu as SideMenu).updateOpenName(newRoute.name)
+    this.setTagNavList(RouterUtil.getNewTagList(this.tagNavList, newRoute))
+    const sideMenu = this.$refs.sideMenu as any
+    sideMenu.updateOpenName(newRoute.name)
   }
 
   mounted () {
@@ -289,5 +294,8 @@ export default class Main extends Vue {
 
   .ivu-select-dropdown.ivu-dropdown-transfer{
     max-height: 400px;
+  }
+  .layout-footer-center{
+    text-align: center;
   }
 </style>

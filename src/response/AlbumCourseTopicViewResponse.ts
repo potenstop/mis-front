@@ -1,5 +1,5 @@
 import { JsonProperty, ReturnGenericsProperty } from 'papio-h5'
-import { ContentTopicViewResponse } from '@/response/ContentTopicViewResponse'
+import { AlbumCourseTopicViewContentTopicItemResponse } from '@/response/AlbumCourseTopicViewContentTopicItemResponse'
 
 /**
  *
@@ -22,8 +22,8 @@ export class AlbumCourseTopicViewResponse {
   @JsonProperty
   private courseName: string
   @JsonProperty
-  @ReturnGenericsProperty(Array, new Map<string, {new(): object}>().set('Array', ContentTopicViewResponse))
-  private contentList: ContentTopicViewResponse[]
+  @ReturnGenericsProperty(Array, new Map<string, {new(): object}>().set('Array', AlbumCourseTopicViewContentTopicItemResponse))
+  private contentList: AlbumCourseTopicViewContentTopicItemResponse[]
   public getAlbumId (): number {
     return this.albumId
   }
@@ -54,10 +54,10 @@ export class AlbumCourseTopicViewResponse {
   public setCourseName (courseName: string): void {
     this.courseName = courseName
   }
-  public getContentList (): ContentTopicViewResponse[] {
+  public getContentList (): AlbumCourseTopicViewContentTopicItemResponse[] {
     return this.contentList
   }
-  public setContentList (contentList: ContentTopicViewResponse[]): void {
+  public setContentList (contentList: AlbumCourseTopicViewContentTopicItemResponse[]): void {
     this.contentList = contentList
   }
 }

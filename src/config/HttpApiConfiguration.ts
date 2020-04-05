@@ -17,8 +17,7 @@ export class HttpApiConfiguration {
     const httpDataSource = new AxiosDataSource()
     httpDataSource.setName('master')
     httpDataSource.setReadOnly(false)
-    //httpDataSource.setUrl('http://mis.potens.top/api')
-    httpDataSource.setUrl('http://api-mobile.potens.top:10000')
+    httpDataSource.setUrl('http://mis-api-gateway.potens.top')
     httpDataSource.setCookieKeyList(['token'])
     httpDataSource.build()
     return httpDataSource

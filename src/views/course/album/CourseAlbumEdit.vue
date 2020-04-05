@@ -33,7 +33,6 @@
 
 <script lang="ts">
 import { Component, Vue, Watch } from 'vue-property-decorator'
-import { AlbumCourseApi } from '@/dao/api/AlbumCourseApi'
 import { CourseApi } from '@/dao/api/CourseApi'
 import { JsonProperty, JsonProtocol } from 'papio-h5'
 import { State, Getter, Action, Mutation, namespace } from 'vuex-class'
@@ -45,7 +44,6 @@ import { AlbumCourseUpdateRequest } from '@/request/AlbumCourseUpdateRequest'
 import { RefreshEvent } from '@/common/event/RefreshEvent'
 
 const appModule = namespace(StoreConstant.APP)
-const albumCourseApi = new AlbumCourseApi()
 const courseApi = new CourseApi()
 class UpdateModel {
   @JsonProperty
@@ -98,7 +96,7 @@ export default class CourseAlbumEdit extends Vue {
     }
     if (!this.isAddPage) {
       const query = this.$route.query as any
-      const result = await albumCourseApi.view(query.id)
+      const result = await courseApi.albumCourseView(query.id)
       const albumCourseViewResponse = ApiUtil.getData(result)
       this.formItem = new UpdateModel()
       JsonProtocol.copyProperties(albumCourseViewResponse, this.formItem)
@@ -120,7 +118,7 @@ export default class CourseAlbumEdit extends Vue {
           courseName = input
         }
       }
-      this.courseList = ApiUtil.getData(await courseApi.notPageList(courseName, courseId))
+      this.courseList = ApiUtil.getData(await courseApi.courseListByFilterNotPage(courseName, courseId))
     } finally {
       this.courseLoading = false
     }
@@ -138,11 +136,11 @@ export default class CourseAlbumEdit extends Vue {
       if (this.isAddPage) {
         const request = new AlbumCourseAddRequest()
         JsonProtocol.copyProperties(this.formItem, request)
-        result = await albumCourseApi.add(request)
+        result = await courseApi.albumCourseAdd(request)
       } else {
         const request = new AlbumCourseUpdateRequest()
         JsonProtocol.copyProperties(this.formItem, request)
-        result = await albumCourseApi.update(request)
+        result = await courseApi.albumCourseUpdate(request)
       }
       ApiUtil.getData(result)
       RefreshEvent.emit('CourseAlbumList')

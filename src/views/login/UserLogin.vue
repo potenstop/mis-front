@@ -8,6 +8,9 @@
         </div>
       </Card>
     </div>
+    <div class="footer">
+      <app-footer></app-footer>
+    </div>
   </div>
 </template>
 
@@ -16,12 +19,13 @@ import { Component, Vue } from 'vue-property-decorator'
 import { namespace } from 'vuex-class'
 import LoginForm from '@/components/login/LoginFrom.vue'
 import { StoreConstant } from '@/common/constant/StoreConstant'
+import AppFooter from '@/components/app/AppFooter.vue'
 
 const userModule = namespace(StoreConstant.USER)
 
 @Component({
   components: {
-    LoginForm
+    LoginForm, AppFooter
   }
 })
 export default class UserLogin extends Vue {
@@ -51,7 +55,7 @@ export default class UserLogin extends Vue {
 <style lang="less">
   .login {
     width: 100%;
-    height: 90%;
+    height: 95%;
     background-image: url('../../assets/images/login-bg.jpg');
     background-size: cover;
     background-position: center;
@@ -80,6 +84,12 @@ export default class UserLogin extends Vue {
         text-align: center;
         color: #c34762;
       }
+    }
+    .footer{
+      position: absolute;
+      padding:10px;
+      right: 50%;
+      top: 100%;
     }
   }
 </style>

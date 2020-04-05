@@ -30,17 +30,17 @@ export class UserApi {
 
   @GetMapping('/mis/info/basic')
   @ReturnGenericsProperty(ApiResult, new Map<string, new() => object>().set('data', UserAuthBasicResponse))
-  public info (): Promise<ApiResult<UserAuthBasicResponse>> {
+  public userInfo (): Promise<ApiResult<UserAuthBasicResponse>> {
     return null
   }
 
-  @PostMapping('/list')
+  @PostMapping('/mis/info/list')
   @ReturnGenericsProperty(ApiResult, new Map<string, new() => object>().set('data', PageResponse).set('data.list', Array).set('data.list.Array', UserListItemResponse))
-  public list (@RequestBody request: UserListRequest): Promise<ApiResult<PageResponse<UserListItemResponse>>> {
+  public userList (@RequestBody request: UserListRequest): Promise<ApiResult<PageResponse<UserListItemResponse>>> {
     return null
   }
 
-  @GetMapping('/detail')
+  @GetMapping('/mis/info/detail')
   @ReturnGenericsProperty(ApiResult, new Map<string, new() => object>().set('data', UserDetailResponse))
   public detail (@RequestParam('userId') userId: number): Promise<ApiResult<UserDetailResponse>> {
     return null

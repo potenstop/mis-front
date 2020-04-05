@@ -52,12 +52,12 @@ import { ContentTopicListItemRequest } from '@/request/ContentTopicListItemReque
 import CourseChooseModal from '@/components/modal/CourseChooseModal.vue'
 import ConstantMixin from '@/components/mixin/ConstantMixin'
 import { mixins } from 'vue-class-component'
-import { AlbumCourseApi } from '@/dao/api/AlbumCourseApi'
+import { CourseApi } from '@/dao/api/CourseApi'
 import { AlbumCourseUpdateCourseRelationRequest } from '@/request/AlbumCourseUpdateCourseRelationRequest'
 import AutoKatex from '@/components/katex/AutoKatex.vue'
 
 const contentTopicApi = new ContentTopicApi()
-const albumCourseApi = new AlbumCourseApi()
+const courseApi = new CourseApi()
 const appModule = namespace(StoreConstant.APP)
 
 class UpdateModel {
@@ -118,7 +118,7 @@ export default class CourseAlbumTopic extends mixins(ConstantMixin) {
   private async initEditData () {
     const query = this.$route.query as any
     this.formItem.albumId = query.id
-    const result = await albumCourseApi.view(query.id)
+    const result = await courseApi.albumCourseView(query.id)
     const data = ApiUtil.getData(result)
     this.formItem.contentIdList = data.getContentIdList()
     // await this.loadContentIdList(data.getContentIdList())
@@ -154,7 +154,7 @@ export default class CourseAlbumTopic extends mixins(ConstantMixin) {
       const request = new AlbumCourseUpdateCourseRelationRequest()
       request.setAlbumId(this.formItem.albumId)
       request.setContentIdList(this.formItem.contentIdList)
-      const result = await albumCourseApi.updateCourseRelation(request)
+      const result = await courseApi.albumCourseUpdateCourseRelation(request)
       ApiUtil.getData(result)
       RefreshEvent.emit('CourseTopicList')
       this.back()

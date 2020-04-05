@@ -74,7 +74,7 @@ export default class UserList extends Vue {
   ]
   private apiList (body) {
     const request = JsonProtocol.jsonToBean(body, UserListRequest)
-    return userApi.list(request)
+    return userApi.userList(request)
   }
   private created () {
     this.editName = this.$t('P_EDIT') as string
