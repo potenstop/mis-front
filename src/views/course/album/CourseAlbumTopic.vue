@@ -47,7 +47,6 @@ import { State, Getter, Action, Mutation, namespace } from 'vuex-class'
 import { StoreConstant } from '@/common/constant/StoreConstant'
 import { JSHelperUtil, JsonProperty, JsonProtocol, ReturnGenericsProperty, StringUtil } from 'papio-h5'
 import { RefreshEvent } from '@/common/event/RefreshEvent'
-import { ContentTopicApi } from '@/dao/api/ContentTopicApi'
 import { ContentTopicListItemRequest } from '@/request/ContentTopicListItemRequest'
 import CourseChooseModal from '@/components/modal/CourseChooseModal.vue'
 import ConstantMixin from '@/components/mixin/ConstantMixin'
@@ -56,7 +55,6 @@ import { CourseApi } from '@/dao/api/CourseApi'
 import { AlbumCourseUpdateCourseRelationRequest } from '@/request/AlbumCourseUpdateCourseRelationRequest'
 import AutoKatex from '@/components/katex/AutoKatex.vue'
 
-const contentTopicApi = new ContentTopicApi()
 const courseApi = new CourseApi()
 const appModule = namespace(StoreConstant.APP)
 
@@ -132,7 +130,7 @@ export default class CourseAlbumTopic extends mixins(ConstantMixin) {
           contentTopicListItemRequest.setContentIdList(idList)
           contentTopicListItemRequest.setPageNum(1)
           contentTopicListItemRequest.setPageSize(100000)
-          const contentListResult = await contentTopicApi.list(contentTopicListItemRequest)
+          const contentListResult = await courseApi.contentTopicList(contentTopicListItemRequest)
           const contentListData = ApiUtil.getData(contentListResult)
           this.contentTopicDataList = contentListData.getList()
         } else {
@@ -169,7 +167,7 @@ export default class CourseAlbumTopic extends mixins(ConstantMixin) {
   }
   private apiList (body) {
     const request = JsonProtocol.jsonToBean(body, ContentTopicListItemRequest)
-    return contentTopicApi.list(request)
+    return courseApi.contentTopicList(request)
   }
   handleRender () {
     this.$modal.show('course-choose-modal', {

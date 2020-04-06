@@ -57,14 +57,14 @@ import { JSHelperUtil, JsonProperty, JsonProtocol, ReturnGenericsProperty, Strin
 import { RefreshEvent } from '@/common/event/RefreshEvent'
 import { ContentTopicConstant } from '@/common/constant/ContentTopicConstant'
 import { ContentTopicAddRequest } from '@/request/ContentTopicAddRequest'
-import { ContentTopicApi } from '@/dao/api/ContentTopicApi'
+import { CourseApi } from '@/dao/api/CourseApi'
 import { ContentTopicUpdateRequest } from '@/request/ContentTopicUpdateRequest'
 import { ContentTopicSelectOptionRequest } from '@/request/ContentTopicSelectOptionRequest'
 import AutoKatex from '@/components/katex/AutoKatex.vue'
 
 const appModule = namespace(StoreConstant.APP)
 
-const contentTopicApi = new ContentTopicApi()
+const courseApi = new CourseApi()
 class UpdateModel {
   @JsonProperty
   public contentId: number
@@ -164,7 +164,7 @@ export default class CourseTopicEdit extends Vue {
   private async initEditData () {
     if (!this.isAddPage) {
       const query = this.$route.query as any
-      const result = await contentTopicApi.view(query.id)
+      const result = await courseApi.contentTopicView(query.id)
       const response = ApiUtil.getData(result)
       this.formItem = new UpdateModel()
       JsonProtocol.copyProperties(response, this.formItem)
@@ -217,7 +217,7 @@ export default class CourseTopicEdit extends Vue {
           }
           request.setAddOptionList(optionList)
         }
-        result = await contentTopicApi.add(request)
+        result = await courseApi.contentTopicAdd(request)
       } else {
         const request = new ContentTopicUpdateRequest()
         JsonProtocol.copyProperties(this.formItem, request)
@@ -259,7 +259,7 @@ export default class CourseTopicEdit extends Vue {
           request.setModifyOptionList(modifyOptionList)
         }
         request.setRemoveOptionIdList(this.removeOptionIdList)
-        result = await contentTopicApi.update(request)
+        result = await courseApi.contentTopicUpdate(request)
       }
       ApiUtil.getData(result)
       RefreshEvent.emit('CourseTopicList')

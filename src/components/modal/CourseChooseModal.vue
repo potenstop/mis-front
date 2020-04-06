@@ -61,12 +61,12 @@ import { Component, Vue, Prop } from 'vue-property-decorator'
 import { ContentTopicListItemResponse } from '@/response/ContentTopicListItemResponse'
 import { JsonProtocol } from 'papio-h5'
 import { ContentTopicListItemRequest } from '@/request/ContentTopicListItemRequest'
-import { ContentTopicApi } from '@/dao/api/ContentTopicApi'
+import { CourseApi } from '@/dao/api/CourseApi'
 import { ApiUtil } from '@/common/util/ApiUtil'
 import ConstantMixin from '@/components/mixin/ConstantMixin'
 import { mixins } from 'vue-class-component'
 import AutoKatex from '@/components/katex/AutoKatex.vue'
-const contentTopicApi = new ContentTopicApi()
+const courseApi = new CourseApi()
 
 @Component({
   components: {
@@ -119,7 +119,7 @@ export default class CourseChooseModal extends mixins(ConstantMixin) {
       request.setPageNum(this.pageCurrent)
       request.setPageSize(this.pageSize)
       request.setTitle(this.title)
-      const result = await contentTopicApi.list(request)
+      const result = await courseApi.contentTopicList(request)
       const data = ApiUtil.getData(result)
       this.dataList = data.getList()
       this.pageTotal = data.getTotal()

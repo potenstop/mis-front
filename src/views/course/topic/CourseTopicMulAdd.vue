@@ -89,8 +89,7 @@ import {
 import { RefreshEvent } from '@/common/event/RefreshEvent'
 import { ContentTopicConstant } from '@/common/constant/ContentTopicConstant'
 import { ContentTopicAddRequest } from '@/request/ContentTopicAddRequest'
-import { ContentTopicApi } from '@/dao/api/ContentTopicApi'
-import { ContentTopicUpdateRequest } from '@/request/ContentTopicUpdateRequest'
+import { CourseApi } from '@/dao/api/CourseApi'
 import { ContentTopicSelectOptionRequest } from '@/request/ContentTopicSelectOptionRequest'
 import { UploadTopicListItemResponse } from '@/response/UploadTopicListItemResponse'
 import { ApiResult } from '@/bmo/ApiResult'
@@ -98,7 +97,7 @@ import { ContentTopicMulAddRequest } from '@/request/ContentTopicMulAddRequest'
 
 const appModule = namespace(StoreConstant.APP)
 
-const contentTopicApi = new ContentTopicApi()
+const courseApi = new CourseApi()
 class UpdateModel {
   @JsonProperty
   public contentId: number
@@ -240,7 +239,7 @@ export default class CourseTopicMulAdd extends Vue {
       console.log(contentTopicAddRequestList, '111111')
       const request = new ContentTopicMulAddRequest()
       request.setContentTopicAddRequestList(contentTopicAddRequestList)
-      const result = await contentTopicApi.mulAdd(request)
+      const result = await courseApi.contentTopicMulAdd(request)
       ApiUtil.getData(result)
       RefreshEvent.emit('CourseTopicList')
       this.back()

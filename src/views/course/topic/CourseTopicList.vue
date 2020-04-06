@@ -15,14 +15,14 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
-import { ContentTopicApi } from '@/dao/api/ContentTopicApi'
+import { CourseApi } from '@/dao/api/CourseApi'
 import { JsonProtocol } from 'papio-h5'
 import SimplePageTable from '@/components/table/SimplePageTable.vue'
 import { ContentTopicListItemResponse } from '@/response/ContentTopicListItemResponse'
 import { ContentTopicConstant } from '@/common/constant/ContentTopicConstant'
 import { ContentTopicListItemRequest } from '@/request/ContentTopicListItemRequest'
 
-const contentTopicApi = new ContentTopicApi()
+const courseApi = new CourseApi()
 @Component({
   components: {
     SimplePageTable
@@ -90,7 +90,7 @@ export default class CourseTopicList extends Vue {
   ]
   private apiList (body) {
     const request = JsonProtocol.jsonToBean(body, ContentTopicListItemRequest)
-    return contentTopicApi.list(request)
+    return courseApi.contentTopicList(request)
   }
   private actionMulAdd () {
     this.$router.push({

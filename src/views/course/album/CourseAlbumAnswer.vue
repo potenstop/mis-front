@@ -21,9 +21,7 @@ import { State, Getter, Action, Mutation, namespace } from 'vuex-class'
 import { StoreConstant } from '@/common/constant/StoreConstant'
 import { JSHelperUtil, JsonProperty, JsonProtocol, ReturnGenericsProperty, StringUtil } from 'papio-h5'
 import { RefreshEvent } from '@/common/event/RefreshEvent'
-import { ContentTopicApi } from '@/dao/api/ContentTopicApi'
 import { CourseApi } from '@/dao/api/CourseApi'
-import { AlbumCourseProblemApi } from '@/dao/api/AlbumCourseProblemApi'
 import TopicItem from '@/components/item/topic/TopicItem.vue'
 import { ItemContentTopic } from '@/components/item/topic/ItemContentTopic'
 import { ItemContentTopicSelectOption } from '@/components/item/topic/ItemContentTopicSelectOption'
@@ -32,9 +30,7 @@ import { AlbumCourseProblemUpdateRequest } from '@/request/AlbumCourseProblemUpd
 import { ProblemContentTopicRequest } from '@/request/ProblemContentTopicRequest'
 import moment from 'moment'
 
-const contentTopicApi = new ContentTopicApi()
 const courseApi = new CourseApi()
-const albumCourseProblemApi = new AlbumCourseProblemApi()
 const appModule = namespace(StoreConstant.APP)
 
 class UpdateModel {
@@ -70,7 +66,7 @@ export default class CourseAlbumAnswer extends Vue {
     let remote: any = null
     // 获取远程的
     try {
-      const result = await albumCourseProblemApi.topic(this.albumCourseProblemId)
+      const result = await courseApi.albumCourseProblemTopicList(this.albumCourseProblemId)
       const albumCourseProblemTopicResponseList = ApiUtil.getData(result)
       // 找出最大的时间
       let maxTime = null
@@ -182,7 +178,7 @@ export default class CourseAlbumAnswer extends Vue {
           }
         }
         request.setProblemContentTopicList(list)
-        await albumCourseProblemApi.update(request)
+        await courseApi.albumCourseProblemUpdate(request)
         this.dataIsChange = false
       }
     }, 1000)

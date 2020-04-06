@@ -16,7 +16,6 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
 import { CourseApi } from '@/dao/api/CourseApi'
-import { AlbumCourseProblemApi } from '@/dao/api/AlbumCourseProblemApi'
 import { JsonProtocol } from 'papio-h5'
 import { AlbumCourseListItemRequest } from '@/request/AlbumCourseListItemRequest'
 import SimplePageTable from '@/components/table/SimplePageTable.vue'
@@ -31,7 +30,6 @@ import ProblemChooseModal from '@/components/modal/ProblemChooseModal.vue'
 const userModule = namespace(StoreConstant.USER)
 
 const courseApi = new CourseApi()
-const albumCourseProblemApi = new AlbumCourseProblemApi()
 @Component({
   components: {
     SimplePageTable, ProblemChooseModal
@@ -146,12 +144,12 @@ export default class CourseAlbumList extends Vue {
     albumCourseProblemListItemRequest.setPageSize(1000)
     albumCourseProblemListItemRequest.setPageNum(1)
     albumCourseProblemListItemRequest.setState(AlbumCourseProblemConstant.STATE_SAVE)
-    const listResult = await albumCourseProblemApi.list(albumCourseProblemListItemRequest)
+    const listResult = await courseApi.albumCourseProblemList(albumCourseProblemListItemRequest)
     const listData = ApiUtil.getData(listResult)
     if (listData.getTotal() === 0) {
       const albumCourseProblemAddRequest = new AlbumCourseProblemAddRequest()
       albumCourseProblemAddRequest.setAlbumId(row.albumId)
-      const addResult = await albumCourseProblemApi.add(albumCourseProblemAddRequest)
+      const addResult = await courseApi.albumCourseProblemAdd(albumCourseProblemAddRequest)
       const addData = ApiUtil.getData(addResult)
       this.$router.push({
         path: '/course/album/answer',
