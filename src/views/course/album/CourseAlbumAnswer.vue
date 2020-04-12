@@ -29,6 +29,7 @@ import { LocalForageUtil } from '@/common/util/LocalForageUtil'
 import { AlbumCourseProblemUpdateRequest } from '@/request/AlbumCourseProblemUpdateRequest'
 import { ProblemContentTopicRequest } from '@/request/ProblemContentTopicRequest'
 import moment from 'moment'
+import { CollectionUtils } from 'papio-h5/lib/util/CollectionUtils'
 
 const courseApi = new CourseApi()
 const appModule = namespace(StoreConstant.APP)
@@ -62,7 +63,11 @@ export default class CourseAlbumAnswer extends Vue {
   }
   private async getCacheData () {
     // 获取本地的
-    const historyCacheData = await LocalForageUtil.getItem('albumCourseProblemHistory' + this.albumCourseProblemId) as any[]
+    const historyCacheDataList = await LocalForageUtil.getItem('albumCourseProblemHistory' + this.albumCourseProblemId) as any[]
+    let historyCacheData = null
+    if (CollectionUtils.isNotEmpty(historyCacheDataList)) {
+      historyCacheData = historyCacheDataList[0]
+    }
     let remote: any = null
     // 获取远程的
     try {
@@ -82,23 +87,22 @@ export default class CourseAlbumAnswer extends Vue {
       })
       remote = {}
       remote.date = maxTime
-      remote.data = albumCourseProblemTopicResponseList
+      remote.data = data
     } catch (e) {
       this.$Message.warning('获取远程数据失败')
     }
-    console.log('1111111111111', historyCacheData, remote)
-    if (!historyCacheData && !remote) {
-      return []
-    } else if (historyCacheData && !remote) {
-      return historyCacheData[0]
+    if (historyCacheData && !remote) {
+      return historyCacheData.data
     } else if (!historyCacheData && remote) {
       return remote.data
-    } else {
-      if (historyCacheData[0].date <= remote.date) {
+    } else if (remote && historyCacheData) {
+      if (historyCacheData.date <= remote.date) {
         return remote.data
       } else {
-        return historyCacheData[0]
+        return historyCacheData.data
       }
+    } else {
+      return {}
     }
   }
   private async initData () {
@@ -114,14 +118,14 @@ export default class CourseAlbumAnswer extends Vue {
       JsonProtocol.copyProperties(item, itemContentTopic)
       itemContentTopic.title = `${j + 1} ${itemContentTopic.title}`
       itemContentTopic.addOptionList = []
-      // if (item.getAddOptionList() !== null) {
-      //   item.getAddOptionList().forEach((optionItem, i) => {
-      //     const itemContentTopicSelectOption = new ItemContentTopicSelectOption()
-      //     JsonProtocol.copyProperties(optionItem, itemContentTopicSelectOption)
-      //     itemContentTopicSelectOption.optionLabel = o[i] + itemContentTopicSelectOption.optionLabel
-      //     itemContentTopic.addOptionList.push(itemContentTopicSelectOption)
-      //   })
-      // }
+      if (item.getOptionList() !== null) {
+        item.getOptionList().forEach((optionItem, i) => {
+          const itemContentTopicSelectOption = new ItemContentTopicSelectOption()
+          JsonProtocol.copyProperties(optionItem, itemContentTopicSelectOption)
+          itemContentTopicSelectOption.optionLabel = o[i] + itemContentTopicSelectOption.optionLabel
+          itemContentTopic.addOptionList.push(itemContentTopicSelectOption)
+        })
+      }
       if (item.getContentId() in cacheData) {
         itemContentTopic.chooseValue = cacheData[item.getContentId()]
       }
@@ -157,9 +161,8 @@ export default class CourseAlbumAnswer extends Vue {
     if (JSHelperUtil.isNullOrUndefined(history)) {
       await LocalForageUtil.setItem('albumCourseProblemHistory' + this.albumCourseProblemId, newList)
     } else {
-      console.log(history, '11')
       const list = history.slice(0, 100)
-      list.unshift(newList)
+      list.unshift(newList[0])
       await LocalForageUtil.setItem('albumCourseProblemHistory' + this.albumCourseProblemId, list)
     }
   }

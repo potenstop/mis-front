@@ -147,30 +147,38 @@ export default class CourseAlbumList extends Vue {
     const listResult = await courseApi.albumCourseProblemList(albumCourseProblemListItemRequest)
     const listData = ApiUtil.getData(listResult)
     if (listData.getTotal() === 0) {
-      const albumCourseProblemAddRequest = new AlbumCourseProblemAddRequest()
-      albumCourseProblemAddRequest.setAlbumId(row.albumId)
-      const addResult = await courseApi.albumCourseProblemAdd(albumCourseProblemAddRequest)
-      const addData = ApiUtil.getData(addResult)
-      this.$router.push({
-        path: '/course/album/answer',
-        query: {
-          id: row.albumId,
-          albumCourseProblemId: addData + ''
-        }
-      })
+      await this.createProblem(row.albumId)
     } else {
       this.$modal.show('problem-choose-modal', {
         chooseList: listData.getList(),
-        onChooseRow: this.onChooseRow
+        onChooseRow: this.onChooseRow,
+        albumId: row.albumId
       })
     }
   }
-  private onChooseRow (row) {
+  private async onChooseRow (row, albumId) {
+    if (row === null && albumId !== null) {
+      await this.createProblem(albumId)
+      return
+    }
     this.$router.push({
       path: '/course/album/answer',
       query: {
         albumId: row.albumId + '',
         albumCourseProblemId: row.albumCourseProblemId + ''
+      }
+    })
+  }
+  private async createProblem (albumId: number) {
+    const albumCourseProblemAddRequest = new AlbumCourseProblemAddRequest()
+    albumCourseProblemAddRequest.setAlbumId(albumId)
+    const addResult = await courseApi.albumCourseProblemAdd(albumCourseProblemAddRequest)
+    const addData = ApiUtil.getData(addResult)
+    this.$router.push({
+      path: '/course/album/answer',
+      query: {
+        albumId: albumId + '',
+        albumCourseProblemId: addData + ''
       }
     })
   }

@@ -1,4 +1,5 @@
-import { JsonProperty } from 'papio-h5'
+import { JsonProperty, ReturnGenericsProperty } from 'papio-h5'
+import { ContentTopicSelectOptionResponse } from '@/response/ContentTopicSelectOptionResponse'
 
 /**
  *
@@ -18,6 +19,9 @@ export class AlbumCourseTopicViewContentTopicItemResponse {
   private title: string
   @JsonProperty
   private topicType: number
+  @JsonProperty
+  @ReturnGenericsProperty(Array, new Map<string, {new(): object}>().set('Array', ContentTopicSelectOptionResponse))
+  private optionList: ContentTopicSelectOptionResponse[]
   public getContentId (): number {
     return this.contentId
   }
@@ -41,5 +45,11 @@ export class AlbumCourseTopicViewContentTopicItemResponse {
   }
   public setTopicType (topicType: number): void {
     this.topicType = topicType
+  }
+  public getOptionList (): ContentTopicSelectOptionResponse[] {
+    return this.optionList
+  }
+  public setOptionList (optionList: ContentTopicSelectOptionResponse[]): void {
+    this.optionList = optionList
   }
 }

@@ -8,7 +8,7 @@
  * @date 2019/6/24 14:14
  */
 import {
-  AxisoRemote, GetMapping, PostMapping, RequestBody,
+  AxisoRemote, DeleteMapping, GetMapping, PostMapping, RequestBody,
   RequestMapping,
   RequestMethod,
   RequestParam,
@@ -133,24 +133,29 @@ export class CourseApi {
   public contentTopicMulAdd (@RequestBody request: ContentTopicMulAddRequest): Promise<ApiResult<number>> {
     return null
   }
-  @PostMapping('/album/course/problem/list')
+  @PostMapping('/mis/album/course/problem/list')
   @ReturnGenericsProperty(ApiResult, new Map<string, new() => object>().set('data', PageResponse).set('data.list', Array).set('data.list.Array', AlbumCourseProblemListItemResponse))
   public albumCourseProblemList (@RequestBody request: AlbumCourseProblemListItemRequest): Promise<ApiResult<PageResponse<AlbumCourseProblemListItemResponse>>> {
     return null
   }
-  @PostMapping('/album/course/problem/add')
+  @PostMapping('/mis/album/course/problem/add')
   @ReturnGenericsProperty(ApiResult, new Map<string, new() => object>().set('data', Number))
   public albumCourseProblemAdd (@RequestBody request: AlbumCourseProblemAddRequest): Promise<ApiResult<number>> {
     return null
   }
-  @GetMapping('/album/course/problem/topic/list')
+  @GetMapping('/mis/album/course/problem/topic/list')
   @ReturnGenericsProperty(ApiResult, new Map<string, new() => object>().set('data', Array).set('data.Array', AlbumCourseProblemTopicResponse))
-  public albumCourseProblemTopicList (@RequestParam albumCourseProblemTopicId: number): Promise<ApiResult<AlbumCourseProblemTopicResponse[]>> {
+  public albumCourseProblemTopicList (@RequestParam albumCourseProblemId: number): Promise<ApiResult<AlbumCourseProblemTopicResponse[]>> {
     return null
   }
-  @PostMapping('/album/course/problem/update')
+  @PostMapping('/mis/album/course/problem/update')
   @ReturnGenericsProperty(ApiResult, new Map<string, new() => object>().set('data', Number))
   public albumCourseProblemUpdate (@RequestBody request: AlbumCourseProblemUpdateRequest): Promise<ApiResult<number>> {
+    return null
+  }
+  @DeleteMapping('/mis/album/course/problem/delete')
+  @ReturnGenericsProperty(ApiResult, new Map<string, new() => object>().set('data', Number))
+  public albumCourseProblemDelete (@RequestParam albumCourseProblemId: number): Promise<ApiResult<number>> {
     return null
   }
 }
