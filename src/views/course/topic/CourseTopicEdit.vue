@@ -16,6 +16,9 @@
           <Option v-for="item in selectTopicTypeList" :value="item.value" :key="item.item">{{item.label}}</Option>
         </Select>
       </FormItem>
+      <FormItem label="分数" prop="gradeAmount">
+        <Input v-model.trim="formItem.gradeAmount" placeholder="" style="width: 300px"></Input>
+      </FormItem>
       <FormItem label="选项" v-if="contentTopicTypeConstantSelectList.indexOf(formItem.topicType) !== -1" prop="chooseOption">
         <Input v-model.trim="optionLabel" placeholder="" style="width: 300px"/>
         <Button icon="ios-add" type="dashed" @click="optionAdd" style="margin-left: 10px">添加选项</Button>
@@ -79,6 +82,8 @@ class UpdateModel {
   @JsonProperty
   public answer: string
   @JsonProperty
+  public gradeAmount: number
+  @JsonProperty
   public chooseOption: {label: string, value: number, checked: boolean, isNew: boolean}[]
   public constructor () {
     this.contentId = null
@@ -88,6 +93,7 @@ class UpdateModel {
     this.analysis = null
     this.answer = null
     this.chooseOption = []
+    this.gradeAmount = 1
   }
 }
 
@@ -103,7 +109,7 @@ export default class CourseTopicEdit extends Vue {
   private contentTopicTypeConstantSelectList: number[] = []
   private ruleValidate = {
     title: [
-      { type: 'string', required: true, message: '标题不能为空', trigger: 'blur' },
+      { type: 'string', required: true, message: '标题不能为空' },
       { type: 'string', max: 2000, message: '课程名称最大不超过50字符', trigger: 'blur' }
     ],
     state: [
@@ -120,6 +126,9 @@ export default class CourseTopicEdit extends Vue {
     ],
     answer: [
       { type: 'string', required: true, message: '答案不能为空', trigger: 'blur' }
+    ],
+    gradeAmount: [
+      { required: true, message: '分数不能为空' }
     ]
   }
   private submitRunning: boolean = false
@@ -184,6 +193,7 @@ export default class CourseTopicEdit extends Vue {
   private async handleSubmit (name) {
     this.submitRunning = true
     try {
+      console.log(this.formItem, 222222222222)
       const form = this.$refs[name] as any
       const valid = await form.validate()
       if (!valid) {

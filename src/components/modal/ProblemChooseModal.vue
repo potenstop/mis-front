@@ -8,16 +8,17 @@
          :reset="true"
          :draggable="true"
          :resizable="true"
-         width="70%"
+         width="80%"
          height="auto"
          @before-open="beforeOpen"
   >
-    <Table border :columns="columns" :data="chooseList" @on-row-click="onRowClick" style="margin: 5px">
+    <Table border :columns="columns" :data="chooseList" style="margin: 5px">
       <template slot-scope="{ row }" slot="progress">
         <Progress :percent="!row.totalContentCount ? 0 : Math.round(row.answerContentCount * 100 / row.totalContentCount)" :stroke-color="['#108ee9', '#87d068']" />
       </template>
       <template slot-scope="{ row }" slot="_option">
-        <Button type="primary" icon="md-trash" @click.stop="onDelete(row.albumCourseProblemId)"></Button>
+        <Button type="info" icon="ios-play" @click.stop="onRowClick(row)">继续</Button>
+        <Button type="warning" icon="md-trash" @click.stop="onDelete(row.albumCourseProblemId)">删除</Button>
       </template>
     </Table>
     <Row type="flex" justify="center" style="padding-top: 20px">

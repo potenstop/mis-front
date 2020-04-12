@@ -24,6 +24,8 @@ export class ContentTopicUpdateRequest {
   @JsonProperty
   private title: string
   @JsonProperty
+  private gradeAmount: number
+  @JsonProperty
   @ReturnGenericsProperty(Array, new Map<string, {new(): object}>().set('Array', ContentTopicSelectOptionRequest))
   private addOptionList: ContentTopicSelectOptionRequest[]
   @JsonProperty
@@ -67,6 +69,12 @@ export class ContentTopicUpdateRequest {
   }
   public setTitle (title: string): void {
     this.title = title
+  }
+  public getGradeAmount (): number {
+    return this.gradeAmount
+  }
+  public setGradeAmount (gradeAmount: number): void {
+    this.gradeAmount = gradeAmount
   }
   public getAddOptionList (): ContentTopicSelectOptionRequest[] {
     return this.addOptionList
