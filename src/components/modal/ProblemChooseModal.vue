@@ -17,7 +17,7 @@
         <Progress :percent="!row.totalContentCount ? 0 : Math.round(row.answerContentCount * 100 / row.totalContentCount)" :stroke-color="['#108ee9', '#87d068']" />
       </template>
       <template slot-scope="{ row }" slot="_option">
-        <Button type="info" icon="ios-play" @click.stop="onRowClick(row)">继续</Button>
+        <Button type="info" icon="ios-play" @click.stop="onRowClick(row)">{{getQueryButtonText(row)}}</Button>
         <Button type="warning" icon="md-trash" @click.stop="onDelete(row.albumCourseProblemId)">删除</Button>
       </template>
     </Table>
@@ -34,6 +34,7 @@
 import { Component, Vue } from 'vue-property-decorator'
 import { AlbumCourseProblemListItemResponse } from '@/response/AlbumCourseProblemListItemResponse'
 import { CourseApi } from '@/dao/api/CourseApi'
+import { AlbumCourseProblemConstant } from '@/common/constant/AlbumCourseProblemConstant'
 
 const courseApi = new CourseApi()
 
@@ -95,6 +96,13 @@ export default class ProblemChooseModal extends Vue {
     this.$modal.hide('problem-choose-modal')
     if (this.onChooseRow) {
       this.onChooseRow(null, this.albumId)
+    }
+  }
+  private getQueryButtonText (row: any) {
+    if (AlbumCourseProblemConstant.STATE_SAVE === row.state) {
+      return '继续'
+    } else {
+      return '查看'
     }
   }
 }

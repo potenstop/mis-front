@@ -143,7 +143,6 @@ export default class CourseAlbumList extends Vue {
     albumCourseProblemListItemRequest.setUserId(+this.userId)
     albumCourseProblemListItemRequest.setPageSize(1000)
     albumCourseProblemListItemRequest.setPageNum(1)
-    albumCourseProblemListItemRequest.setState(AlbumCourseProblemConstant.STATE_SAVE)
     const listResult = await courseApi.albumCourseProblemList(albumCourseProblemListItemRequest)
     const listData = ApiUtil.getData(listResult)
     if (listData.getTotal() === 0) {
