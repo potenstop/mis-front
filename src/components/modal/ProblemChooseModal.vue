@@ -8,7 +8,7 @@
          :reset="true"
          :draggable="true"
          :resizable="true"
-         width="80%"
+         width="60%"
          height="auto"
          @before-open="beforeOpen"
   >
@@ -46,15 +46,18 @@ export default class ProblemChooseModal extends Vue {
   private columns = [
     {
       'title': 'ID',
-      'key': 'albumCourseProblemId'
+      'key': 'albumCourseProblemId',
+      width: 80
     },
     {
       'title': '创建时间',
-      'key': 'createTime'
+      'key': 'createTime',
+      width: 200
     },
     {
       'title': '更新时间',
-      'key': 'updateTime'
+      'key': 'updateTime',
+      width: 200
     },
     {
       'title': '进度',
@@ -64,7 +67,8 @@ export default class ProblemChooseModal extends Vue {
     {
       'title': '操作',
       'key': '_option',
-      'slot': '_option'
+      'slot': '_option',
+      width: 250
     }
   ]
   private beforeOpen (event) {

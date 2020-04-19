@@ -41,6 +41,8 @@ import { AlbumCourseProblemListItemRequest } from '@/request/AlbumCourseProblemL
 import { AlbumCourseProblemAddRequest } from '@/request/AlbumCourseProblemAddRequest'
 import { AlbumCourseProblemTopicResponse } from '@/response/AlbumCourseProblemTopicResponse'
 import { AlbumCourseProblemUpdateRequest } from '@/request/AlbumCourseProblemUpdateRequest'
+import { AlbumCourseProblemAnswerOverviewResponse } from '@/response/AlbumCourseProblemAnswerOverviewResponse'
+import { AlbumCourseProblemViewResponse } from '@/response/AlbumCourseProblemViewResponse'
 @AxisoRemote({ filepath: '/src/dao/api', name: 'course-api', timeout: 5000 })
 export class CourseApi {
   @PostMapping('/mis/album/course/list')
@@ -55,7 +57,7 @@ export class CourseApi {
   }
   @GetMapping('/mis/album/course/view')
   @ReturnGenericsProperty(ApiResult, new Map<string, new() => object>().set('data', AlbumCourseViewResponse))
-  public albumCourseView (@RequestParam("albumId") albumId: number): Promise<ApiResult<AlbumCourseViewResponse>> {
+  public albumCourseView (@RequestParam('albumId') albumId: number): Promise<ApiResult<AlbumCourseViewResponse>> {
     return null
   }
   @PostMapping('/mis/album/course/update')
@@ -70,7 +72,7 @@ export class CourseApi {
   }
   @GetMapping('/mis/album/course/topic-list')
   @ReturnGenericsProperty(ApiResult, new Map<string, new() => object>().set('data', AlbumCourseTopicViewResponse))
-  public albumCourseTopicList (@RequestParam("albumId") albumId: number): Promise<ApiResult<AlbumCourseTopicViewResponse>> {
+  public albumCourseTopicList (@RequestParam('albumId') albumId: number): Promise<ApiResult<AlbumCourseTopicViewResponse>> {
     return null
   }
   @PostMapping('/mis/course/list')
@@ -85,7 +87,7 @@ export class CourseApi {
   }
   @GetMapping('/mis/course/view')
   @ReturnGenericsProperty(ApiResult, new Map<string, new() => object>().set('data', CourseViewResponse))
-  public courseView (@RequestParam("courseId") courseId: number): Promise<ApiResult<CourseViewResponse>> {
+  public courseView (@RequestParam('courseId') courseId: number): Promise<ApiResult<CourseViewResponse>> {
     return null
   }
   @PostMapping('/mis/course/update')
@@ -95,12 +97,12 @@ export class CourseApi {
   }
   @GetMapping('/mis/course/no-page/list')
   @ReturnGenericsProperty(ApiResult, new Map<string, new() => object>().set('data', Array).set('data.Array', CourseListItemResponse))
-  public courseListByFilterNotPage (@RequestParam("courseName") courseName: string, @RequestParam("courseId") courseId: number): Promise<ApiResult<CourseListItemResponse[]>> {
+  public courseListByFilterNotPage (@RequestParam('courseName') courseName: string, @RequestParam('courseId') courseId: number): Promise<ApiResult<CourseListItemResponse[]>> {
     return null
   }
   @GetMapping('/mis/course-type/no-page/list')
   @ReturnGenericsProperty(ApiResult, new Map<string, new() => object>().set('data', Array).set('data.Array', CourseTypeListItemResponse))
-  public courseTypeListByFilterNotPage (@RequestParam("courseIdList") courseIdList: [], @RequestParam("rank") rank: number): Promise<ApiResult<CourseTypeListItemResponse[]>> {
+  public courseTypeListByFilterNotPage (@RequestParam('courseIdList') courseIdList: [], @RequestParam('rank') rank: number): Promise<ApiResult<CourseTypeListItemResponse[]>> {
     return null
   }
   @GetMapping('/mis/course-type/no-page/tree')
@@ -120,7 +122,7 @@ export class CourseApi {
   }
   @GetMapping('/mis/content-topic/view')
   @ReturnGenericsProperty(ApiResult, new Map<string, new() => object>().set('data', ContentTopicViewResponse))
-  public contentTopicView (@RequestParam("contentId") contentId: number): Promise<ApiResult<ContentTopicViewResponse>> {
+  public contentTopicView (@RequestParam('contentId') contentId: number): Promise<ApiResult<ContentTopicViewResponse>> {
     return null
   }
   @PostMapping('/mis/content-topic/update')
@@ -145,7 +147,7 @@ export class CourseApi {
   }
   @GetMapping('/mis/album/course/problem/topic/list')
   @ReturnGenericsProperty(ApiResult, new Map<string, new() => object>().set('data', Array).set('data.Array', AlbumCourseProblemTopicResponse))
-  public albumCourseProblemTopicList (@RequestParam("albumCourseProblemId") albumCourseProblemId: number): Promise<ApiResult<AlbumCourseProblemTopicResponse[]>> {
+  public albumCourseProblemTopicList (@RequestParam('albumCourseProblemId') albumCourseProblemId: number): Promise<ApiResult<AlbumCourseProblemTopicResponse[]>> {
     return null
   }
   @PostMapping('/mis/album/course/problem/update')
@@ -155,7 +157,22 @@ export class CourseApi {
   }
   @DeleteMapping('/mis/album/course/problem/delete')
   @ReturnGenericsProperty(ApiResult, new Map<string, new() => object>().set('data', Number))
-  public albumCourseProblemDelete (@RequestParam("albumCourseProblemId") albumCourseProblemId: number): Promise<ApiResult<number>> {
+  public albumCourseProblemDelete (@RequestParam('albumCourseProblemId') albumCourseProblemId: number): Promise<ApiResult<number>> {
+    return null
+  }
+  @PostMapping('/mis/album/course/problem/submit')
+  @ReturnGenericsProperty(ApiResult, new Map<string, new() => object>().set('data', AlbumCourseProblemAnswerOverviewResponse))
+  public albumCourseProblemSubmit (@RequestParam('albumCourseProblemId') albumCourseProblemId: number): Promise<ApiResult<AlbumCourseProblemAnswerOverviewResponse>> {
+    return null
+  }
+  @GetMapping('/mis/album/course/problem/answer/overview')
+  @ReturnGenericsProperty(ApiResult, new Map<string, new() => object>().set('data', AlbumCourseProblemAnswerOverviewResponse))
+  public albumCourseProblemAnswerOverview (@RequestParam('albumCourseProblemId') albumCourseProblemId: number): Promise<ApiResult<AlbumCourseProblemAnswerOverviewResponse>> {
+    return null
+  }
+  @GetMapping('/mis/album/course/problem/view')
+  @ReturnGenericsProperty(ApiResult, new Map<string, new() => object>().set('data', AlbumCourseProblemViewResponse))
+  public albumCourseProblemView (@RequestParam('albumCourseProblemId') albumCourseProblemId: number): Promise<ApiResult<AlbumCourseProblemViewResponse>> {
     return null
   }
 }

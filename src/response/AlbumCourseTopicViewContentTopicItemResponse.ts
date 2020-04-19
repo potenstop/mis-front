@@ -22,6 +22,10 @@ export class AlbumCourseTopicViewContentTopicItemResponse {
   @JsonProperty
   @ReturnGenericsProperty(Array, new Map<string, {new(): object}>().set('Array', ContentTopicSelectOptionResponse))
   private optionList: ContentTopicSelectOptionResponse[]
+  @JsonProperty
+  private answer: string
+  @JsonProperty
+  private analysis: string
   public getContentId (): number {
     return this.contentId
   }
@@ -51,5 +55,17 @@ export class AlbumCourseTopicViewContentTopicItemResponse {
   }
   public setOptionList (optionList: ContentTopicSelectOptionResponse[]): void {
     this.optionList = optionList
+  }
+  public getAnswer (): string {
+    return this.answer
+  }
+  public setAnswer (answer: string): void {
+    this.answer = answer
+  }
+  public getAnalysis (): string {
+    return this.analysis
+  }
+  public setAnalysis (analysis: string): void {
+    this.analysis = analysis
   }
 }

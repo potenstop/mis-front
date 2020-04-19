@@ -6,11 +6,14 @@
       :data="item"
       :key="item.contentId"
       @on-choose-value="onChooseValue"
+      :showAnswer="showAnswer"
+      :showAnalysis="showAnalysis"
     ></topic-item>
     <div style="margin-top: 20px;margin-left: 40%">
-      <Button type="primary" @click="handleSubmit" :loading="submitRunning" :disabled="loadingInit">提交试卷</Button>
+      <Button v-show="showSubmit" type="primary" @click="handleSubmit" :loading="submitRunning" :disabled="loadingInit">提交试卷</Button>
       <Button @click="back" style="margin-left: 8px">{{$t("P_CANCEL")}}</Button>
     </div>
+    <problem-answer-grade-overview-modal/>
   </div>
 </template>
 
@@ -30,6 +33,8 @@ import { AlbumCourseProblemUpdateRequest } from '@/request/AlbumCourseProblemUpd
 import { ProblemContentTopicRequest } from '@/request/ProblemContentTopicRequest'
 import moment from 'moment'
 import { CollectionUtils } from 'papio-h5/lib/util/CollectionUtils'
+import ProblemAnswerGradeOverviewModal from '@/components/modal/ProblemAnswerGradeOverviewModal.vue'
+import { DataUtil } from '@/common/util/DataUtil'
 
 const courseApi = new CourseApi()
 const appModule = namespace(StoreConstant.APP)
@@ -39,7 +44,8 @@ class UpdateModel {
 
 @Component({
   components: {
-    TopicItem
+    TopicItem,
+    ProblemAnswerGradeOverviewModal
   }
 })
 export default class CourseAlbumAnswer extends Vue {
@@ -54,6 +60,9 @@ export default class CourseAlbumAnswer extends Vue {
   private albumCourseProblemId: number = null
   // 数据是发生了变化
   private dataIsChange: boolean = false
+  private showSubmit: boolean = true
+  private showAnswer: boolean = false
+  private showAnalysis: boolean = false
 
   private async created () {
     this.loadingInit = true
@@ -109,6 +118,12 @@ export default class CourseAlbumAnswer extends Vue {
     const query = this.$route.query as any
     this.albumId = query.albumId
     this.albumCourseProblemId = query.albumCourseProblemId
+    // 获取试卷·详情
+    const problemViewResult = await courseApi.albumCourseProblemView(this.albumCourseProblemId)
+    const problemView = ApiUtil.getData(problemViewResult)
+    this.showSubmit = DataUtil.showIntToBool(problemView.getShowSubmitButton())
+    this.showAnswer = DataUtil.showIntToBool(problemView.getShowAnswer())
+    this.showAnalysis = DataUtil.showIntToBool(problemView.getShowAnalysis())
     const result = await courseApi.albumCourseTopicList(this.albumId)
     this.contentTopic = []
     const o = ['A ', 'B ', 'C ', 'D ', 'E ', 'F ', 'J ']
@@ -134,8 +149,13 @@ export default class CourseAlbumAnswer extends Vue {
   }
 
   private async handleSubmit () {
-    // 提交答案并给出得分
-    console.log(this.contentTopic)
+    // 提交答案并给出得分预览
+    const albumCourseProblemAnswerOverviewResponseResult = await courseApi.albumCourseProblemSubmit(this.albumCourseProblemId)
+    const albumCourseProblemAnswerOverview = ApiUtil.getData(albumCourseProblemAnswerOverviewResponseResult)
+    // 答题完成 给出概览图
+    this.$modal.show('problem-answer-grade-overview-modal', {
+      answerOverview: albumCourseProblemAnswerOverview
+    })
   }
   public back () {
     this.closeTag(this.$route)

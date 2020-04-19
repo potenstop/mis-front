@@ -8,6 +8,7 @@ import { RouterUtil } from '@/common/util/RouterUtil'
 import store from './store'
 import axios from 'axios'
 const { homeName } = ProjectConfig
+const messageVue = new Vue()
 
 Vue.use(Router)
 const LOGIN_PAGE_NAME = 'UserLogin'
@@ -86,6 +87,7 @@ axios.interceptors.response.use((response: any) => {
         })
     }
   }
+  messageVue.$Message.error({ content: `url:${error.config.url} message: ${error.message} status: ${error.response.status}`, duration: 5 })
   // 返回接口返回的错误信息
   return Promise.reject(error)
 })

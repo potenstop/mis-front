@@ -85,7 +85,8 @@ export default class CourseChooseModal extends mixins(ConstantMixin) {
     {
       title: 'ID',
       slot: 'contentId',
-      sortable: true
+      sortable: true,
+      width: 120
     },
     {
       title: '题目描述',
@@ -94,7 +95,8 @@ export default class CourseChooseModal extends mixins(ConstantMixin) {
     {
       title: '题目类型',
       slot: 'topicType',
-      key: 'topicType'
+      key: 'topicType',
+      width: 100
     },
     {
       title: '状态',

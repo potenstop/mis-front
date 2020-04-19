@@ -570,7 +570,7 @@ export default class SimplePageTable extends Vue {
           this.insideData = data.list
         }
       } catch (e) {
-        this.$Message.error(e.message)
+        // this.$Message.error(e.message)
       }
     } else {
       this.insideData = this.data

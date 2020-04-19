@@ -13,7 +13,9 @@
           :key="option.contentTopicSelectOptionId"
           :label="option.contentTopicSelectOptionId"
           style="margin-left: 10px"
+          :disabled="showAnswer"
         >
+          <Icon v-show="showAnswer && option.isOptionAnswer === 1" type="ios-checkmark-circle" :color="signOptionColor()"/>
           <auto-katex :data="option.optionLabel" :is-line-feed="false"></auto-katex>
         </Radio>
       </RadioGroup>
@@ -27,14 +29,27 @@
           :key="option.contentTopicSelectOptionId"
           :label="option.contentTopicSelectOptionId"
           style="margin-left: 10px"
-        >{{option.optionLabel}}</Checkbox>
+          :disabled="showAnswer"
+        >
+          <Icon v-show="showAnswer && option.isOptionAnswer === 1" type="ios-checkmark-circle" :color="mulOptionColor()"/>
+          <auto-katex :data="option.optionLabel" :is-line-feed="false"></auto-katex>
+        </Checkbox>
       </CheckboxGroup>
       <div v-if="data.topicType === topicType.TYPE_FILL_BLANK">
         <Input @on-change="inputDataChanged" placeholder="输入答案" style="width: 300px" v-model="inputData"></Input>
       </div>
       <div v-if="data.topicType === topicType.TYPE_SHORT_ANSWER">
         <Input @on-change="inputDataChanged" maxlength="5000" show-word-limit type="textarea" placeholder="输入答案" style="width: 600px" v-model="inputData"/>
+        <div v-show="showAnswer">
+          <Divider orientation="left" style="color: #2182ff;">答案:</Divider>
+          <auto-katex :data="data.answer" :is-line-feed="false"></auto-katex>
+        </div>
       </div>
+      <div v-show="showAnalysis">
+        <Divider orientation="left" style="color: #2182ff;">解析:</Divider>
+        <auto-katex :data="data.analysis" :is-line-feed="false"></auto-katex>
+      </div>
+
     </Card>
   </div>
 </template>
@@ -54,6 +69,8 @@ import AutoKatex from '@/components/katex/AutoKatex.vue'
 export default class TopicItem extends Vue {
   private name = 'TopicItem'
   @Prop({ default: () => new ItemContentTopic() }) private readonly data: ItemContentTopic
+  @Prop({ default: false }) private readonly showAnswer: boolean
+  @Prop({ default: false }) private readonly showAnalysis: boolean
   private signData: number = null
   private mulData: number[] = []
   private inputData: string = null
@@ -91,6 +108,37 @@ export default class TopicItem extends Vue {
   }
   private noticeValue () {
     this.$emit('on-choose-value')
+  }
+  private signOptionColor () {
+    let answerOptionId = null
+    this.data.addOptionList.forEach(item => {
+      if (item.isOptionAnswer === 1) {
+        answerOptionId = item.contentTopicSelectOptionId
+      }
+    })
+    if (this.signData === answerOptionId) {
+      return '#0aff8d'
+    }
+    return '#FF243B'
+  }
+  private mulOptionColor () {
+    let answerOptionIdList = []
+    this.data.addOptionList.forEach(item => {
+      if (item.isOptionAnswer === 1) {
+        answerOptionIdList.push(item.contentTopicSelectOptionId)
+      }
+    })
+    answerOptionIdList.sort()
+    let mulDataCopy = []
+    this.mulData.forEach(item => {
+      mulDataCopy.push(item)
+    })
+    mulDataCopy.sort()
+    answerOptionIdList.sort()
+    if (JSON.stringify(mulDataCopy) === JSON.stringify(answerOptionIdList)) {
+      return '#0aff8d'
+    }
+    return '#FF243B'
   }
 }
 </script>
