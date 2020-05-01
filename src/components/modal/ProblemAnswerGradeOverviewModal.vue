@@ -19,8 +19,12 @@
       <ListItem>排名:{{answerOverview.getSiteRank() === -1 ? '未上榜' : `第${answerOverview.getSiteRank()}名`}}</ListItem>
       <ListItem>准确率:{{answerOverview.getCorrectRate() * 100 + '%'}}</ListItem>
     </List>
-
     <br>
+    <Row type="flex" justify="center" style="padding-top: 20px">
+      <Col span="4">
+        <Button type="primary" @click="close()">确认</Button>
+      </Col>
+    </Row>
   </modal>
 </template>
 
@@ -37,6 +41,10 @@ export default class ProblemAnswerGradeOverviewModal extends Vue {
   private answerOverview: AlbumCourseProblemAnswerOverviewResponse = new AlbumCourseProblemAnswerOverviewResponse()
   private beforeOpen (event) {
     this.answerOverview = event.params.answerOverview
+  }
+  private close () {
+    this.$modal.hide('problem-answer-grade-overview-modal')
+    this.$emit('close')
   }
 }
 </script>

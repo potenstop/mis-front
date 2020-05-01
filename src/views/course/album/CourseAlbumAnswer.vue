@@ -13,12 +13,14 @@
       <Button v-show="showSubmit" type="primary" @click="handleSubmit" :loading="submitRunning" :disabled="loadingInit">提交试卷</Button>
       <Button @click="back" style="margin-left: 8px">{{$t("P_CANCEL")}}</Button>
     </div>
-    <problem-answer-grade-overview-modal/>
+    <problem-answer-grade-overview-modal
+      @close="overviewClose"
+    ></problem-answer-grade-overview-modal>
   </div>
 </template>
 
 <script lang="ts">
-import { Component, Vue, Watch } from 'vue-property-decorator'
+import { Component, Inject, Vue, Watch } from 'vue-property-decorator'
 import { ApiUtil } from '@/common/util/ApiUtil'
 import { State, Getter, Action, Mutation, namespace } from 'vuex-class'
 import { StoreConstant } from '@/common/constant/StoreConstant'
@@ -50,6 +52,7 @@ class UpdateModel {
 })
 export default class CourseAlbumAnswer extends Vue {
   @appModule.Mutation closeTag: Function
+  @Inject('reload') readonly reload: Function
   private name = 'CourseAlbumAnswer'
   private formItem: UpdateModel = new UpdateModel()
   private loadingInit: boolean = true
@@ -205,6 +208,9 @@ export default class CourseAlbumAnswer extends Vue {
         this.dataIsChange = false
       }
     }, 1000)
+  }
+  private overviewClose () {
+    this.reload()
   }
 }
 </script>
