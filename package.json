@@ -5,6 +5,7 @@
   "scripts": {
     "serve": "vue-cli-service serve --port=8091",
     "build": "vue-cli-service build",
+    "deploy": "vue-cli-service build --dest /site/mis",
     "lint": "vue-cli-service lint",
     "test:unit": "vue-cli-service test:unit"
   },
