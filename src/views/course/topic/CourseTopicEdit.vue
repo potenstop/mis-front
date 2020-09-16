@@ -2,7 +2,7 @@
   <Card style="width: 100%">
     <Form ref="formItem" :model="formItem" :rules="ruleValidate" :label-width="80" style="margin-left: 20%" label-position="left">
       <FormItem label="标题" prop="title">
-        <Input v-model.trim="formItem.title" placeholder="" style="width: 300px"></Input>
+        <Input v-model.trim="formItem.title" maxlength="5000" show-word-limit type="textarea" placeholder="输入标题" style="width: 600px" :autosize="{ minRows: 3, maxRows: 10 }"/>
         <auto-katex :data="formItem.title"></auto-katex>
       </FormItem>
       <FormItem label="是否展示" prop="state">
@@ -35,16 +35,33 @@
              :name="item.value"
              @on-close = "optionTagClose"
              @on-change = "optionTagChange"
-        >{{item.label}}</Tag>
+        >
+          {{item.label}}
+        </Tag>
+        <CheckboxGroup
+        >
+          <Checkbox
+            v-for="option in formItem.chooseOption"
+            :key="option.contentTopicSelectOptionId"
+            :label="option.contentTopicSelectOptionId"
+            style="margin-left: 10px"
+            :disabled="true"
+          >
+            <auto-katex :data="option.label" :is-line-feed="false"></auto-katex>
+          </Checkbox>
+        </CheckboxGroup>
       </FormItem>
       <FormItem label="答案" v-if="formItem.topicType > 0 && contentTopicTypeConstantSelectList.indexOf(formItem.topicType) === -1" prop="answer">
         <Input v-model.trim="formItem.answer" maxlength="5000" show-word-limit type="textarea" placeholder="Enter something..." style="width: 600px" />
+        <auto-katex :data="formItem.answer"></auto-katex>
       </FormItem>
       <FormItem label="解析" prop="analysis">
         <Input v-model.trim="formItem.analysis" maxlength="2000" show-word-limit type="textarea" placeholder="Enter something..." style="width: 600px" />
+        <auto-katex :data="formItem.analysis"></auto-katex>
       </FormItem>
       <FormItem>
-        <Button type="primary" @click="handleSubmit('formItem')" :loading="submitRunning" :disabled="loadingInit">{{$t('P_SAVE')}}</Button>
+        <Button type="primary" @click="handleSubmit('formItem', true)" :loading="submitRunning" :disabled="loadingInit" style="margin-left: 8px">{{$t('P_SAVE')}}</Button>
+        <Button type="info" @click="handleSubmit('formItem', false)" :loading="submitRunning" :disabled="loadingInit" style="margin-left: 8px">{{$t('P_UPDATE')}}</Button>
         <Button @click="back" style="margin-left: 8px">{{$t('P_CANCEL')}}</Button>
       </FormItem>
     </Form>
@@ -52,7 +69,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator'
+import { Component, Vue, Watch } from 'vue-property-decorator'
 import { ApiUtil } from '@/common/util/ApiUtil'
 import { State, Getter, Action, Mutation, namespace } from 'vuex-class'
 import { StoreConstant } from '@/common/constant/StoreConstant'
@@ -104,6 +121,7 @@ export default class CourseTopicEdit extends Vue {
   @appModule.Mutation closeTag: Function
   private name = 'CourseTopicEdit'
   private formItem: UpdateModel = new UpdateModel()
+  private formItemHasUpdate: boolean = false
   private loadingInit: boolean = true
   private selectTopicTypeList: {value: number, label: string}[] = []
   private contentTopicTypeConstantSelectList: number[] = []
@@ -190,10 +208,9 @@ export default class CourseTopicEdit extends Vue {
       }
     }
   }
-  private async handleSubmit (name) {
+  private async handleSubmit (name, isBack: boolean) {
     this.submitRunning = true
     try {
-      console.log(this.formItem, 222222222222)
       const form = this.$refs[name] as any
       const valid = await form.validate()
       if (!valid) {
@@ -273,7 +290,11 @@ export default class CourseTopicEdit extends Vue {
       }
       ApiUtil.getData(result)
       RefreshEvent.emit('CourseTopicList')
-      this.back()
+      this.$Message.info('保存成功！')
+      this.formItemHasUpdate = false
+      if (isBack) {
+        this.back()
+      }
     } catch (e) {
       this.$Message.error(e.message)
     } finally {
@@ -339,6 +360,10 @@ export default class CourseTopicEdit extends Vue {
     if (index >= 0) {
       this.formItem.chooseOption[index].checked = checked
     }
+  }
+  @Watch('formItem')
+  private onFormItemChange () {
+    this.formItemHasUpdate = true
   }
 }
 </script>

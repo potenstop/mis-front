@@ -169,6 +169,7 @@ export default class TagsNav extends Vue {
 
     close (route) {
       let res = this.list.filter(item => !RouterUtil.routeEqual(route, item))
+      console.log('11111111111111111111111')
       this.$emit('on-close', res, undefined, route)
     }
 

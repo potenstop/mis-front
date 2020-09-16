@@ -26,6 +26,7 @@ export default {
   P_MUL_ADD: '批量添加',
   P_EDIT: '编辑',
   P_SAVE: '保存',
+  P_UPDATE: '更新',
   P_CANCEL: '取消',
   P_VIEW_FILTER: '查看过滤条件',
   P_ERROR_ENUM: '数据错误',
