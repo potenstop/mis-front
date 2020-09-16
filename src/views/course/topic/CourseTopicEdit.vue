@@ -140,10 +140,8 @@ export default class CourseTopicEdit extends Vue {
       { type: 'array', required: true, message: '选项不能为空', trigger: 'blur' }
     ],
     analysis: [
-      { type: 'string', required: false, message: '解析不能为空', trigger: 'blur' }
     ],
     answer: [
-      { type: 'string', required: true, message: '答案不能为空', trigger: 'blur' }
     ],
     gradeAmount: [
       { required: true, message: '分数不能为空' }

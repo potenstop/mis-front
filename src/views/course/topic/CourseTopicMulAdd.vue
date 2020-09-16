@@ -7,7 +7,9 @@
       :max-size="1024*20"
       :on-success="handleUploadSuccess"
       :on-error="handleUploadError"
+      :before-upload="handleUploadBefore"
       type="drag"
+      :data="fileData"
     >
       <div style="padding: 20px 0">
         <Icon type="ios-cloud-upload" size="52" style="color: #3399ff"></Icon>
@@ -26,7 +28,8 @@
         style="padding-left: 20%"
       >
         <FormItem label="标题" prop="title">
-          <Input v-model.trim="item.title" placeholder="" style="width: 300px"></Input>
+          <Input v-model.trim="item.title" maxlength="5000" show-word-limit type="textarea" placeholder="输入标题" style="width: 600px" :autosize="{ minRows: 3, maxRows: 10 }"/>
+          <auto-katex :data="item.title"></auto-katex>
         </FormItem>
         <FormItem label="是否展示" prop="state">
           <Select v-model="item.state" style="width: 300px">
@@ -38,6 +41,9 @@
           <Select v-model="item.topicType" style="width: 300px">
             <Option v-for="itemType in selectTopicTypeList" :value="itemType.value" :key="itemType.value">{{itemType.label}}</Option>
           </Select>
+        </FormItem>
+        <FormItem label="分数" prop="gradeAmount">
+          <Input v-model.trim="item.gradeAmount" placeholder="" style="width: 300px"></Input>
         </FormItem>
         <FormItem label="选项" v-if="contentTopicTypeConstantSelectList.indexOf(item.topicType) !== -1" prop="chooseOption">
           <Input v-model.trim="item.optionLabel" placeholder="" style="width: 300px"/>
@@ -58,9 +64,11 @@
         </FormItem>
         <FormItem label="答案" v-if="item.topicType > 0 && contentTopicTypeConstantSelectList.indexOf(item.topicType) === -1" prop="answer">
           <Input v-model.trim="item.answer" maxlength="5000" show-word-limit type="textarea" placeholder="Enter something..." style="width: 300px" />
+          <auto-katex :data="item.answer"></auto-katex>
         </FormItem>
         <FormItem label="解析" prop="analysis">
           <Input v-model.trim="item.analysis" maxlength="2000" show-word-limit type="textarea" placeholder="Enter something..." style="width: 300px" />
+          <auto-katex :data="item.analysis"></auto-katex>
         </FormItem>
         <Divider />
       </Form>
@@ -94,10 +102,17 @@ import { ContentTopicSelectOptionRequest } from '@/request/ContentTopicSelectOpt
 import { UploadTopicListItemResponse } from '@/response/UploadTopicListItemResponse'
 import { ApiResult } from '@/bmo/ApiResult'
 import { ContentTopicMulAddRequest } from '@/request/ContentTopicMulAddRequest'
+import { ForeignApi } from '@/dao/api/ForeignApi'
+import moment from 'moment'
+import { EncryptUtil } from '@/common/util/EncryptUtil'
+import { CmsApi } from '@/dao/api/CmsApi'
+import AutoKatex from '@/components/katex/AutoKatex.vue'
 
 const appModule = namespace(StoreConstant.APP)
 
 const courseApi = new CourseApi()
+const foreignApi = new ForeignApi()
+const cmsApi = new CmsApi()
 class UpdateModel {
   @JsonProperty
   public contentId: number
@@ -113,6 +128,8 @@ class UpdateModel {
   public answer: string
   public optionLabel: string
   @JsonProperty
+  public gradeAmount: number
+  @JsonProperty
   public chooseOption: {label: string, value: number, checked: boolean, isNew: boolean}[]
   public constructor () {
     this.contentId = null
@@ -123,10 +140,13 @@ class UpdateModel {
     this.answer = null
     this.chooseOption = []
     this.optionLabel = null
+    this.gradeAmount = 1
   }
 }
 
-@Component
+@Component({
+  components: { AutoKatex }
+})
 export default class CourseTopicMulAdd extends Vue {
   @appModule.Mutation closeTag: Function
   private fileApiAddress: string;
@@ -138,7 +158,7 @@ export default class CourseTopicMulAdd extends Vue {
   private ruleValidate = {
     title: [
       { type: 'string', required: true, message: '标题不能为空', trigger: 'blur' },
-      { type: 'string', max: 50, message: '课程名称最大不超过50字符', trigger: 'blur' }
+      { type: 'string', max: 2000, message: '课程名称最大不超过50字符', trigger: 'blur' }
     ],
     state: [
       { type: 'integer', required: true, message: '状态不能为空', trigger: 'blur' }
@@ -150,20 +170,24 @@ export default class CourseTopicMulAdd extends Vue {
       { type: 'array', required: true, message: '选项不能为空', trigger: 'blur' }
     ],
     analysis: [
-      { type: 'string', required: true, message: '解析不能为空', trigger: 'blur' }
     ],
     answer: [
-      { type: 'string', required: true, message: '答案不能为空', trigger: 'blur' }
+    ],
+    gradeAmount: [
+      { required: true, message: '分数不能为空' }
     ]
   }
   private submitRunning: boolean = false
   private isAddPage = true
   private removeOptionIdList: number[] = []
   private optionValue: number = 1000
+  private fileData = {
+    token: '',
+    key: ''
+  }
 
   private async created () {
-    const dataSource = Beans.getBean('HttpApiConfigurationMaster') as AxiosDataSource
-    this.fileApiAddress = dataSource.getUrl() + '/word/batch/course/topic'
+    this.fileApiAddress = 'https://upload-z2.qiniup.com'
     if (this.$route.path.indexOf('add') !== -1) {
       this.isAddPage = true
     } else {
@@ -312,10 +336,9 @@ export default class CourseTopicMulAdd extends Vue {
       this.formItem[index[0]].chooseOption[index[1]].checked = checked
     }
   }
-  private handleUploadSuccess (res) {
-    const result: ApiResult<UploadTopicListItemResponse[]> = JsonProtocol.jsonToBean<ApiResult<UploadTopicListItemResponse[]>>(
-      res, ApiResult, new Map<string, new() => object>().set('data', Array).set('data.Array', UploadTopicListItemResponse))
-    const data = ApiUtil.getData(result)
+  private async handleUploadSuccess (res) {
+    const data = ApiUtil.getData(await cmsApi.wordBatchCourseTopic('http://pic.potens.top/' + this.fileData.key))
+    ApiUtil.getData(await foreignApi.qiniuFileDelete(this.fileData.key))
     data.forEach(item => {
       const updateModel = new UpdateModel()
       updateModel.state = ContentTopicConstant.STATE_ONLINE
@@ -337,6 +360,12 @@ export default class CourseTopicMulAdd extends Vue {
   }
   private handleUploadError (error) {
     this.$Message.error('上传失败:' + error.message)
+  }
+  private async handleUploadBefore () {
+    this.fileData.token = ApiUtil.getData(await foreignApi.qiniuTokenRefresh())
+    const now = moment()
+    this.fileData.key = `course/word/problem/${now.format('YYYY')}/${now.format('MM-DD')}/${now.format('X')}_${Math.floor(Math.random() * 1000)}.doc`
+    return true
   }
 }
 </script>
