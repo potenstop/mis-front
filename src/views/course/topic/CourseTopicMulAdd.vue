@@ -366,6 +366,7 @@ export default class CourseTopicMulAdd extends Vue {
   private async handleUploadSuccess (res) {
     const data = ApiUtil.getData(await cmsApi.wordBatchCourseTopic('http://pic.potens.top/' + this.fileData.key))
     ApiUtil.getData(await foreignApi.qiniuFileDelete(this.fileData.key))
+    this.formItem = []
     data.forEach(item => {
       const updateModel = new UpdateModel()
       updateModel.state = ContentTopicConstant.STATE_ONLINE
