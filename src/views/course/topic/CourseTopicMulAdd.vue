@@ -27,50 +27,56 @@
         :key="index"
         style="padding-left: 20%"
       >
-        <FormItem label="标题" prop="title">
-          <Input v-model.trim="item.title" maxlength="5000" show-word-limit type="textarea" placeholder="输入标题" style="width: 600px" :autosize="{ minRows: 3, maxRows: 10 }"/>
-          <auto-katex :data="item.title"></auto-katex>
-        </FormItem>
-        <FormItem label="是否展示" prop="state">
-          <Select v-model="item.state" style="width: 300px">
-            <Option :value="1">是</Option>
-            <Option :value="2">否</Option>
-          </Select>
-        </FormItem>
-        <FormItem label="类型" prop="topicType">
-          <Select v-model="item.topicType" style="width: 300px">
-            <Option v-for="itemType in selectTopicTypeList" :value="itemType.value" :key="itemType.value">{{itemType.label}}</Option>
-          </Select>
-        </FormItem>
-        <FormItem label="分数" prop="gradeAmount">
-          <Input v-model.trim="item.gradeAmount" placeholder="" style="width: 300px"></Input>
-        </FormItem>
-        <FormItem label="选项" v-if="contentTopicTypeConstantSelectList.indexOf(item.topicType) !== -1" prop="chooseOption">
-          <Input v-model.trim="item.optionLabel" placeholder="" style="width: 300px"/>
-          <Button icon="ios-add" type="dashed" @click="optionAdd(index)" style="margin-left: 10px">添加选项</Button>
-          <br/>
-          <Tag v-for="itemOption in item.chooseOption"
-               style="margin-top: 5px"
-               :key="itemOption.value"
-               size="large"
-               closable
-               checkable
-               :color="itemOption.checked ? 'primary' : 'default'"
-               :checked="itemOption.checked"
-               :name="itemOption.value"
-               @on-close = "optionTagClose"
-               @on-change = "optionTagChange"
-          >{{itemOption.label}}</Tag>
-        </FormItem>
-        <FormItem label="答案" v-if="item.topicType > 0 && contentTopicTypeConstantSelectList.indexOf(item.topicType) === -1" prop="answer">
-          <Input v-model.trim="item.answer" maxlength="5000" show-word-limit type="textarea" placeholder="Enter something..." style="width: 300px" />
-          <auto-katex :data="item.answer"></auto-katex>
-        </FormItem>
-        <FormItem label="解析" prop="analysis">
-          <Input v-model.trim="item.analysis" maxlength="2000" show-word-limit type="textarea" placeholder="Enter something..." style="width: 300px" />
-          <auto-katex :data="item.analysis"></auto-katex>
-        </FormItem>
-        <Divider />
+        <Card style="width: 800px; margin-top: 20px">
+          <p slot="title">
+            题号: {{index + 1}}
+          </p>
+          <Button slot="extra" type="warning" @click="deleteFormItem">删除</Button>
+          <FormItem label="标题" prop="title">
+            <Input v-model.trim="item.title" maxlength="5000" show-word-limit type="textarea" placeholder="输入标题" style="width: 600px" :autosize="{ minRows: 3, maxRows: 10 }"/>
+            <auto-katex :data="item.title"></auto-katex>
+          </FormItem>
+          <FormItem label="是否展示" prop="state">
+            <Select v-model="item.state" style="width: 300px">
+              <Option :value="1">是</Option>
+              <Option :value="2">否</Option>
+            </Select>
+          </FormItem>
+          <FormItem label="类型" prop="topicType">
+            <Select v-model="item.topicType" style="width: 300px">
+              <Option v-for="itemType in selectTopicTypeList" :value="itemType.value" :key="itemType.value">{{itemType.label}}</Option>
+            </Select>
+          </FormItem>
+          <FormItem label="分数" prop="gradeAmount">
+            <Input v-model.trim="item.gradeAmount" placeholder="" style="width: 300px"></Input>
+          </FormItem>
+          <FormItem label="选项" v-if="contentTopicTypeConstantSelectList.indexOf(item.topicType) !== -1" prop="chooseOption">
+            <Input v-model.trim="item.optionLabel" placeholder="" style="width: 300px"/>
+            <Button icon="ios-add" type="dashed" @click="optionAdd(index)" style="margin-left: 10px">添加选项</Button>
+            <br/>
+            <Tag v-for="itemOption in item.chooseOption"
+                 style="margin-top: 5px"
+                 :key="itemOption.value"
+                 size="large"
+                 closable
+                 checkable
+                 :color="itemOption.checked ? 'primary' : 'default'"
+                 :checked="itemOption.checked"
+                 :name="itemOption.value"
+                 @on-close = "optionTagClose"
+                 @on-change = "optionTagChange"
+            >{{itemOption.label}}</Tag>
+          </FormItem>
+          <FormItem label="答案" v-if="item.topicType > 0 && contentTopicTypeConstantSelectList.indexOf(item.topicType) === -1" prop="answer">
+            <Input v-model.trim="item.answer" maxlength="5000" show-word-limit type="textarea" placeholder="Enter something..." style="width: 300px" />
+            <auto-katex :data="item.answer"></auto-katex>
+          </FormItem>
+          <FormItem label="解析" prop="analysis">
+            <Input v-model.trim="item.analysis" maxlength="2000" show-word-limit type="textarea" placeholder="Enter something..." style="width: 300px" />
+            <auto-katex :data="item.analysis"></auto-katex>
+          </FormItem>
+          <Divider />
+        </Card>
       </Form>
       <div style="padding-left: 40%">
         <Button type="primary" @click="handleSubmit('formItem')" :loading="submitRunning" :disabled="loadingInit">{{$t("P_SAVE")}}</Button>
@@ -107,6 +113,8 @@ import moment from 'moment'
 import { EncryptUtil } from '@/common/util/EncryptUtil'
 import { CmsApi } from '@/dao/api/CmsApi'
 import AutoKatex from '@/components/katex/AutoKatex.vue'
+import { LocalForageUtil } from '@/common/util/LocalForageUtil'
+import { CollectionUtils } from 'papio-h5/lib/util/CollectionUtils'
 
 const appModule = namespace(StoreConstant.APP)
 
@@ -185,6 +193,7 @@ export default class CourseTopicMulAdd extends Vue {
     token: '',
     key: ''
   }
+  private loadCacheFormItemKey = 'CourseTopicMulAddKey'
 
   private async created () {
     this.fileApiAddress = 'https://upload-z2.qiniup.com'
@@ -197,6 +206,8 @@ export default class CourseTopicMulAdd extends Vue {
     this.initSelectTopicTypeList()
     this.initContentTopicTypeConstantSelectList()
     this.loadingInit = false
+    this.loadCacheFormItem()
+    this.startTimeSaveCache()
   }
   private initSelectTopicTypeList () {
     const t1 = this.$t('CONTENT_TOPIC_TYPE_SIGN_SELECT') as string
@@ -266,12 +277,28 @@ export default class CourseTopicMulAdd extends Vue {
       const result = await courseApi.contentTopicMulAdd(request)
       ApiUtil.getData(result)
       RefreshEvent.emit('CourseTopicList')
+      await LocalForageUtil.deleteItem(this.loadCacheFormItemKey)
       this.back()
     } catch (e) {
       this.$Message.error(e.message)
     } finally {
       this.submitRunning = false
     }
+  }
+  private async loadCacheFormItem () {
+    const cacheData = await LocalForageUtil.getItem(this.loadCacheFormItemKey)
+    console.log('111', cacheData)
+    if (cacheData != null) {
+      this.formItem = JsonProtocol.arrayToBeans(cacheData, UpdateModel, new Map<string, new() => object>().set('root', UpdateModel), 'root')
+      console.log('222', this.formItem)
+    }
+  }
+  private async startTimeSaveCache () {
+    setInterval(() => {
+      if (CollectionUtils.isNotEmpty(this.formItem)) {
+        LocalForageUtil.setItem(this.loadCacheFormItemKey, this.formItem)
+      }
+    }, 100)
   }
   public back () {
     this.closeTag(this.$route)
@@ -366,6 +393,9 @@ export default class CourseTopicMulAdd extends Vue {
     const now = moment()
     this.fileData.key = `course/word/problem/${now.format('YYYY')}/${now.format('MM-DD')}/${now.format('X')}_${Math.floor(Math.random() * 1000)}.doc`
     return true
+  }
+  private async deleteFormItem (index: number) {
+    this.formItem.splice(index, 1)
   }
 }
 </script>

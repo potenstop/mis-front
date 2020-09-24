@@ -24,6 +24,9 @@ export class LocalForageUtil {
   public static setItem (key: string, value: any) {
     return store.setItem(key, value)
   }
+  public static deleteItem (key: string) {
+    return store.setItem(key, null)
+  }
   public static async getItem (key: string, defalutValue?: any): Promise<any> {
     const result = await store.getItem(key)
     if (result === null) {

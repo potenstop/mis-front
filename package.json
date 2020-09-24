@@ -24,7 +24,7 @@
     "localforage": "^1.7.3",
     "mockjs": "^1.0.1-beta3",
     "moment": "^2.24.0",
-    "papio-h5": "0.0.8",
+    "papio-h5": "0.0.12",
     "plupload": "^2.3.6",
     "qiniu-js": "^2.5.4",
     "tinymce": "^5.0.16",
