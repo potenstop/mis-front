@@ -34,6 +34,10 @@ export class ContentTopicUpdateRequest {
   @JsonProperty
   @ReturnGenericsProperty(Array, new Map<string, {new(): object}>().set('Array', ContentTopicSelectOptionRequest))
   private modifyOptionList: ContentTopicSelectOptionRequest[]
+  @JsonProperty
+  private titleAnnexContent: string
+  @JsonProperty
+  private answerAnnexContent: string
   public getContentId (): number {
     return this.contentId
   }
@@ -93,5 +97,17 @@ export class ContentTopicUpdateRequest {
   }
   public setRemoveOptionIdList (removeOptionIdList: number[]): void {
     this.removeOptionIdList = removeOptionIdList
+  }
+  public getTitleAnnexContent (): string {
+    return this.titleAnnexContent
+  }
+  public setTitleAnnexContent (titleAnnexContent: string): void {
+    this.titleAnnexContent = titleAnnexContent
+  }
+  public getAnswerAnnexContent (): string {
+    return this.answerAnnexContent
+  }
+  public setAnswerAnnexContent (answerAnnexContent: string): void {
+    this.answerAnnexContent = answerAnnexContent
   }
 }

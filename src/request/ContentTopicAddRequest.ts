@@ -26,6 +26,10 @@ export class ContentTopicAddRequest {
   @JsonProperty
   @ReturnGenericsProperty(Array, new Map<string, {new(): object}>().set('Array', ContentTopicSelectOptionRequest))
   private addOptionList: ContentTopicSelectOptionRequest[]
+  @JsonProperty
+  private titleAnnexContent: string
+  @JsonProperty
+  private answerAnnexContent: string
   public getAnalysis (): string {
     return this.analysis
   }
@@ -67,5 +71,17 @@ export class ContentTopicAddRequest {
   }
   public setAddOptionList (addOptionList: ContentTopicSelectOptionRequest[]): void {
     this.addOptionList = addOptionList
+  }
+  public getTitleAnnexContent (): string {
+    return this.titleAnnexContent
+  }
+  public setTitleAnnexContent (titleAnnexContent: string): void {
+    this.titleAnnexContent = titleAnnexContent
+  }
+  public getAnswerAnnexContent (): string {
+    return this.answerAnnexContent
+  }
+  public setAnswerAnnexContent (answerAnnexContent: string): void {
+    this.answerAnnexContent = answerAnnexContent
   }
 }

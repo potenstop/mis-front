@@ -35,5 +35,7 @@ export default {
   CONTENT_TOPIC_TYPE_FILL_BLANK: '填空题',
   CONTENT_TOPIC_TYPE_SHORT_ANSWER: '简答题',
   CONTENT_STATE_OFFLINE: '下线',
-  CONTENT_STATE_ONLINE: '上线'
+  CONTENT_STATE_ONLINE: '上线',
+  ADD_MARKDOWN: '添加markdown',
+  CANCEL_MARKDOWN: '收起markdown'
 }

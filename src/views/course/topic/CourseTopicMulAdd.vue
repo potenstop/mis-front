@@ -31,10 +31,15 @@
           <p slot="title">
             题号: {{index + 1}}
           </p>
-          <Button slot="extra" type="warning" @click="deleteFormItem">删除</Button>
+          <Button slot="extra" type="warning" @click="deleteFormItem(index)">删除</Button>
           <FormItem label="标题" prop="title">
             <Input v-model.trim="item.title" maxlength="5000" show-word-limit type="textarea" placeholder="输入标题" style="width: 600px" :autosize="{ minRows: 3, maxRows: 10 }"/>
             <auto-katex :data="item.title"></auto-katex>
+          </FormItem>
+          <FormItem label="标题附件">
+            <Button icon="ios-add" type="dashed" @click="addTitleMarkdown(item)" style="margin-left: 10px" v-if="!item.showTitleMarkdown">{{$t("ADD_MARKDOWN")}}</Button>
+            <Button icon="ios-add" type="dashed" @click="addTitleMarkdown(item)" style="margin-left: 10px" v-if="item.showTitleMarkdown">{{$t("CANCEL_MARKDOWN")}}</Button>
+            <simple-markdown style="margin-top: 10px" v-if="item.showTitleMarkdown" :value.sync="item.titleAnnexContent"></simple-markdown >
           </FormItem>
           <FormItem label="是否展示" prop="state">
             <Select v-model="item.state" style="width: 300px">
@@ -70,6 +75,11 @@
           <FormItem label="答案" v-if="item.topicType > 0 && contentTopicTypeConstantSelectList.indexOf(item.topicType) === -1" prop="answer">
             <Input v-model.trim="item.answer" maxlength="5000" show-word-limit type="textarea" placeholder="Enter something..." style="width: 300px" />
             <auto-katex :data="item.answer"></auto-katex>
+          </FormItem>
+          <FormItem label="答案附件">
+            <Button icon="ios-add" type="dashed" @click="addAnsweMarkdown(item)" style="margin-left: 10px" v-if="!item.showAnswerMarkdown">{{$t("ADD_MARKDOWN")}}</Button>
+            <Button icon="ios-add" type="dashed" @click="addAnsweMarkdown(item)" style="margin-left: 10px" v-if="item.showAnswerMarkdown">{{$t("CANCEL_MARKDOWN")}}</Button>
+            <simple-markdown style="margin-top: 10px" v-if="item.showAnswerMarkdown" :value.sync="item.answerAnnexContent"></simple-markdown >
           </FormItem>
           <FormItem label="解析" prop="analysis">
             <Input v-model.trim="item.analysis" maxlength="2000" show-word-limit type="textarea" placeholder="Enter something..." style="width: 300px" />
@@ -115,6 +125,8 @@ import { CmsApi } from '@/dao/api/CmsApi'
 import AutoKatex from '@/components/katex/AutoKatex.vue'
 import { LocalForageUtil } from '@/common/util/LocalForageUtil'
 import { CollectionUtils } from 'papio-h5/lib/util/CollectionUtils'
+import ProjectConfig from '@/config/ProjectConfig'
+import SimpleMarkdown from '@/components/editor/SimpleMarkdown.vue'
 
 const appModule = namespace(StoreConstant.APP)
 
@@ -139,6 +151,12 @@ class UpdateModel {
   public gradeAmount: number
   @JsonProperty
   public chooseOption: {label: string, value: number, checked: boolean, isNew: boolean}[]
+  @JsonProperty
+  public titleAnnexContent: string
+  @JsonProperty
+  public answerAnnexContent: string
+  public showTitleMarkdown = false
+  public showAnswerMarkdown = false
   public constructor () {
     this.contentId = null
     this.title = null
@@ -149,11 +167,16 @@ class UpdateModel {
     this.chooseOption = []
     this.optionLabel = null
     this.gradeAmount = 1
+    this.titleAnnexContent = null
+    this.answerAnnexContent = null
   }
 }
 
 @Component({
-  components: { AutoKatex }
+  components: {
+    AutoKatex,
+    SimpleMarkdown
+  }
 })
 export default class CourseTopicMulAdd extends Vue {
   @appModule.Mutation closeTag: Function
@@ -196,7 +219,7 @@ export default class CourseTopicMulAdd extends Vue {
   private loadCacheFormItemKey = 'CourseTopicMulAddKey'
 
   private async created () {
-    this.fileApiAddress = 'https://upload-z2.qiniup.com'
+    this.fileApiAddress = ProjectConfig.qiniuUpload
     if (this.$route.path.indexOf('add') !== -1) {
       this.isAddPage = true
     } else {
@@ -364,7 +387,7 @@ export default class CourseTopicMulAdd extends Vue {
     }
   }
   private async handleUploadSuccess (res) {
-    const data = ApiUtil.getData(await cmsApi.wordBatchCourseTopic('http://pic.potens.top/' + this.fileData.key))
+    const data = ApiUtil.getData(await cmsApi.wordBatchCourseTopic(ProjectConfig.picDomain + this.fileData.key))
     ApiUtil.getData(await foreignApi.qiniuFileDelete(this.fileData.key))
     this.formItem = []
     data.forEach(item => {
@@ -397,6 +420,14 @@ export default class CourseTopicMulAdd extends Vue {
   }
   private async deleteFormItem (index: number) {
     this.formItem.splice(index, 1)
+  }
+  private async addTitleMarkdown (item: UpdateModel) {
+    if (item.showTitleMarkdown) {}
+    item.showTitleMarkdown = !item.showTitleMarkdown
+  }
+  private async addAnsweMarkdown (item: UpdateModel) {
+    if (item.showAnswerMarkdown) {}
+    item.showAnswerMarkdown = !item.showAnswerMarkdown
   }
 }
 </script>

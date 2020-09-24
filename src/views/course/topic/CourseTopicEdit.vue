@@ -5,6 +5,11 @@
         <Input v-model.trim="formItem.title" maxlength="5000" show-word-limit type="textarea" placeholder="输入标题" style="width: 600px" :autosize="{ minRows: 3, maxRows: 10 }"/>
         <auto-katex :data="formItem.title"></auto-katex>
       </FormItem>
+      <FormItem label="标题附件">
+        <Button icon="ios-add" type="dashed" @click="addTitleMarkdown" style="margin-left: 10px" v-if="!showTitleMarkdown">{{$t("ADD_MARKDOWN")}}</Button>
+        <Button icon="ios-add" type="dashed" @click="addTitleMarkdown" style="margin-left: 10px" v-if="showTitleMarkdown">{{$t("CANCEL_MARKDOWN")}}</Button>
+        <simple-markdown style="margin-top: 10px" v-if="showTitleMarkdown" :value.sync="formItem.titleAnnexContent"></simple-markdown >
+      </FormItem>
       <FormItem label="是否展示" prop="state">
         <Select v-model="formItem.state" style="width: 300px">
           <Option :value="1">是</Option>
@@ -55,6 +60,11 @@
         <Input v-model.trim="formItem.answer" maxlength="5000" show-word-limit type="textarea" placeholder="Enter something..." style="width: 600px" />
         <auto-katex :data="formItem.answer"></auto-katex>
       </FormItem>
+      <FormItem label="答案附件">
+        <Button icon="ios-add" type="dashed" @click="addAnsweMarkdown" style="margin-left: 10px" v-if="!showAnswerMarkdown">{{$t("ADD_MARKDOWN")}}</Button>
+        <Button icon="ios-add" type="dashed" @click="addAnsweMarkdown" style="margin-left: 10px" v-if="showAnswerMarkdown">{{$t("CANCEL_MARKDOWN")}}</Button>
+        <simple-markdown style="margin-top: 10px" v-if="showAnswerMarkdown" :value.sync="formItem.answerAnnexContent"></simple-markdown >
+      </FormItem>
       <FormItem label="解析" prop="analysis">
         <Input v-model.trim="formItem.analysis" maxlength="2000" show-word-limit type="textarea" placeholder="Enter something..." style="width: 600px" />
         <auto-katex :data="formItem.analysis"></auto-katex>
@@ -81,6 +91,7 @@ import { CourseApi } from '@/dao/api/CourseApi'
 import { ContentTopicUpdateRequest } from '@/request/ContentTopicUpdateRequest'
 import { ContentTopicSelectOptionRequest } from '@/request/ContentTopicSelectOptionRequest'
 import AutoKatex from '@/components/katex/AutoKatex.vue'
+import SimpleMarkdown from '@/components/editor/SimpleMarkdown.vue'
 
 const appModule = namespace(StoreConstant.APP)
 
@@ -102,6 +113,10 @@ class UpdateModel {
   public gradeAmount: number
   @JsonProperty
   public chooseOption: {label: string, value: number, checked: boolean, isNew: boolean}[]
+  @JsonProperty
+  public titleAnnexContent: string
+  @JsonProperty
+  public answerAnnexContent: string
   public constructor () {
     this.contentId = null
     this.title = null
@@ -111,11 +126,16 @@ class UpdateModel {
     this.answer = null
     this.chooseOption = []
     this.gradeAmount = 1
+    this.titleAnnexContent = null
+    this.answerAnnexContent = null
   }
 }
 
 @Component({
-  components: { AutoKatex }
+  components: {
+    AutoKatex,
+    SimpleMarkdown
+  }
 })
 export default class CourseTopicEdit extends Vue {
   @appModule.Mutation closeTag: Function
@@ -151,6 +171,8 @@ export default class CourseTopicEdit extends Vue {
   private isAddPage = true
   private optionLabel: string = ''
   private removeOptionIdList: number[] = []
+  private showTitleMarkdown = false
+  private showAnswerMarkdown = false
 
   private async created () {
     if (this.$route.path.indexOf('add') !== -1) {
@@ -193,6 +215,12 @@ export default class CourseTopicEdit extends Vue {
       const response = ApiUtil.getData(result)
       this.formItem = new UpdateModel()
       JsonProtocol.copyProperties(response, this.formItem)
+      if (StringUtil.isNotBank(this.formItem.titleAnnexContent)) {
+        this.showTitleMarkdown = true
+      }
+      if (StringUtil.isNotBank(this.formItem.answerAnnexContent)) {
+        this.showAnswerMarkdown = true
+      }
       if (JSHelperUtil.isNotNull(response.getAddOptionList()) && response.getAddOptionList()) {
         this.formItem.chooseOption = []
         response.getAddOptionList().forEach(item => {
@@ -362,6 +390,14 @@ export default class CourseTopicEdit extends Vue {
   @Watch('formItem')
   private onFormItemChange () {
     this.formItemHasUpdate = true
+  }
+  private async addTitleMarkdown () {
+    if (this.showTitleMarkdown) {}
+    this.showTitleMarkdown = !this.showTitleMarkdown
+  }
+  private async addAnsweMarkdown () {
+    if (this.showAnswerMarkdown) {}
+    this.showAnswerMarkdown = !this.showAnswerMarkdown
   }
 }
 </script>
