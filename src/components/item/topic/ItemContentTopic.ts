@@ -31,4 +31,8 @@ export class ItemContentTopic {
   @ReturnGenericsProperty(Array, new Map<string, {new(): object}>().set('Array', ItemContentTopicSelectOption))
   public addOptionList: ItemContentTopicSelectOption[]
   public chooseValue: string
+  @JsonProperty
+  public titleAnnexContent: string
+  @JsonProperty
+  public answerAnnexContent: string
 }

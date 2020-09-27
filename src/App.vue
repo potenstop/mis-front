@@ -5,7 +5,7 @@
 </template>
 
 <script lang="ts">
-import './config/HttpApiConfiguration'
+import '@/config/HttpApiConfiguration'
 import { Component, Vue, Watch, Provide } from 'vue-property-decorator'
 @Component
 export default class App extends Vue {

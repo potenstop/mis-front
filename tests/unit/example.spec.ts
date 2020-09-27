@@ -1,22 +1,17 @@
 
 describe('HelloWorld.vue', () => {
   it('zhongwen', function () {
-    const str = `#include <iostream>
-using namespace std；
-class A {
-int a；
-public：
-A(int aa=0){a=aa；}
-～A( ){cout <<″Destructor A!″<<a<<endl；}
+    const str = `#include<iostream.h>
+    template<class T>
+class f{
+private：T x，y；
+public：void f1(T a，T b){x=a；y=b；}
+T max( ){retum(x>y)?x:y;}
 }；
-class B：public A{
-int b;
-public:
-B(int aa = 0,int bb = 0):A(aa){b = bb;}
-～B( ){cout <<″Destructor B!″<< b << endl;}
-};
-void main( ){
-B x(5),y(6,7);
+main( ){
+f a；
+a.f1(1.5,3.8)；    ’
+cout<<a.x<<a.y<<a.max( )<<endl；
 }`
     let newStr = ''
     for (const s of str) {
@@ -31,6 +26,12 @@ B x(5),y(6,7);
         news = ','
       } else if (s === '～') {
         news = '~'
+      } else if (s === '＆') {
+        news = '&'
+      } else if (s === '．') {
+        news = '.'
+      } else if (s === '’') {
+        news = '\''
       }
       newStr += news
     }

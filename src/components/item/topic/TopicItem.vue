@@ -2,6 +2,7 @@
   <div>
     <Card :bordered="false">
       <auto-katex :data="data.title"></auto-katex>
+      <div v-html="data.titleAnnexContent"></div>
       <RadioGroup
         style="margin-top: 15px"
         size="large" v-model='signData'
@@ -43,6 +44,7 @@
         <div v-show="showAnswer">
           <Divider orientation="left" style="color: #2182ff;">答案:</Divider>
           <auto-katex :data="data.answer" :is-line-feed="false"></auto-katex>
+          <div v-html="data.answerAnnexContent"></div>
         </div>
       </div>
       <div v-show="showAnalysis">
@@ -56,10 +58,11 @@
 
 <script lang="ts">
 import { Component, Prop, Vue, Watch } from 'vue-property-decorator'
-import { JsonProperty, ReturnGenericsProperty } from 'papio-h5'
+import { JsonProperty, ReturnGenericsProperty, StringUtil } from 'papio-h5'
 import { ItemContentTopic } from '@/components/item/topic/ItemContentTopic'
 import { ContentTopicConstant } from '@/common/constant/ContentTopicConstant'
 import AutoKatex from '@/components/katex/AutoKatex.vue'
+import editor from 'mavon-editor'
 
 @Component({
   components: {
@@ -104,6 +107,13 @@ export default class TopicItem extends Vue {
       } else {
         this.inputData = this.data.chooseValue
       }
+    }
+    const mavonEditor = editor.mavonEditor as any
+    if (StringUtil.isNotBank(this.data.titleAnnexContent)) {
+      this.data.titleAnnexContent = mavonEditor.getMarkdownIt().render(this.data.titleAnnexContent)
+    }
+    if (StringUtil.isNotBank(this.data.answerAnnexContent)) {
+      this.data.answerAnnexContent = mavonEditor.getMarkdownIt().render(this.data.answerAnnexContent)
     }
   }
   private noticeValue () {

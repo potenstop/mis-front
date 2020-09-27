@@ -26,6 +26,10 @@ export class AlbumCourseTopicViewContentTopicItemResponse {
   private answer: string
   @JsonProperty
   private analysis: string
+  @JsonProperty
+  private titleAnnexContent: string
+  @JsonProperty
+  private answerAnnexContent: string
   public getContentId (): number {
     return this.contentId
   }
@@ -67,5 +71,17 @@ export class AlbumCourseTopicViewContentTopicItemResponse {
   }
   public setAnalysis (analysis: string): void {
     this.analysis = analysis
+  }
+  public getTitleAnnexContent (): string {
+    return this.titleAnnexContent
+  }
+  public setTitleAnnexContent (titleAnnexContent: string): void {
+    this.titleAnnexContent = titleAnnexContent
+  }
+  public getAnswerAnnexContent (): string {
+    return this.answerAnnexContent
+  }
+  public setAnswerAnnexContent (answerAnnexContent: string): void {
+    this.answerAnnexContent = answerAnnexContent
   }
 }
