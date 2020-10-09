@@ -133,6 +133,16 @@ const appModule = namespace(StoreConstant.APP)
 const courseApi = new CourseApi()
 const foreignApi = new ForeignApi()
 const cmsApi = new CmsApi()
+class Option {
+  @JsonProperty
+  public label: string
+  @JsonProperty
+  public value: number
+  @JsonProperty
+  public checked: boolean
+  @JsonProperty
+  public isNew: boolean
+}
 class UpdateModel {
   @JsonProperty
   public contentId: number
@@ -150,7 +160,8 @@ class UpdateModel {
   @JsonProperty
   public gradeAmount: number
   @JsonProperty
-  public chooseOption: {label: string, value: number, checked: boolean, isNew: boolean}[]
+  @ReturnGenericsProperty(Array, new Map<string, { new(): object }>().set('Array', Option))
+  public chooseOption: Option[]
   @JsonProperty
   public titleAnnexContent: string
   @JsonProperty
@@ -310,10 +321,8 @@ export default class CourseTopicMulAdd extends Vue {
   }
   private async loadCacheFormItem () {
     const cacheData = await LocalForageUtil.getItem(this.loadCacheFormItemKey)
-    console.log('111', cacheData)
     if (cacheData != null) {
       this.formItem = JsonProtocol.arrayToBeans(cacheData, UpdateModel, new Map<string, new() => object>().set('root', UpdateModel), 'root')
-      console.log('222', this.formItem)
     }
   }
   private async startTimeSaveCache () {
@@ -321,7 +330,7 @@ export default class CourseTopicMulAdd extends Vue {
       if (CollectionUtils.isNotEmpty(this.formItem)) {
         LocalForageUtil.setItem(this.loadCacheFormItemKey, this.formItem)
       }
-    }, 100)
+    }, 500)
   }
   public back () {
     this.closeTag(this.$route)
@@ -387,27 +396,32 @@ export default class CourseTopicMulAdd extends Vue {
     }
   }
   private async handleUploadSuccess (res) {
-    const data = ApiUtil.getData(await cmsApi.wordBatchCourseTopic(ProjectConfig.picDomain + this.fileData.key))
-    ApiUtil.getData(await foreignApi.qiniuFileDelete(this.fileData.key))
-    this.formItem = []
-    data.forEach(item => {
-      const updateModel = new UpdateModel()
-      updateModel.state = ContentTopicConstant.STATE_ONLINE
-      updateModel.topicType = item.getTopicType()
-      updateModel.title = item.getTitle()
-      updateModel.chooseOption = []
-      if (JSHelperUtil.isNotNull(item.getOptionList())) {
-        item.getOptionList().forEach(option => {
-          updateModel.chooseOption.push({
-            value: this.optionValue++,
-            label: option,
-            checked: false,
-            isNew: true
+    try {
+      const data = ApiUtil.getData(await cmsApi.wordBatchCourseTopic(ProjectConfig.picDomain + this.fileData.key))
+      this.formItem = []
+      data.forEach(item => {
+        const updateModel = new UpdateModel()
+        updateModel.state = ContentTopicConstant.STATE_ONLINE
+        updateModel.topicType = item.getTopicType()
+        updateModel.title = item.getTitle()
+        updateModel.chooseOption = []
+        if (JSHelperUtil.isNotNull(item.getOptionList())) {
+          item.getOptionList().forEach(option => {
+            updateModel.chooseOption.push({
+              value: this.optionValue++,
+              label: option,
+              checked: false,
+              isNew: true
+            })
           })
-        })
-      }
-      this.formItem.push(updateModel)
-    })
+        }
+        this.formItem.push(updateModel)
+      })
+    } catch (e) {
+      throw e
+    } finally {
+      ApiUtil.getData(await foreignApi.qiniuFileDelete(this.fileData.key))
+    }
   }
   private handleUploadError (error) {
     this.$Message.error('上传失败:' + error.message)

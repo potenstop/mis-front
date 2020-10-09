@@ -15,7 +15,8 @@ import axios from 'axios'
 import VModal from 'vue-js-modal'
 // simpe page table css
 import '@/assets/css/simple-page-table.css'
-import 'katex/dist/katex.min.css'
+import VueClipboard from 'vue-clipboard2'
+
 Vue.prototype.axios = axios
 // 实际打包时应该不引入mock
 if (process.env.NODE_ENV !== 'production') {
@@ -41,6 +42,7 @@ Vue.directive('clickOutside', clickOutside)
  * 注册指令
  */
 importDirective(Vue)
+Vue.use(VueClipboard)
 
 Vue.config.productionTip = false
 Vue.prototype.$config = ProjectConfig

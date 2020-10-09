@@ -13,7 +13,7 @@
                :loading="chooseTopicLoading"
         >
           <template slot-scope="{ row }" slot="contentId">
-            <span>{{ row.contentId }}</span>
+            <a @click.prevent="jumpTopicEditById(row.contentId)">{{ row.contentId }}</a>
           </template>
           <template slot-scope="{ row }" slot="title">
             <auto-katex :data="row.title"></auto-katex>
@@ -183,6 +183,14 @@ export default class CourseAlbumTopic extends mixins(ConstantMixin) {
     if (i !== -1) {
       this.formItem.contentIdList.splice(i, 1)
     }
+  }
+  private async jumpTopicEditById (id: number) {
+    this.$router.push({
+      path: '/course/topic/edit',
+      query: {
+        id: id + ''
+      }
+    })
   }
 }
 </script>

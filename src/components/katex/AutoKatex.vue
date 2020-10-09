@@ -6,13 +6,19 @@
 <script lang="ts">
 import { Component, Prop, Vue, Watch } from 'vue-property-decorator'
 import katex from 'katex'
+import 'katex/dist/katex.min.css'
 import { JSHelperUtil, StringUtil } from 'papio-h5'
 
 @Component
 export default class AutoKatex extends Vue {
   private name = 'AutoKatex'
+  // 带有公式的源文本
   @Prop({ default: '' }) readonly data!: string;
+  // 是否占用一行
   @Prop({ default: true }) readonly isLineFeed!: boolean;
+  @Prop({ default: '' }) readonly lineEnd!: string;
+  // 公式的分割符号
+  @Prop({ default: '$$' }) readonly delimiters!: string;
   private htmlData = ''
 
   private created () {
@@ -26,16 +32,15 @@ export default class AutoKatex extends Vue {
 
   private katexRender () {
     const data = this.data
-    const delimiters = '$$'
-    const delimitersLength = delimiters.length
+    const delimitersLength = this.delimiters.length
     if (StringUtil.isEmpty(data)) {
       return
     }
-    let pos = data.indexOf(delimiters)
+    let pos = data.indexOf(this.delimiters)
     const positions = []
     while (pos > -1) {
       positions.push(pos)
-      pos = data.indexOf(delimiters, pos + delimitersLength)
+      pos = data.indexOf(this.delimiters, pos + delimitersLength)
     }
     let htmlData = ''
     if (positions.length <= 1) {
@@ -57,6 +62,9 @@ export default class AutoKatex extends Vue {
         }
       }
       htmlData += this.getSpanHtml(data.substring(positions[positions.length - 1] + delimitersLength))
+    }
+    if (this.lineEnd.length > 0) {
+      htmlData += this.lineEnd
     }
     this.htmlData = htmlData
   }

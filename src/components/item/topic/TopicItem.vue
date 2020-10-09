@@ -1,7 +1,7 @@
 <template>
   <div>
     <Card :bordered="false">
-      <auto-katex :data="data.title"></auto-katex>
+      <auto-katex :data="data.title" :lineEnd="titleLineEnd" ></auto-katex>
       <div v-html="data.titleAnnexContent"></div>
       <RadioGroup
         style="margin-top: 15px"
@@ -83,6 +83,7 @@ export default class TopicItem extends Vue {
     TYPE_FILL_BLANK: ContentTopicConstant.TYPE_FILL_BLANK,
     TYPE_SHORT_ANSWER: ContentTopicConstant.TYPE_SHORT_ANSWER
   }
+  private titleLineEnd = '';
   private signDataChanged () {
     this.data.chooseValue = this.signData + ''
     this.noticeValue()
@@ -96,6 +97,7 @@ export default class TopicItem extends Vue {
     this.noticeValue()
   }
   private created () {
+    this.titleLineEnd = `<a href="/course/topic/edit?id=${this.data.contentId}">&nbsp&nbsp&nbsp&nbsp[${this.data.contentId}]</router-link>`
     if (this.data.chooseValue !== null && this.data.chooseValue !== undefined) {
       if (this.data.topicType === this.topicType.TYPE_SIGN_SELECT) {
         this.signData = +this.data.chooseValue

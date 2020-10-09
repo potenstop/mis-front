@@ -1,5 +1,23 @@
 <template xmlns:v-katex="http://www.w3.org/1999/xhtml">
   <Card style="width: 100%">
+    <Collapse style="margin-bottom: 10px">
+      <Panel name="1">
+        数学公式(点击复制)
+        <div slot="content" >
+          <Button type="info" class="sub-btn" v-clipboard:copy="copyKatexData.seize" v-clipboard:success="onClipboardCopySuc" v-clipboard:error="onClipboardCopyError">占位</Button>
+          <Button type="info" class="sub-btn" v-clipboard:copy="copyKatexData.dispersedVariableDistribution" v-clipboard:success="onClipboardCopySuc" v-clipboard:error="onClipboardCopyError">离散变量分布律</Button>
+          <Button type="info" class="sub-btn" v-clipboard:copy="copyKatexData.piecewiseFunction"  v-clipboard:success="onClipboardCopySuc" v-clipboard:error="onClipboardCopyError">分段函数</Button>
+          <Button type="info" class="sub-btn" v-clipboard:copy="copyKatexData.fraction"  v-clipboard:success="onClipboardCopySuc" v-clipboard:error="onClipboardCopyError">分数</Button>
+          <Button type="info" class="sub-btn" v-clipboard:copy="copyKatexData.moreX"  v-clipboard:success="onClipboardCopySuc" v-clipboard:error="onClipboardCopyError">x1~xn</Button>
+          <Button type="info" class="sub-btn" v-clipboard:copy="copyKatexData.distributionBinomial"  v-clipboard:success="onClipboardCopySuc" v-clipboard:error="onClipboardCopyError">二项分布</Button>
+          <Button type="info" class="sub-btn" v-clipboard:copy="copyKatexData.distributionPoisson"  v-clipboard:success="onClipboardCopySuc" v-clipboard:error="onClipboardCopyError">泊松分布</Button>
+          <Button type="info" class="sub-btn" v-clipboard:copy="copyKatexData.distributionUniformity"  v-clipboard:success="onClipboardCopySuc" v-clipboard:error="onClipboardCopyError">均匀分布</Button>
+          <Button type="info" class="sub-btn" v-clipboard:copy="copyKatexData.distributionIndex"  v-clipboard:success="onClipboardCopySuc" v-clipboard:error="onClipboardCopyError">指数分布</Button>
+          <Button type="info" class="sub-btn" v-clipboard:copy="copyKatexData.distributionNormal"  v-clipboard:success="onClipboardCopySuc" v-clipboard:error="onClipboardCopyError">正态分布</Button>
+
+        </div>
+      </Panel>
+    </Collapse>
     <Form ref="formItem" :model="formItem" :rules="ruleValidate" :label-width="80" style="margin-left: 20%" label-position="left">
       <FormItem label="标题" prop="title">
         <Input v-model.trim="formItem.title" maxlength="5000" show-word-limit type="textarea" placeholder="输入标题" style="width: 600px" :autosize="{ minRows: 3, maxRows: 10 }"/>
@@ -61,8 +79,8 @@
         <auto-katex :data="formItem.answer"></auto-katex>
       </FormItem>
       <FormItem label="答案附件">
-        <Button icon="ios-add" type="dashed" @click="addAnsweMarkdown" style="margin-left: 10px" v-if="!showAnswerMarkdown">{{$t("ADD_MARKDOWN")}}</Button>
-        <Button icon="ios-add" type="dashed" @click="addAnsweMarkdown" style="margin-left: 10px" v-if="showAnswerMarkdown">{{$t("CANCEL_MARKDOWN")}}</Button>
+        <Button icon="ios-add" type="dashed" @click="addAnswerMarkdown" style="margin-left: 10px" v-if="!showAnswerMarkdown">{{$t("ADD_MARKDOWN")}}</Button>
+        <Button icon="ios-add" type="dashed" @click="addAnswerMarkdown" style="margin-left: 10px" v-if="showAnswerMarkdown">{{$t("CANCEL_MARKDOWN")}}</Button>
         <simple-markdown style="margin-top: 10px" v-if="showAnswerMarkdown" :value.sync="formItem.answerAnnexContent"></simple-markdown >
       </FormItem>
       <FormItem label="解析" prop="analysis">
@@ -173,6 +191,25 @@ export default class CourseTopicEdit extends Vue {
   private removeOptionIdList: number[] = []
   private showTitleMarkdown = false
   private showAnswerMarkdown = false
+  private copyKatexData = {
+    seize: `$$$$`,
+    dispersedVariableDistribution: `$$\\def\\arraystretch{1.5}
+   \\begin{array}{c|}
+   X & 0 & 1 \\\\ \\hline
+   P & 0.4 & 0.6 \\\\
+\\end{array}$$`,
+    piecewiseFunction: `$$f(x)=\\begin{cases}
+     2x, 0\\le x \\le 1,\\\\
+     0, 其他,
+  \\end{cases}$$`,
+    fraction: `$$\\dfrac{1}{2}$$`,
+    moreX: `$$x_1, x_2,...,x_n$$`,
+    distributionBinomial: `$$X \\text{\\textasciitilde}B(n,p)$$`,
+    distributionPoisson: `$$X \\text{\\textasciitilde}P(\\lambda)$$`,
+    distributionUniformity: `$$X \\text{\\textasciitilde}U(a,b)$$`,
+    distributionIndex: `$$X \\text{\\textasciitilde}E(\\lambda)$$`,
+    distributionNormal: `$$X \\text{\\textasciitilde}N(\\mu, \\sigma^2)$$`
+  }
 
   private async created () {
     if (this.$route.path.indexOf('add') !== -1) {
@@ -395,13 +432,21 @@ export default class CourseTopicEdit extends Vue {
     if (this.showTitleMarkdown) {}
     this.showTitleMarkdown = !this.showTitleMarkdown
   }
-  private async addAnsweMarkdown () {
+  private async addAnswerMarkdown () {
     if (this.showAnswerMarkdown) {}
     this.showAnswerMarkdown = !this.showAnswerMarkdown
+  }
+  private async onClipboardCopySuc () {
+    this.$Message.info('复制成功')
+  }
+  private async onClipboardCopyError () {
+    this.$Message.warning('复制失败')
   }
 }
 </script>
 
 <style scoped>
-
+.sub-btn{
+  margin: 1px;
+}
 </style>
